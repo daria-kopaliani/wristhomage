@@ -233,6 +233,36 @@ window.HOMAGE_DATA = {
         { name: "SN0113W", house: "San Martin", priceUSD: 300, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "the teak-striped dial and twisted lugs of the Aqua Terra in a tidy 38mm; a longtime community favourite, sold direct" },
         { name: "Teak Dress 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 74, amazon: false, direct: true, note: "the striped-dial dressy-sport look at a lower price; its own dial identity rather than a strict copy, sold direct" }
       ]
+    },
+    {
+      id: "longines-legend-diver", name: "Legend Diver", house: "Longines", ref: "L3.774",
+      priceUSD: 2600, type: "dive", size_mm: 42, wr_m: 300,
+      movement: "Automatic (Longines L888)",
+      cues: ["super-compressor", "internal rotating bezel", "twin crowns", "vintage diver", "domed crystal"],
+      homages: [
+        { name: "Legend Diver 39", house: "San Martin", priceUSD: 230, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 84, amazon: false, direct: true, note: "the super-compressor look with an internal rotating bezel and twin crowns, in a wearable 39mm; a well-liked homage, sold direct" },
+        { name: "Compressor 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: false, direct: true, note: "the twin-crown compressor style at a lower price; its own dial identity rather than a strict copy, sold direct" }
+      ]
+    },
+    {
+      id: "iwc-portugieser", name: "Portugieser", house: "IWC", ref: "IW500",
+      priceUSD: 8000, type: "dress", size_mm: 40, wr_m: 30,
+      movement: "Automatic (IWC 82200)",
+      cues: ["arabic numerals", "railroad minute track", "leaf hands", "clean dress", "slim case"],
+      homages: [
+        { name: "Portugieser 40", house: "San Martin", priceUSD: 200, size_mm: 40, wr_m: 50, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: false, direct: true, note: "the clean Arabic-numeral dial, railroad track and leaf hands; a sharp, well-priced dress homage, sold direct" },
+        { name: "Portugieser Chrono", house: "Sugess", priceUSD: 220, size_mm: 41, wr_m: 30, movement: "Mechanical chronograph (Seagull ST19)", fidelity: 79, amazon: false, direct: true, note: "the chronograph take with a hand-wound Seagull movement for the winding ritual; sold direct" }
+      ]
+    },
+    {
+      id: "rolex-milgauss", name: "Milgauss", house: "Rolex", ref: "116400GV",
+      priceUSD: 9500, type: "everyday", size_mm: 40, wr_m: 100,
+      movement: "Automatic (Rolex 3131, antimagnetic)",
+      cues: ["lightning-bolt seconds", "green sapphire", "orange accents", "antimagnetic", "smooth bezel"],
+      homages: [
+        { name: "Lightning 40", house: "San Martin", priceUSD: 300, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "the lightning-bolt seconds hand, orange accents and green-tinted crystal edge that make the Milgauss instantly recognisable; sold direct" },
+        { name: "Bolt Antimagnetic", house: "Baltany", priceUSD: 190, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 72, amazon: false, direct: true, note: "the lightning-hand look at a budget price; its own dial rather than a strict copy, sold direct" }
+      ]
     }
   ]
 };
