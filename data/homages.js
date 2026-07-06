@@ -126,7 +126,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Blancpain 1315)",
       cues: ["dive", "domed sapphire bezel", "vintage diver", "large case"],
       homages: [
-        { name: "SN0121 (Fathoms)", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 83, amazon: false, direct: true, note: "the domed sapphire bezel and dial furniture are close; sized down a touch from the original's larger case for real wrists" },
+        { name: "Fifty Fathoms 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 83, amazon: false, direct: true, note: "the domed sapphire bezel and dial furniture are close; sized down a touch from the original's larger case for real wrists" },
         { name: "SD1952 Fathom", house: "Steeldive", priceUSD: 150, size_mm: 43, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "budget route to the Fifty Fathoms look with a sapphire bezel insert and 300m WR" }
       ]
     },
@@ -138,6 +138,47 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "Marlin 34", house: "Timex", priceUSD: 130, size_mm: 34, wr_m: 30, movement: "Quartz / hand-wind", fidelity: 60, amazon: true, note: "not a Tank copy, but the go-to affordable rectangular/vintage-dress alternative when you want that flavour on a strap" },
         { name: "Rectangular Dress (Roman)", house: "Casio", priceUSD: 45, size_mm: 33, wr_m: 30, movement: "Quartz", fidelity: 55, amazon: true, note: "a spiritual budget stand-in for the roman-numeral dress look; own identity, not a homage in the strict sense" }
+      ]
+    },
+    {
+      id: "iwc-big-pilot", name: "Big Pilot", house: "IWC", ref: "IW501001",
+      priceUSD: 15000, type: "pilot", size_mm: 43, wr_m: 60,
+      movement: "Automatic (IWC 52110)",
+      cues: ["pilot", "onion crown", "triangle at 12", "flieger dial", "large case"],
+      homages: [
+        { name: "PD-1703", house: "Pagani Design", priceUSD: 110, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the Big Pilot look — oversized onion crown, triangle and dots at 12, clean flieger dial — with a Seiko auto for around a hundred dollars" },
+        { name: "Big Pilot 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: false, direct: true, note: "the refined take, with sharper case finishing and a smoother movement; the community's default above the budget tier" },
+        { name: "Flieger 40", house: "Baltany", priceUSD: 190, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 70, amazon: false, direct: true, note: "a smaller, more wearable flieger in the same spirit rather than a strict Big Pilot copy; usually cheaper direct" }
+      ]
+    },
+    {
+      id: "cartier-santos", name: "Santos", house: "Cartier", ref: "WSSA0009",
+      priceUSD: 7500, type: "dress", size_mm: 40, wr_m: 100,
+      movement: "Automatic (Cartier 1847 MC)",
+      cues: ["square case", "exposed screws", "roman numerals", "integrated bracelet", "dress-sport"],
+      homages: [
+        { name: "PD-1644", house: "Pagani Design", priceUSD: 100, size_mm: 40, wr_m: 30, movement: "Quartz (Japanese)", fidelity: 80, amazon: true, note: "the square bezel with exposed screws, roman-numeral dial and an integrated bracelet; the affordable Santos look, kept slim with a quartz movement" },
+        { name: "Santos-style Auto", house: "Cadisen", priceUSD: 135, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota)", fidelity: 72, amazon: true, note: "an automatic take on the square dress-sport with the screw motif; finishing a step below but a sharp everyday look for the money" }
+      ]
+    },
+    {
+      id: "tudor-pelagos", name: "Pelagos", house: "Tudor", ref: "25600TN",
+      priceUSD: 5000, type: "dive", size_mm: 42, wr_m: 500,
+      movement: "Automatic (Tudor MT5612)",
+      cues: ["titanium", "ceramic bezel", "snowflake hands", "500m dive", "square markers"],
+      homages: [
+        { name: "EXD Titanium", house: "Watchdives", priceUSD: 150, size_mm: 42, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "titanium case, ceramic bezel and snowflake hands for $150 — the community's surprise-value Pelagos alternative, sold direct" },
+        { name: "Pelagos (titanium)", house: "San Martin", priceUSD: 300, size_mm: 42, wr_m: 300, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: false, direct: true, note: "titanium with a ceramic bezel and better finishing; widely rated the closest affordable Pelagos" }
+      ]
+    },
+    {
+      id: "rolex-explorer-ii", name: "Explorer II", house: "Rolex", ref: "226570",
+      priceUSD: 9350, type: "gmt", size_mm: 42, wr_m: 100,
+      movement: "Automatic GMT (Rolex 3285)",
+      cues: ["24h fixed bezel", "orange gmt hand", "steve mcqueen", "tool gmt", "no cyclops"],
+      homages: [
+        { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
+        { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: false, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
       ]
     }
   ]
