@@ -180,6 +180,27 @@ window.HOMAGE_DATA = {
         { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
         { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: false, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
       ]
+    },
+    {
+      id: "panerai-luminor", name: "Luminor Marina", house: "Panerai", ref: "PAM01312",
+      priceUSD: 8500, type: "dive", size_mm: 44, wr_m: 300,
+      movement: "Automatic (Panerai P.9010)",
+      cues: ["cushion case", "crown-guard lever", "sandwich dial", "large case", "minimalist"],
+      homages: [
+        { name: "SD1940", house: "Steeldive", priceUSD: 130, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 81, amazon: true, note: "the cushion case, crown-guard lever and sandwich dial that define the Luminor, in steel with a Seiko auto for pocket change" },
+        { name: "SN041", house: "San Martin", priceUSD: 320, size_mm: 44, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: false, direct: true, note: "the sandwich dial and case finishing enthusiasts rate closest; a clear step up in bracelet and lume, sold direct" },
+        { name: "Cushion Diver", house: "Addiesdive", priceUSD: 95, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 75, amazon: true, direct: true, note: "the value pick — the Luminor silhouette for under a hundred; carried on Amazon, though often cheaper still direct on AliExpress" }
+      ]
+    },
+    {
+      id: "omega-seamaster-300-heritage", name: "Seamaster 300 (Heritage)", house: "Omega", ref: "234.30.41",
+      priceUSD: 7600, type: "dive", size_mm: 41, wr_m: 300,
+      movement: "Automatic (Omega 8912)",
+      cues: ["vintage diver", "broad-arrow hands", "no crown guard", "sword seconds", "faux-patina"],
+      homages: [
+        { name: "Vintage Diver SN011", house: "San Martin", priceUSD: 300, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "a well-judged take on the vintage diver with broad-arrow hands and mostly brushed surfaces; the community favourite, sold direct" },
+        { name: "1957 Diver", house: "Steeldive", priceUSD: 150, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the vintage Seamaster look with a ceramic bezel over aluminium and no fragile lume pip; a lot of diver for the money" }
+      ]
     }
   ]
 };
