@@ -36,6 +36,9 @@ ARTICLES = [
     "/rubric",
     "/articles/homage-vs-replica",
     "/articles/are-homage-watches-ok",
+    "/articles/best-submariner-homage-under-200",
+    "/articles/best-speedmaster-homage",
+    "/guides/pagani-design",
 ]
 
 
@@ -84,7 +87,7 @@ HEAD = """<!doctype html>
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
   <link rel="stylesheet" href="/css/style.css?v=2">
   {schema}
 </head>
