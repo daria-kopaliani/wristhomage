@@ -22,7 +22,8 @@ window.HOMAGE_DATA = {
         { name: "Ocean One 39", house: "Steinhart", priceUSD: 520, size_mm: 39, wr_m: 300, movement: "Automatic (Sellita SW200)", fidelity: 92, amazon: false, note: "the enthusiast benchmark — Swiss Sellita movement, ceramic bezel, proportions the community rates closest to the real thing" },
         { name: "SN0004-G", house: "San Martin", priceUSD: 260, size_mm: 40, wr_m: 200, movement: "Automatic (NH35 / PT5000 option)", fidelity: 88, amazon: false, direct: true, note: "sharp finishing for the money and a well-cut ceramic bezel; usually cheaper direct than through resellers" },
         { name: "SD1953", house: "Steeldive", priceUSD: 130, size_mm: 41, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 83, amazon: true, note: "genuine 300m diver with a ceramic bezel and Seiko auto — a lot of watch per dollar" },
-        { name: "SRPE control (Seiko 5 dive)", house: "Seiko", priceUSD: 250, size_mm: 42.5, wr_m: 100, movement: "Automatic (Seiko 4R36)", fidelity: 58, amazon: true, note: "not a Sub copy — a spiritual budget diver the community reaches for instead; own identity, in-house auto" }
+        { name: "SRPE control (Seiko 5 dive)", house: "Seiko", priceUSD: 250, size_mm: 42.5, wr_m: 100, movement: "Automatic (Seiko 4R36)", fidelity: 58, amazon: true, note: "not a Sub copy — a spiritual budget diver the community reaches for instead; own identity, in-house auto" },
+        { name: "AD2044 Diver", house: "Addiesdive", priceUSD: 95, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 77, amazon: true, direct: true, note: "a hugely popular budget Sub homage — ceramic bezel, sapphire, 200m and a Seiko auto; carried on Amazon, often cheaper still direct on AliExpress" }
       ]
     },
     {
@@ -33,7 +34,8 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1662 (Pepsi GMT)", house: "Pagani Design", priceUSD: 115, size_mm: 40, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 84, amazon: true, note: "the homage that made Pagani famous — a genuine NH34 GMT with a ceramic Pepsi bezel and jubilee, wildly over-delivering on price" },
         { name: "SN004-G GMT", house: "San Martin", priceUSD: 340, size_mm: 39, wr_m: 200, movement: "Automatic GMT (NH34)", fidelity: 87, amazon: false, direct: true, note: "tighter finishing and a slimmer case than the budget set; community-favourite mid-tier GMT" },
-        { name: "Ocean One GMT", house: "Steinhart", priceUSD: 560, size_mm: 42, wr_m: 300, movement: "Automatic GMT (ETA 2893 / SW330)", fidelity: 86, amazon: false, note: "Swiss true-GMT movement and dive-grade WR; a step up in movement over the Seiko-based field" }
+        { name: "Ocean One GMT", house: "Steinhart", priceUSD: 560, size_mm: 42, wr_m: 300, movement: "Automatic GMT (ETA 2893 / SW330)", fidelity: 86, amazon: false, note: "Swiss true-GMT movement and dive-grade WR; a step up in movement over the Seiko-based field" },
+        { name: "Pepsi GMT (NH34)", house: "Addiesdive", priceUSD: 110, size_mm: 39, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 80, amazon: true, direct: true, note: "a genuine NH34 GMT with a ceramic Pepsi bezel for around a hundred; carried on Amazon, often cheaper direct" }
       ]
     },
     {
@@ -220,6 +222,16 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "62MAS SN007", house: "San Martin", priceUSD: 180, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 86, amazon: false, direct: true, note: "the go-to 62MAS homage — 40mm, sapphire with AR coating, 200m, and finishing that punches well above the price; sold direct" },
         { name: "62MAS Diver", house: "Watchdives", priceUSD: 150, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "the same vintage-diver silhouette at a lower price, sold direct; a frequent value recommendation" }
+      ]
+    },
+    {
+      id: "omega-aqua-terra", name: "Aqua Terra", house: "Omega", ref: "220.10.38",
+      priceUSD: 6200, type: "everyday", size_mm: 38, wr_m: 150,
+      movement: "Automatic (Omega 8800)",
+      cues: ["teak-striped dial", "dressy sport", "twisted lugs", "date", "sword hands"],
+      homages: [
+        { name: "SN0113W", house: "San Martin", priceUSD: 300, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "the teak-striped dial and twisted lugs of the Aqua Terra in a tidy 38mm; a longtime community favourite, sold direct" },
+        { name: "Teak Dress 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 74, amazon: false, direct: true, note: "the striped-dial dressy-sport look at a lower price; its own dial identity rather than a strict copy, sold direct" }
       ]
     }
   ]
