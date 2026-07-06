@@ -75,7 +75,8 @@
     var homages = (o.homages || []).filter(passHomage).sort(function (a, b) { return (b.fidelity || 0) - (a.fidelity || 0); });
     if (!homages.length) return "";
     return '<article class="card">' +
-      '<div class="card-head"><div><h3><a href="/watches/' + esc(o.id) + '">' + esc(o.name) + ' homages</a></h3>' +
+      '<div class="card-head"><svg class="wa" viewBox="0 0 48 48" aria-hidden="true"><use href="#wa-' + esc(o.type) + '"/></svg>' +
+      '<div><h3><a href="/watches/' + esc(o.id) + '">' + esc(o.name) + ' homages</a></h3>' +
       '<div class="house">' + esc(o.house) + ' · ' + esc(o.type) + ' · ' + esc(o.size_mm) + 'mm · ' + money(o.priceUSD) + ' original</div></div></div>' +
       homages.map(homageRow).join("") +
       '<div class="more"><a href="/watches/' + esc(o.id) + '">Full ' + esc(o.name) + ' breakdown &rsaquo;</a></div>' +

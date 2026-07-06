@@ -47,6 +47,25 @@ def ld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj) + '</script>'
 
 
+# Inline watch-type art sprite (original line-art, no brand designs). Injected once per
+# watch page so <use href="#wa-..."> resolves same-document (robust across all browsers,
+# unlike external-file <use> which Safari has historically choked on).
+with open(os.path.join(ROOT, "assets", "watch-art.svg")) as _f:
+    SPRITE = _f.read()
+
+# Small watch mark used in the wordmark. Inherits currentColor.
+LOGO = ('<svg class="logo" viewBox="0 0 48 48" aria-hidden="true">'
+        '<circle cx="24" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="2.4"/>'
+        '<path d="M20.5 7h7l-3.5 3.6z" fill="currentColor"/>'
+        '<line x1="24" y1="24" x2="24" y2="14.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+        '<line x1="24" y1="24" x2="30.5" y2="27" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+        '<circle cx="24" cy="24" r="1.8" fill="currentColor"/></svg>')
+
+
+def art_svg(t):
+    return f'<svg class="wa" viewBox="0 0 48 48" aria-hidden="true"><use href="#wa-{esc(t)}"/></svg>'
+
+
 def load_data():
     js = os.path.join(ROOT, "data", "homages.js")
     out = subprocess.check_output(
@@ -66,12 +85,13 @@ HEAD = """<!doctype html>
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/style.css?v=1">
+  <link rel="stylesheet" href="/css/style.css?v=2">
   {schema}
 </head>
 <body>
+{sprite}
   <header class="nav"><div class="wrap">
-    <a class="brand" href="/"><b>wrist</b>homage</a>
+    <a class="brand" href="/">{logo}<b>wrist</b>homage</a>
     <nav><a href="/#finder">Finder</a> <a href="/#originals">Watches</a> <a href="/rubric">How we score</a></nav>
   </div></header>
   <main class="article">
@@ -130,10 +150,12 @@ def original_page(o):
 
     b = []
     b.append(f'<div class="crumbs"><a href="/">Home</a> › <a href="/#originals">Watches</a> › {esc(name)} homages</div>')
+    b.append(f'<div class="watch-hero">{art_svg(o.get("type","dive"))}<div class="watch-hero-txt">')
     b.append(f'<h1>{esc(name)} homages — the affordable {esc(full)} alternatives</h1>')
     b.append(f'<p class="lede">{n} spec-checked homages of the {esc(full)} ({esc(cues)}), ranked by how '
              f'closely they follow the original by our <a href="/rubric">published rubric</a> — with prices, '
              f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
+    b.append('</div></div>')
     b.append(DISC)
 
     b.append(f'<p>The {esc(full)} (ref {esc(o.get("ref","—"))}) is a {esc(o.get("size_mm","?"))}mm '
@@ -200,7 +222,7 @@ def original_page(o):
               "mainEntity": [{"@type": "Question", "name": q,
                               "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     schema = ld(faq_ld)
-    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
+    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
 
 
 def hub_page(originals):
@@ -214,11 +236,12 @@ def hub_page(originals):
          '<a href="/rubric">published rubric</a>. Pick a watch to see prices, movements and where to buy.</p>',
          '<div class="tablewrap"><table><thead><tr><th>Original</th><th>Brand</th><th>Type</th><th>Homages</th></tr></thead><tbody>']
     for o in sorted(originals, key=lambda x: x["house"] + x["name"]):
-        b.append(f'<tr><td><strong><a href="/watches/{esc(o["id"])}">{esc(o["name"])} homages</a></strong></td>'
+        b.append(f'<tr><td class="row-nm"><span class="row-art">{art_svg(o.get("type","dive"))}</span>'
+                 f'<strong><a href="/watches/{esc(o["id"])}">{esc(o["name"])} homages</a></strong></td>'
                  f'<td>{esc(o["house"])}</td><td>{esc(o.get("type",""))}</td><td>{len(o.get("homages",[]))}</td></tr>')
     b.append('</tbody></table></div>')
     coll = {"@context": "https://schema.org", "@type": "CollectionPage", "name": "Watch homage database", "url": canon}
-    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=ld(coll)) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
+    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=ld(coll), sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
 
 
 def write(path, content):
