@@ -1,0 +1,21 @@
+# wristhomage
+
+> Independent, spec-rich database of watch homages — affordable watches that pay homage to iconic designs (Submariner, Speedmaster, Datejust and more), each ranked by a published fidelity rubric.
+
+## Watches
+- [Royal Oak homages](https://wristhomage.com/watches/ap-royal-oak): 2 ranked homages of the Audemars Piguet Royal Oak
+- [Fifty Fathoms homages](https://wristhomage.com/watches/blancpain-fifty-fathoms): 2 ranked homages of the Blancpain Fifty Fathoms
+- [Tank Must homages](https://wristhomage.com/watches/cartier-tank): 2 ranked homages of the Cartier Tank Must
+- [Seamaster Diver 300M homages](https://wristhomage.com/watches/omega-seamaster-300m): 2 ranked homages of the Omega Seamaster Diver 300M
+- [Speedmaster Moonwatch homages](https://wristhomage.com/watches/omega-speedmaster): 3 ranked homages of the Omega Speedmaster Moonwatch
+- [Nautilus homages](https://wristhomage.com/watches/patek-nautilus): 2 ranked homages of the Patek Philippe Nautilus
+- [Datejust homages](https://wristhomage.com/watches/rolex-datejust): 3 ranked homages of the Rolex Datejust
+- [Daytona homages](https://wristhomage.com/watches/rolex-daytona): 3 ranked homages of the Rolex Daytona
+- [Explorer homages](https://wristhomage.com/watches/rolex-explorer): 3 ranked homages of the Rolex Explorer
+- [GMT-Master II homages](https://wristhomage.com/watches/rolex-gmt-master-ii): 3 ranked homages of the Rolex GMT-Master II
+- [Submariner homages](https://wristhomage.com/watches/rolex-submariner): 5 ranked homages of the Rolex Submariner
+- [Black Bay 58 homages](https://wristhomage.com/watches/tudor-black-bay): 2 ranked homages of the Tudor Black Bay 58
+
+## About
+- [Scoring rubric](https://wristhomage.com/rubric)
+- [Homage vs replica](https://wristhomage.com/articles/homage-vs-replica)

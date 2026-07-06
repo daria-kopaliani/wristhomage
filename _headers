@@ -1,0 +1,9 @@
+# Cloudflare Pages headers.
+# Always revalidate JS/CSS/data so edits reach visitors immediately (etag-based;
+# browsers do a conditional request → 304 when unchanged, fresh 200 when changed).
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
