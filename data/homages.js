@@ -201,6 +201,26 @@ window.HOMAGE_DATA = {
         { name: "Vintage Diver SN011", house: "San Martin", priceUSD: 300, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "a well-judged take on the vintage diver with broad-arrow hands and mostly brushed surfaces; the community favourite, sold direct" },
         { name: "1957 Diver", house: "Steeldive", priceUSD: 150, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the vintage Seamaster look with a ceramic bezel over aluminium and no fragile lume pip; a lot of diver for the money" }
       ]
+    },
+    {
+      id: "rolex-yacht-master", name: "Yacht-Master", house: "Rolex", ref: "126622",
+      priceUSD: 12000, type: "dive", size_mm: 40, wr_m: 100,
+      movement: "Automatic (Rolex 3235)",
+      cues: ["bidirectional bezel", "sunburst dial", "oyster bracelet", "dressy diver", "raised bezel numerals"],
+      homages: [
+        { name: "PD-1651", house: "Pagani Design", priceUSD: 95, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, note: "one of the visually closest Yacht-Master homages — bidirectional bezel, sunburst dial, oyster bracelet — with a Seiko auto for well under a hundred" },
+        { name: "Sunburst Diver", house: "Cadisen", priceUSD: 140, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 70, amazon: true, note: "a dressy rotating-bezel diver in the same vein; its own dial identity rather than a strict copy, but the flavour is there" }
+      ]
+    },
+    {
+      id: "seiko-62mas", name: "62MAS (SPB reissue)", house: "Seiko", ref: "SPB143",
+      priceUSD: 1200, type: "dive", size_mm: 40, wr_m: 200,
+      movement: "Automatic (Seiko 6R35)",
+      cues: ["vintage diver", "no crown guard", "wide bezel", "62mas", "grey or gilt dial"],
+      homages: [
+        { name: "62MAS SN007", house: "San Martin", priceUSD: 180, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 86, amazon: false, direct: true, note: "the go-to 62MAS homage — 40mm, sapphire with AR coating, 200m, and finishing that punches well above the price; sold direct" },
+        { name: "62MAS Diver", house: "Watchdives", priceUSD: 150, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "the same vintage-diver silhouette at a lower price, sold direct; a frequent value recommendation" }
+      ]
     }
   ]
 };
