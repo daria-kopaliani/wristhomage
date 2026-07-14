@@ -181,36 +181,9 @@ section { scroll-margin-top: 72px; }
   box-shadow: 0 22px 44px -24px rgba(19, 18, 17, 0.4);
   border-color: var(--hair-20);
 }
-.eh-plate {
-  aspect-ratio: 4 / 3; position: relative; overflow: hidden;
-  background:
-    radial-gradient(70% 60% at 78% 18%, rgba(168, 134, 78, 0.22), transparent 60%),
-    linear-gradient(158deg, #201d19 0%, #131211 100%);
-}
-.eh-mark {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 13px; user-select: none;
-}
-.eh-mark svg {
-  width: 96px; height: 96px;
-  color: rgba(205, 174, 128, 0.62);
-}
-.eh-mark .t {
-  font-size: 9.5px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.3em; color: rgba(246, 244, 239, 0.42);
-  padding-left: 0.3em; /* optically recenter — tracking adds a trailing gap */
-}
-.eh-plate .no {
-  position: absolute; top: 14px; left: 16px;
+.eh-no {
   font-family: var(--serif); font-style: italic; font-weight: 500;
-  font-size: 15px; color: rgba(246, 244, 239, 0.66);
-}
-.eh-plate .tagpill {
-  position: absolute; top: 14px; right: 14px;
-  padding: 4px 12px; border-radius: 9999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.28); color: rgba(246, 244, 239, 0.75);
-  font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em;
+  font-size: 14px; color: var(--ink-3); margin-bottom: 10px;
 }
 .eh-body { padding: 18px 18px 14px; display: flex; flex-direction: column; flex: 1; }
 .eh-body .toprow { display: flex; justify-content: space-between; gap: 14px; }

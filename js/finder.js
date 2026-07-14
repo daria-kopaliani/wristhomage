@@ -88,20 +88,12 @@
     return true;
   }
 
-  var TYPE_LABEL = { dive: "Diver", chronograph: "Chronograph", gmt: "GMT",
-    pilot: "Pilot", dress: "Dress", integrated: "Integrated", everyday: "Everyday", field: "Field" };
-
   function cardHtml(r, i) {
     var h = r.h, o = r.o;
     var fid = h.fidelity != null ? h.fidelity : null;
     return '<article class="eh-card">' +
-      '<div class="eh-plate">' +
-        '<span class="no">N° ' + pad2(i + 1) + '</span>' +
-        '<span class="tagpill">Homage</span>' +
-        '<span class="eh-mark"><svg aria-hidden="true" focusable="false"><use href="#wa-' + esc(o.type) + '"/></svg>' +
-        '<span class="t">' + esc(TYPE_LABEL[o.type] || o.type) + '</span></span>' +
-      '</div>' +
       '<div class="eh-body">' +
+        '<div class="eh-no">N° ' + pad2(i + 1) + '</div>' +
         '<div class="toprow"><div>' +
           '<div class="eh-name">' + esc(h.house) + ' ' + esc(h.name) + '</div>' +
           '<div class="eh-homageto">Homage to ' + esc(o.name) + '</div>' +
