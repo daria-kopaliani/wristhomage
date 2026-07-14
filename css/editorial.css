@@ -102,7 +102,7 @@ section { scroll-margin-top: 72px; }
   margin-top: -49px; /* sit behind the translucent header */
   padding-top: 49px;
 }
-.eh-hero .wrap { padding-top: 140px; padding-bottom: 84px; }
+.eh-hero .wrap { width: 100%; padding-top: 140px; padding-bottom: 84px; }
 .eh-hero .eyebrow { color: var(--wf-accent); }
 .eh-hero h1 {
   font-family: var(--serif); font-weight: 600;
