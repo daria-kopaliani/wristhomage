@@ -10,62 +10,146 @@
   <meta property="og:description" content="Affordable homages of iconic watches, ranked by fidelity. Filter by budget, size and movement.">
   <meta property="og:type" content="website">
   <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/style.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap">
+  <link rel="stylesheet" href="/css/editorial.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"wristhomage","url":"https://wristhomage.com/","description":"Independent database of watch homages ranked by a published fidelity rubric."}</script>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-  <symbol id="wa-dive" viewBox="0 0 48 48"><circle cx="24" cy="24" r="15.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20 5.5h8l-4 4z" fill="currentColor"/><circle cx="24" cy="24" r="18.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.2 4.4" opacity=".7"/><path d="M41 24h3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="24" y1="24" x2="31" y2="27" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="24" r="1.4" fill="currentColor"/></symbol>
-  <symbol id="wa-chronograph" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="27" r="3.6" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="30.5" cy="27" r="3.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M39.5 19l2-2M39.5 29l2 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M41 24h2.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="24" y1="20" x2="24" y2="10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="24" y1="20" x2="29" y2="16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="20" r="1.3" fill="currentColor"/></symbol>
-  <symbol id="wa-gmt" viewBox="0 0 48 48"><circle cx="24" cy="24" r="15.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="24" cy="24" r="18.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1 5.6" opacity=".7"/><path d="M41 24h3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="24" y1="24" x2="30" y2="27" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M24 24l8-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".55"/><circle cx="32" cy="19" r="1.5" fill="currentColor" opacity=".55"/><circle cx="24" cy="24" r="1.4" fill="currentColor"/></symbol>
-  <symbol id="wa-pilot" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M21.5 9.5h5l-2.5 3.2z" fill="currentColor"/><path d="M40.5 22.5l3-1.5v6l-3-1.5z" fill="currentColor"/><line x1="24" y1="24" x2="24" y2="12.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><line x1="24" y1="24" x2="31" y2="27" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="24" cy="24" r="1.5" fill="currentColor"/></symbol>
-  <symbol id="wa-dress" viewBox="0 0 48 48"><circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M24 10.5v1.8M37.5 24h-1.8M24 37.5v-1.8M12.3 24h-1.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M40.5 24h2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="24" y1="24" x2="30" y2="26" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="24" cy="24" r="1.2" fill="currentColor"/></symbol>
-  <symbol id="wa-integrated" viewBox="0 0 48 48"><path d="M24 7.5l11.7 6.8v13.4L24 40.5 12.3 33.7V20.3z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 15l3.3 5.3M39 15l-3.3 5.3M9 33l3.3-5.3M39 33l-3.3-5.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".65"/><line x1="24" y1="24" x2="24" y2="14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="24" y1="24" x2="30" y2="27" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="24" cy="24" r="1.3" fill="currentColor"/></symbol>
-  <symbol id="wa-everyday" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="24" cy="24" r="18.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.4 2" opacity=".6"/><rect x="33.4" y="21.6" width="4.2" height="4.8" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M41 24h2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="24" y1="24" x2="30" y2="27" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="24" r="1.4" fill="currentColor"/></symbol>
-  <symbol id="wa-field" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M24 10v3M38 24h-3M24 38v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M41 24h2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="24" y1="24" x2="30" y2="27" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="24" r="1.4" fill="currentColor"/></symbol>
-</svg>
 
-  <header class="nav"><div class="wrap">
-    <a class="brand" href="/"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20.5 7h7l-3.5 3.6z" fill="currentColor"/><line x1="24" y1="24" x2="24" y2="14.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="24" y1="24" x2="30.5" y2="27" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="24" cy="24" r="1.8" fill="currentColor"/></svg><b>wrist</b>homage</a>
-    <nav><a href="/#finder">Finder</a> <a href="/#originals">Watches</a> <a href="/rubric">How we score</a></nav>
-  </div></header>
+<header class="eh-header">
+  <div class="wrap">
+    <a class="eh-wordmark" href="/">Wristhomage</a>
+    <nav class="eh-nav">
+      <a href="#finder">Finder</a>
+      <a href="#originals">The Icons</a>
+      <a href="#rubric">The Rubric</a>
+    </nav>
+  </div>
+</header>
 
-  <main>
-    <section class="hero"><div class="wrap">
-      <div class="hero-strip" aria-hidden="true">
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-dive"/></svg>
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-chronograph"/></svg>
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-gmt"/></svg>
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-pilot"/></svg>
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-integrated"/></svg>
-        <svg class="wa" viewBox="0 0 48 48"><use href="#wa-dress"/></svg>
-      </div>
+<main>
+
+  <section class="eh-hero">
+    <div class="wrap">
+      <div class="eyebrow">The Watch Homage Index</div>
       <h1>Get the icon, skip the price tag.</h1>
-      <p class="lede">An independent, spec-rich database of <strong>watch homages</strong> — affordable watches that pay homage to the classics. Ranked by a <a href="/rubric">published fidelity rubric</a>, filtered by budget, case size and movement. Homages, not replicas — we never link a fake.</p>
-    </div></section>
-
-    <section id="finder" class="finder"><div class="wrap">
-      <div class="controls">
-        <input id="q" type="search" placeholder="Search an icon — Submariner, Speedmaster, Nautilus…" autocomplete="off" aria-label="Search watches">
-        <div id="budget-filters" class="chips" aria-label="Budget"></div>
-        <div id="move-filters" class="chips" aria-label="Movement"></div>
+      <p class="sub">An independent, spec-rich database of <strong>watch homages</strong> —
+      affordable watches that pay homage to the classics, ranked by a
+      <a href="/rubric">published fidelity rubric</a> and filtered by icon, budget and movement.
+      <strong>Homages, never replicas.</strong> We never link a fake.</p>
+      <div class="eh-cta-row">
+        <a class="eh-btn" href="#finder">Browse the index</a>
+        <a class="eh-textlink" href="/rubric">How fidelity is scored →</a>
       </div>
-      <div id="count" class="count"></div>
-      <div id="cards" class="cards"></div>
-    </div></section>
+      <div class="eh-stats">
+        <div class="eh-stat"><div class="n" id="stat-homages">60</div><div class="t">Homages</div></div>
+        <div class="eh-stat"><div class="n" id="stat-originals">24</div><div class="t">Originals</div></div>
+        <div class="eh-stat"><div class="n">5</div><div class="t">Criteria</div></div>
+      </div>
+    </div>
+  </section>
 
-    <section id="originals" class="wrap" style="padding-bottom:48px">
-      <p class="crumbs"><a href="/watches/">Browse the full watch database →</a> · <a href="/rubric">How fidelity is scored</a> · <a href="/articles/homage-vs-replica">Homage vs replica</a></p>
-    </section>
-  </main>
+  <section id="finder" class="section-pad" data-reveal>
+    <div class="wrap">
+      <div class="eyebrow">The Finder</div>
+      <h2 class="display">Every homage, ranked by fidelity.</h2>
+      <p class="eh-count" id="count">Loading the index…</p>
 
-  <footer class="foot"><div class="wrap">
-    <span>&copy; 2026 wristhomage &middot; Independent watch-homage database. Not affiliated with any watch brand.</span>
-    <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
-  </div></footer>
+      <div class="eh-filters">
+        <div class="eh-frow"><span class="lbl">Icon</span><div class="chips" id="icon-filters"></div></div>
+        <div class="eh-frow"><span class="lbl">Budget</span><div class="chips" id="budget-filters"></div></div>
+        <div class="eh-frow"><span class="lbl">Movement</span><div class="chips" id="move-filters"></div></div>
+        <div class="eh-frow"><span class="lbl">Sort by</span><div class="chips" id="sort-filters"></div></div>
+      </div>
 
-  <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-  <script src="/data/homages.js?v=2"></script>
-  <script src="/js/finder.js?v=2"></script>
+      <div class="eh-grid" id="cards"><!-- rendered by finder.js --></div>
+    </div>
+  </section>
+
+  <section id="originals" class="section-pad" data-reveal style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">The Icons</div>
+      <h2 class="display">The watches worth paying tribute to.</h2>
+      <p class="section-intro">Every original in the index, with the homage field it anchors.
+      Retail figures are approximate — the icon&rsquo;s price is the whole reason homages exist.
+      <a href="/watches/" style="color:var(--wf-accent)">Browse the full database →</a></p>
+      <div class="eh-index" id="icons-list"><!-- rendered by finder.js --></div>
+    </div>
+  </section>
+
+  <section id="rubric" class="section-pad" data-reveal style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">The Rubric</div>
+      <h2 class="display">How fidelity is scored.</h2>
+      <p class="section-intro">One published, weighted 100-point rubric, applied identically to
+      every watch against its specific original. It measures <em>design closeness</em>, not build
+      quality — and it is never a claim that anything is a copy.
+      <a href="/rubric" style="color:var(--wf-accent)">The full rubric →</a></p>
+      <div class="eh-rubric-list">
+        <div class="eh-rrow">
+          <div class="eh-rweight"><span class="n">30</span><span class="d">/100</span></div>
+          <div class="eh-rmain"><div class="eh-rname">Dial &amp; handset</div>
+          <p class="eh-rdesc">Marker shape and layout, text placement, handset style, colour and
+          lume — the things your eye reads first.</p></div>
+        </div>
+        <div class="eh-rrow">
+          <div class="eh-rweight"><span class="n">25</span><span class="d">/100</span></div>
+          <div class="eh-rmain"><div class="eh-rname">Case &amp; proportions</div>
+          <p class="eh-rdesc">Case shape, lug design, crown guards — and, heavily, whether the
+          diameter and thickness track the original. Wearing 6mm too large costs points.</p></div>
+        </div>
+        <div class="eh-rrow">
+          <div class="eh-rweight"><span class="n">20</span><span class="d">/100</span></div>
+          <div class="eh-rmain"><div class="eh-rname">Bezel</div>
+          <p class="eh-rdesc">Bezel type and insert — dive, GMT 24-hour, tachymeter, fluted —
+          plus material and font.</p></div>
+        </div>
+        <div class="eh-rrow">
+          <div class="eh-rweight"><span class="n">15</span><span class="d">/100</span></div>
+          <div class="eh-rmain"><div class="eh-rname">Movement class</div>
+          <p class="eh-rdesc">Whether the movement matches the original&rsquo;s character:
+          automatic vs a meca-quartz standing in for a mechanical chronograph, a GMT complication
+          present or faked, hand-wind where it matters.</p></div>
+        </div>
+        <div class="eh-rrow">
+          <div class="eh-rweight"><span class="n">10</span><span class="d">/100</span></div>
+          <div class="eh-rmain"><div class="eh-rname">Spec parity</div>
+          <p class="eh-rdesc">Water resistance, crystal and bracelet/clasp quality relative to
+          what the original is known for.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="eh-footer">
+  <div class="wrap">
+    <div class="toprow">
+      <a class="eh-wordmark" href="/">Wristhomage</a>
+      <nav>
+        <a href="#finder">Finder</a>
+        <a href="#originals">The Icons</a>
+        <a href="/rubric">The Rubric</a>
+        <a href="/articles/homage-vs-replica">Homage vs Replica</a>
+        <a href="/disclosure">Disclosure</a>
+      </nav>
+    </div>
+    <p>wristhomage is an independent watch-homage database, not affiliated with any watch brand.
+    Homages only — we never link a counterfeit or anything that copies brand markings. Some shop
+    links are affiliate links; if you buy through them we may earn a commission, at no cost to you.
+    That never changes a fidelity score — scores come from the
+    <a href="/rubric" style="color:var(--wf-accent)">published rubric</a>, applied before any link
+    exists. Brands with no affiliate program get a plain, unpaid search link, honestly marked.</p>
+    <p class="fine">&copy; 2026 wristhomage · Prices are approximate street prices and drift —
+    the linked listing is always authoritative. <a href="/sitemap.xml">Sitemap</a></p>
+  </div>
+</footer>
+
+<script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="/data/homages.js?v=2"></script>
+<script src="/js/finder.js?v=3"></script>
 </body>
 </html>

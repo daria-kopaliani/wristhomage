@@ -1,8 +1,10 @@
-/* wristhomage finder — filterable homage database (DOM only). Mirrors gen.py's
- * shop-link policy exactly: Amazon houses get a tagged affiliate search
- * (wristhomage-20); off-Amazon houses get an honest, marked non-affiliate search.
- * Shop clicks fire cookieless GoatCounter events shop/<kind>/<slug> to reveal
- * demand split (drives the add-more-programs decision), same as dupenote. */
+/* wristhomage finder — editorial homepage (redesign 2026-07). Flat grid of every
+ * homage, ranked by fidelity, filtered by icon / budget / movement.
+ *
+ * Mirrors gen.py's shop-link policy exactly: Amazon houses get a tagged affiliate
+ * search (wristhomage-20); off-Amazon houses get an honest, marked non-affiliate
+ * search. Shop clicks fire cookieless GoatCounter events shop/<kind>/<slug> to
+ * reveal demand split (drives the add-more-programs decision), same as dupenote. */
 (function () {
   "use strict";
   var DATA = (window.HOMAGE_DATA || { originals: [] });
@@ -11,18 +13,15 @@
     "Seiko": 1, "Orient": 1, "Citizen": 1, "Steeldive": 1, "Cadisen": 1, "Berny": 1, "Addies": 1 };
 
   var els = {
-    q: document.getElementById("q"),
+    icon: document.getElementById("icon-filters"),
     budget: document.getElementById("budget-filters"),
     move: document.getElementById("move-filters"),
+    sort: document.getElementById("sort-filters"),
     count: document.getElementById("count"),
     cards: document.getElementById("cards"),
+    icons: document.getElementById("icons-list"),
   };
   if (!els.cards) return;
-
-  var state = { q: "", budget: 0, move: "all" };
-  var BUDGETS = [[0, "Any price"], [150, "Under $150"], [300, "Under $300"], [600, "Under $600"]];
-  var MOVES = [["all", "Any movement"], ["Automatic", "Automatic"], ["Meca-quartz", "Meca-quartz"],
-    ["Mechanical", "Mechanical chrono"], ["Quartz", "Quartz"]];
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -31,6 +30,36 @@
   }
   function money(n) { n = Number(n); return isFinite(n) ? "$" + n.toLocaleString() : "—"; }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function roman(n) {
+    var M = [[10, "x"], [9, "ix"], [5, "v"], [4, "iv"], [1, "i"]], out = "";
+    M.forEach(function (m) { while (n >= m[0]) { out += m[1]; n -= m[0]; } });
+    return out;
+  }
+  function moveClass(m) {
+    m = String(m || "");
+    if (m.indexOf("Meca-quartz") === 0) return "Meca-quartz";
+    if (m.indexOf("Automatic") === 0) return "Automatic";
+    if (m.indexOf("Mechanical") === 0 || m.indexOf("Manual") === 0) return "Mechanical";
+    if (m.indexOf("Quartz") === 0 || m.indexOf("Solar") === 0) return "Quartz";
+    return "Other";
+  }
+
+  /* Flatten: one row per homage, carrying its original */
+  var ROWS = [];
+  DATA.originals.forEach(function (o) {
+    (o.homages || []).forEach(function (h) { ROWS.push({ h: h, o: o }); });
+  });
+
+  var state = { icon: "all", budget: "all", move: "all", sort: "fidelity" };
+
+  var ICONS = [["all", "All"]].concat(DATA.originals.map(function (o) { return [o.id, o.name]; }));
+  var BUDGETS = [["all", "Any"], ["lt", "Under $150"], ["mid", "$150–350"], ["gt", "Over $350"]];
+  var MOVES = [["all", "All"]];
+  ["Automatic", "Mechanical", "Meca-quartz", "Quartz"].forEach(function (cls) {
+    if (ROWS.some(function (r) { return moveClass(r.h.movement) === cls; })) MOVES.push([cls, cls]);
+  });
+  var SORTS = [["fidelity", "Fidelity"], ["price", "Price low→high"]];
 
   function onAmazon(h) { return h.amazon === true || (h.amazon !== false && AMAZON_HOUSES[h.house]); }
 
@@ -49,73 +78,120 @@
       '" href="' + esc(href) + '" rel="' + rel + '" target="_blank"' + title + ">Shop &rsaquo;</a>";
   }
 
-  function passHomage(h) {
-    if (state.budget && Number(h.priceUSD) > state.budget) return false;
-    if (state.move !== "all" && String(h.movement || "").indexOf(state.move) === -1) return false;
+  function pass(r) {
+    if (state.icon !== "all" && r.o.id !== state.icon) return false;
+    var p = Number(r.h.priceUSD);
+    if (state.budget === "lt" && !(p < 150)) return false;
+    if (state.budget === "mid" && !(p >= 150 && p <= 350)) return false;
+    if (state.budget === "gt" && !(p > 350)) return false;
+    if (state.move !== "all" && moveClass(r.h.movement) !== state.move) return false;
     return true;
   }
 
-  function matchOriginal(o) {
-    if (!state.q) return true;
-    var hay = (o.name + " " + o.house + " " + (o.cues || []).join(" ") + " " + o.type).toLowerCase();
-    return hay.indexOf(state.q.toLowerCase()) !== -1;
-  }
-
-  function homageRow(h) {
-    return '<div class="hrow">' +
-      '<div class="fid">' + esc(h.fidelity != null ? h.fidelity : "–") + '<s>fidelity</s></div>' +
-      '<div class="hinfo"><div class="nm">' + esc(h.name) + ' <span class="meta">· ' + esc(h.house) + '</span></div>' +
-      '<div class="meta">' + money(h.priceUSD) + ' · ' + esc(h.movement || "") + ' · ' + esc(h.size_mm) + 'mm · ' + esc(h.wr_m) + 'm' +
-      (h.direct ? ' · <span class="muted">often cheaper direct</span>' : '') + '</div>' +
-      (h.note ? '<div class="note">' + esc(h.note) + '</div>' : '') + '</div>' +
-      '<div class="buy">' + shopLink(h) + '</div></div>';
-  }
-
-  function card(o) {
-    var homages = (o.homages || []).filter(passHomage).sort(function (a, b) { return (b.fidelity || 0) - (a.fidelity || 0); });
-    if (!homages.length) return "";
-    return '<article class="card">' +
-      '<div class="card-head"><svg class="wa" viewBox="0 0 48 48" aria-hidden="true"><use href="#wa-' + esc(o.type) + '"/></svg>' +
-      '<div><h3><a href="/watches/' + esc(o.id) + '">' + esc(o.name) + ' homages</a></h3>' +
-      '<div class="house">' + esc(o.house) + ' · ' + esc(o.type) + ' · ' + esc(o.size_mm) + 'mm · ' + money(o.priceUSD) + ' original</div></div></div>' +
-      homages.map(homageRow).join("") +
-      '<div class="more"><a href="/watches/' + esc(o.id) + '">Full ' + esc(o.name) + ' breakdown &rsaquo;</a></div>' +
+  function cardHtml(r, i) {
+    var h = r.h, o = r.o;
+    var fid = h.fidelity != null ? h.fidelity : null;
+    return '<article class="eh-card">' +
+      '<div class="eh-plate">' +
+        '<span class="no">N° ' + pad2(i + 1) + '</span>' +
+        '<span class="tagpill">Homage</span>' +
+        '<span class="initial">' + esc((h.house || h.name).charAt(0)) + '</span>' +
+      '</div>' +
+      '<div class="eh-body">' +
+        '<div class="toprow"><div>' +
+          '<div class="eh-name">' + esc(h.house) + ' ' + esc(h.name) + '</div>' +
+          '<div class="eh-homageto">Homage to ' + esc(o.name) + '</div>' +
+        '</div>' +
+        '<div class="eh-fid"><div class="n">' + (fid != null ? fid : "–") + '</div><div class="t">Fidelity</div></div></div>' +
+        '<div class="eh-spec">' + esc(h.size_mm) + 'mm · ' + esc(h.movement || "") +
+          (h.direct ? ' <span class="muted">· often cheaper direct</span>' : '') + '</div>' +
+        '<div class="eh-cardfoot">' +
+          '<span class="eh-price">' + money(h.priceUSD) + '</span>' +
+          '<span class="eh-cardlinks">' +
+            '<a href="/watches/' + esc(o.id) + '">Specs →</a>' + shopLink(h) +
+          '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="eh-fidbar"><i style="width:' + (fid != null ? fid : 0) + '%"></i></div>' +
       '</article>';
   }
 
   function render() {
-    var list = DATA.originals.filter(matchOriginal).map(function (o) {
-      return { o: o, html: card(o) };
-    }).filter(function (x) { return x.html; });
-    var nH = 0;
-    DATA.originals.filter(matchOriginal).forEach(function (o) { nH += (o.homages || []).filter(passHomage).length; });
-    els.count.textContent = nH + " homage" + (nH === 1 ? "" : "s") + " across " + list.length + " icon" + (list.length === 1 ? "" : "s") +
-      (state.q || state.budget || state.move !== "all" ? " matched" : "");
-    els.cards.innerHTML = list.length ? list.map(function (x) { return x.html; }).join("") :
-      '<div class="empty">No homages match those filters. Try widening the budget or movement.</div>';
+    var list = ROWS.filter(pass);
+    list.sort(function (a, b) {
+      if (state.sort === "price") return (a.h.priceUSD || 0) - (b.h.priceUSD || 0);
+      return (b.h.fidelity || 0) - (a.h.fidelity || 0);
+    });
+    els.cards.innerHTML = list.length ? list.map(cardHtml).join("") :
+      '<div class="eh-empty">No homages match those filters. Try widening the budget or movement.</div>';
+    els.count.innerHTML = "<strong>" + list.length + "</strong> watch" + (list.length === 1 ? "" : "es") + " shown" +
+      (state.icon !== "all" || state.budget !== "all" || state.move !== "all" ? " · filtered" : "");
   }
 
-  function chips(el, opts, key, cur) {
+  function chips(el, opts, cur) {
     el.innerHTML = opts.map(function (o) {
-      return '<button class="chip" data-k="' + esc(o[0]) + '" aria-pressed="' + (String(cur) === String(o[0])) + '">' + esc(o[1]) + "</button>";
+      return '<button class="eh-chip' + (String(cur) === String(o[0]) ? " on" : "") +
+        '" data-k="' + esc(o[0]) + '" aria-pressed="' + (String(cur) === String(o[0])) + '">' + esc(o[1]) + "</button>";
     }).join("");
   }
+  function wire(el, opts, key) {
+    el.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-k]"); if (!b) return;
+      state[key] = b.getAttribute("data-k");
+      chips(el, opts, state[key]);
+      render();
+    });
+    chips(el, opts, state[key]);
+  }
 
-  els.q.addEventListener("input", function () { state.q = els.q.value; render(); });
-  els.budget.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-k]"); if (!b) return;
-    state.budget = Number(b.getAttribute("data-k")); chips(els.budget, BUDGETS, "budget", state.budget); render();
-  });
-  els.move.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-k]"); if (!b) return;
-    state.move = b.getAttribute("data-k"); chips(els.move, MOVES, "move", state.move); render();
-  });
+  wire(els.icon, ICONS, "icon");
+  wire(els.budget, BUDGETS, "budget");
+  wire(els.move, MOVES, "move");
+  wire(els.sort, SORTS, "sort");
+
+  /* Shop-click events (delegated — cards re-render) */
   els.cards.addEventListener("click", function (e) {
     var a = e.target.closest("a.shop"); if (!a || !window.goatcounter || !window.goatcounter.count) return;
     window.goatcounter.count({ path: "shop/" + a.getAttribute("data-shop") + "/" + a.getAttribute("data-slug"), title: "shop click", event: true });
   });
 
-  chips(els.budget, BUDGETS, "budget", 0);
-  chips(els.move, MOVES, "move", "all");
+  /* The Icons — editorial index of every original */
+  if (els.icons) {
+    els.icons.innerHTML = DATA.originals.map(function (o, i) {
+      var note = [o.house + (o.ref ? " " + o.ref : ""), o.type, o.size_mm + "mm"].join(" · ");
+      return '<a class="eh-irow" href="/watches/' + esc(o.id) + '">' +
+        '<span class="eh-inum">' + roman(i + 1) + '</span>' +
+        '<span class="eh-imain"><span class="eh-iname">' + esc(o.name) + '</span>' +
+        '<div class="eh-inote">' + esc(note) + '</div></span>' +
+        '<span class="eh-iprice"><div class="t">Retail from</div><div class="n">' + money(o.priceUSD) + '</div></span>' +
+        '</a>';
+    }).join("");
+  }
+
+  /* Hero stats from the live dataset */
+  var sh = document.getElementById("stat-homages"), so = document.getElementById("stat-originals");
+  if (sh) sh.textContent = String(ROWS.length);
+  if (so) so.textContent = String(DATA.originals.length);
+
   render();
+
+  /* Scroll reveal — progressive enhancement with a hard safety net: elements in
+   * view reveal immediately, and EVERYTHING force-reveals after 1.2s no matter
+   * what, so content can never be left invisible. */
+  var revealables = document.querySelectorAll("[data-reveal]");
+  function revealAll() {
+    Array.prototype.forEach.call(revealables, function (el) { el.classList.add("revealed"); });
+  }
+  if ("IntersectionObserver" in window &&
+      !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    Array.prototype.forEach.call(revealables, function (el) { io.observe(el); });
+    setTimeout(revealAll, 1200);
+  } else {
+    revealAll();
+  }
 })();
