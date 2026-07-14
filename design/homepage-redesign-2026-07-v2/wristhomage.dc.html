@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/beat-player-design-system-ed8ef4ee-f676-47f6-98c4-729c58b1df51/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f6f4ef; color: #131211; font-family: var(--font-text); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: var(--wf-accent, #a8864e); text-decoration: none; }
+    ::selection { background: #e6dcc6; }
+  </style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-height:100vh; background:#f6f4ef; color:#131211; font-family:var(--font-text); letter-spacing:-0.2px; --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;">
+
+  <!-- ===== Header ===== -->
+  <header style="position:sticky; top:0; z-index:60; background:rgba(19,18,17,0.62); backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%); border-bottom:0.5px solid rgba(255,255,255,0.12);">
+    <div style="max-width:1240px; margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <a href="#top" style="color:#fff; font-size:13px; font-weight:var(--weight-semibold); letter-spacing:0.3em; text-transform:uppercase;">wristhomage</a>
+      <nav style="display:flex; align-items:center; gap:26px; flex-wrap:wrap;">
+        <a href="#finder" style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.72);">Finder</a>
+        <a href="#originals" style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.72);">The Icons</a>
+        <a href="#rubric" style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.72);">The Rubric</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section id="top" style="position:relative; background:#131211; color:#fff; overflow:hidden; min-height:90vh; display:flex; align-items:flex-end;">
+    <div style="position:absolute; inset:0; background:radial-gradient(120% 90% at 82% 12%, rgba(168,134,78,0.34) 0%, rgba(168,134,78,0) 52%), radial-gradient(90% 70% at 108% 96%, rgba(120,96,58,0.28) 0%, rgba(120,96,58,0) 55%), linear-gradient(155deg, #1c1a17 0%, #131211 46%, #0d0c0b 100%); pointer-events:none;"></div>
+    <div style="position:absolute; inset:0; opacity:0.5; background:radial-gradient(60% 50% at 78% 30%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 60%); pointer-events:none;"></div>
+    <div style="position:relative; z-index:2; max-width:1240px; width:100%; margin:0 auto; padding:0 28px 84px; pointer-events:none;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:26px;">
+        <span style="width:34px; height:1px; background:var(--wf-accent,#a8864e);"></span>
+        <span style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.28em; text-transform:uppercase; color:#d8cdb6;">The watch homage index</span>
+      </div>
+      <h1 style="font-family:var(--serif); font-weight:600; font-size:clamp(46px,7.6vw,104px); line-height:0.98; letter-spacing:-1.5px; margin:0 0 26px; max-width:15ch;">Get the icon,<br>skip the price&nbsp;tag.</h1>
+      <p style="font-size:19px; line-height:1.55; color:rgba(255,255,255,0.74); margin:0 0 40px; max-width:52ch; font-weight:var(--weight-regular); text-wrap:pretty;">An independent, spec-obsessed catalogue of watch homages — affordable tributes to the classics, ranked by a published fidelity rubric. Homages, never replicas. We never link a fake.</p>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-bottom:66px; pointer-events:auto;">
+        <a href="#finder" style="padding:15px 30px; border-radius:9999px; border:1px solid rgba(255,255,255,0.55); color:#fff; font-size:12px; font-weight:var(--weight-semibold); letter-spacing:0.16em; text-transform:uppercase;" style-hover="padding:15px 30px; border-radius:9999px; border:1px solid #fff; color:#131211; background:#fff; font-size:12px; font-weight:var(--weight-semibold); letter-spacing:0.16em; text-transform:uppercase;">Browse the index</a>
+        <a href="#rubric" style="font-size:12px; font-weight:var(--weight-semibold); letter-spacing:0.16em; text-transform:uppercase; color:#d8cdb6;">How fidelity is scored →</a>
+      </div>
+      <div style="display:flex; gap:0; flex-wrap:wrap; pointer-events:auto;">
+        <div style="padding-right:34px;"><div style="font-family:var(--serif); font-weight:600; font-size:38px; line-height:1; letter-spacing:-1px;">120+</div><div style="font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:8px;">Homages catalogued</div></div>
+        <div style="width:0.5px; background:rgba(255,255,255,0.2);"></div>
+        <div style="padding:0 34px;"><div style="font-family:var(--serif); font-weight:600; font-size:38px; line-height:1; letter-spacing:-1px;">24</div><div style="font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:8px;">Iconic originals</div></div>
+        <div style="width:0.5px; background:rgba(255,255,255,0.2);"></div>
+        <div style="padding-left:34px;"><div style="font-family:var(--serif); font-weight:600; font-size:38px; line-height:1; letter-spacing:-1px;">5</div><div style="font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:8px;">Criteria, published</div></div>
+      </div>
+    </div>
+  </section>
+
+  <main style="max-width:1240px; margin:0 auto; padding:0 28px;">
+
+    <!-- ===== Finder ===== -->
+    <section id="finder" data-reveal="1" style="padding:92px 0 24px; scroll-margin-top:72px;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+        <span style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.24em; text-transform:uppercase; color:var(--wf-accent,#a8864e);">The Finder</span>
+        <span style="flex:1; height:0.5px; background:rgba(19,18,17,0.14);"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:34px;">
+        <h2 style="font-family:var(--serif); font-weight:600; font-size:clamp(34px,4.4vw,52px); letter-spacing:-1px; line-height:1.02; margin:0; max-width:16ch;">Every homage, ranked by fidelity.</h2>
+        <p style="color:#6f6a63; font-size:14px; margin:0; white-space:nowrap;"><strong style="color:#131211; font-weight:var(--weight-semibold);">{{ resultCount }}</strong> watches shown</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div style="display:flex; flex-direction:column; gap:0; border-top:0.5px solid rgba(19,18,17,0.14); border-bottom:0.5px solid rgba(19,18,17,0.14); margin-bottom:44px;">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; padding:16px 0; border-bottom:0.5px solid rgba(19,18,17,0.08);">
+          <span style="font-size:10.5px; font-weight:var(--weight-semibold); letter-spacing:0.2em; text-transform:uppercase; color:#a49e95; width:92px; flex:none;">Icon</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;"><sc-for list="{{ originalChips }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for></div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; padding:16px 0; border-bottom:0.5px solid rgba(19,18,17,0.08);">
+          <span style="font-size:10.5px; font-weight:var(--weight-semibold); letter-spacing:0.2em; text-transform:uppercase; color:#a49e95; width:92px; flex:none;">Budget</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;"><sc-for list="{{ budgetChips }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for></div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; padding:16px 0; border-bottom:0.5px solid rgba(19,18,17,0.08);">
+          <span style="font-size:10.5px; font-weight:var(--weight-semibold); letter-spacing:0.2em; text-transform:uppercase; color:#a49e95; width:92px; flex:none;">Movement</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;"><sc-for list="{{ movementChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for></div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; padding:16px 0;">
+          <span style="font-size:10.5px; font-weight:var(--weight-semibold); letter-spacing:0.2em; text-transform:uppercase; color:#a49e95; width:92px; flex:none;">Sort by</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;"><sc-for list="{{ sortChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for></div>
+        </div>
+      </div>
+
+      <!-- Results grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:26px 24px;">
+        <sc-for list="{{ watches }}" as="w" hint-placeholder-count="8">
+          <article style="background:#fffdfa; border:0.5px solid rgba(19,18,17,0.1); overflow:hidden; display:flex; flex-direction:column; transition:transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .4s ease;" style-hover="background:#fffdfa; border:0.5px solid rgba(19,18,17,0.2); overflow:hidden; display:flex; flex-direction:column; transition:transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .4s ease; transform:translateY(-5px); box-shadow:0 22px 44px -24px rgba(19,18,17,0.4);">
+            <div style="position:relative; padding:16px 20px; background:linear-gradient(158deg, #201d19 0%, #131211 100%); overflow:hidden; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <div style="position:absolute; inset:0; background:radial-gradient(90% 130% at 88% 8%, rgba(168,134,78,0.20) 0%, rgba(168,134,78,0) 60%); pointer-events:none;"></div>
+              <span style="position:relative; font-family:var(--serif); font-style:italic; font-size:17px; color:rgba(255,255,255,0.9);">N° {{ w.index }}</span>
+              <span style="position:relative; padding:4px 10px; border-radius:9999px; background:rgba(255,255,255,0.1); border:0.5px solid rgba(255,255,255,0.18); color:#fff; font-size:9.5px; font-weight:var(--weight-semibold); letter-spacing:0.16em; text-transform:uppercase;">Homage</span>
+            </div>
+            <div style="padding:20px 20px 0; display:flex; flex-direction:column; gap:14px; flex:1;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px;">
+                <div>
+                  <div style="font-family:var(--serif); font-weight:600; font-size:22px; line-height:1.1; letter-spacing:-0.4px;">{{ w.model }}</div>
+                  <div style="font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#a49e95; margin-top:6px;">Homage to {{ w.original }}</div>
+                </div>
+                <div style="text-align:right; flex:none;">
+                  <div style="font-family:var(--serif); font-weight:600; font-size:32px; line-height:0.9; letter-spacing:-0.5px;">{{ w.fidelity }}</div>
+                  <div style="font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:#a49e95; margin-top:3px;">Fidelity</div>
+                </div>
+              </div>
+              <div style="font-size:13px; color:#6f6a63;">{{ w.sizeStr }} &nbsp;·&nbsp; {{ w.movement }}</div>
+              <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center; padding:14px 0 16px; border-top:0.5px solid rgba(19,18,17,0.1);">
+                <div style="font-family:var(--serif); font-weight:600; font-size:24px; letter-spacing:-0.4px;">{{ w.priceStr }}</div>
+                <a href="#" style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.16em; text-transform:uppercase; color:#131211;">View specs →</a>
+              </div>
+            </div>
+            <div style="height:2px; background:rgba(19,18,17,0.08);"><div style="height:100%; background:var(--wf-accent,#a8864e); width:{{ w.fidPct }}%;"></div></div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ===== The icons ===== -->
+    <section id="originals" data-reveal="1" style="padding:92px 0; scroll-margin-top:72px;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+        <span style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.24em; text-transform:uppercase; color:var(--wf-accent,#a8864e);">The Icons</span>
+        <span style="flex:1; height:0.5px; background:rgba(19,18,17,0.14);"></span>
+      </div>
+      <h2 style="font-family:var(--serif); font-weight:600; font-size:clamp(34px,4.4vw,52px); letter-spacing:-1px; line-height:1.02; margin:0 0 8px; max-width:20ch;">The watches worth paying tribute to.</h2>
+      <p style="color:#6f6a63; font-size:16px; margin:0 0 34px; max-width:60ch; line-height:1.5;">What the originals command at retail — and why a faithful homage is such a satisfying stand-in.</p>
+      <div style="border-top:0.5px solid rgba(19,18,17,0.16);">
+        <sc-for list="{{ icons }}" as="ic" hint-placeholder-count="6">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:28px; padding:24px 0; border-bottom:0.5px solid rgba(19,18,17,0.12);">
+            <div style="display:flex; gap:26px; align-items:baseline;">
+              <span style="font-family:var(--serif); font-style:italic; font-size:16px; color:var(--wf-accent,#a8864e); flex:none; width:28px;">{{ ic.num }}</span>
+              <div>
+                <div style="font-family:var(--serif); font-weight:600; font-size:clamp(22px,2.6vw,30px); letter-spacing:-0.5px; line-height:1.05;">{{ ic.name }}</div>
+                <div style="font-size:14px; color:#6f6a63; margin-top:5px; line-height:1.45; max-width:56ch;">{{ ic.note }}</div>
+              </div>
+            </div>
+            <div style="text-align:right; flex:none;">
+              <div style="font-size:9.5px; letter-spacing:0.18em; text-transform:uppercase; color:#a49e95; margin-bottom:4px;">Retail from</div>
+              <div style="font-family:var(--serif); font-weight:600; font-size:22px; letter-spacing:-0.3px;">{{ ic.price }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ===== Rubric ===== -->
+    <section id="rubric" data-reveal="1" style="padding:20px 0 40px; scroll-margin-top:72px;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+        <span style="font-size:11px; font-weight:var(--weight-semibold); letter-spacing:0.24em; text-transform:uppercase; color:var(--wf-accent,#a8864e);">The Rubric</span>
+        <span style="flex:1; height:0.5px; background:rgba(19,18,17,0.14);"></span>
+      </div>
+      <h2 style="font-family:var(--serif); font-weight:600; font-size:clamp(34px,4.4vw,52px); letter-spacing:-1px; line-height:1.02; margin:0 0 8px; max-width:16ch;">How fidelity is scored.</h2>
+      <p style="color:#6f6a63; font-size:16px; margin:0 0 34px; max-width:66ch; line-height:1.5;">One published, weighted rubric out of 100, applied identically to every watch — so the number means the same thing across the whole catalogue. It measures resemblance to the original, not build quality.</p>
+      <div style="border-top:0.5px solid rgba(19,18,17,0.16);">
+        <sc-for list="{{ rubric }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex; gap:30px; align-items:baseline; padding:26px 0; border-bottom:0.5px solid rgba(19,18,17,0.12);">
+            <div style="flex:none; width:120px; display:flex; align-items:baseline; gap:4px;">
+              <span style="font-family:var(--serif); font-weight:600; font-size:44px; line-height:0.9; letter-spacing:-1px;">{{ r.weight }}</span>
+              <span style="font-size:12px; color:#a49e95;">/100</span>
+            </div>
+            <div>
+              <div style="font-family:var(--serif); font-weight:600; font-size:24px; letter-spacing:-0.4px;">{{ r.name }}</div>
+              <p style="margin:6px 0 0; font-size:14.5px; line-height:1.55; color:#6f6a63; max-width:70ch;">{{ r.desc }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer style="background:#131211; color:rgba(255,255,255,0.55); margin-top:40px;">
+    <div style="max-width:1240px; margin:0 auto; padding:56px 28px;">
+      <div style="display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:flex-start; margin-bottom:36px;">
+        <div style="font-size:14px; font-weight:var(--weight-semibold); letter-spacing:0.3em; text-transform:uppercase; color:#fff;">wristhomage</div>
+        <div style="display:flex; gap:26px; flex-wrap:wrap;">
+          <a href="#finder" style="font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.6);">Finder</a>
+          <a href="#originals" style="font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.6);">The Icons</a>
+          <a href="#rubric" style="font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.6);">The Rubric</a>
+        </div>
+      </div>
+      <div style="height:0.5px; background:rgba(255,255,255,0.14); margin-bottom:24px;"></div>
+      <p style="font-size:13px; line-height:1.65; max-width:82ch; margin:0 0 10px;">Independent watch-homage database. Not affiliated with any watch brand. Some product links are affiliate links — if you buy through them we may earn a commission, at no cost to you; that never changes a fidelity score or the ranking. Homages only — we never link a counterfeit or a “replica” that copies brand markings.</p>
+      <p style="font-size:11.5px; color:rgba(255,255,255,0.38); margin:0; letter-spacing:0.02em;">© 2026 wristhomage · Retail prices for the originals are approximate and drift · Fidelity is our own published rubric, not a brand endorsement.</p>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:960},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#a8864e&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { original: 'all', budget: 'all', movement: 'all', sort: 'fidelity' };
+    this._root = null;
+  }
+
+  componentDidMount() {
+    this.applyVars();
+    this.setupReveal();
+  }
+  componentDidUpdate() { this.applyVars(); }
+
+  applyVars() {
+    if (!this._root) return;
+    this._root.style.setProperty('--wf-accent', this.props.accentColor || '#a8864e');
+  }
+
+  setupReveal() {
+    if (!this._root || this._revealed) return;
+    this._revealed = true;
+    if (typeof IntersectionObserver === 'undefined') return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const els = Array.prototype.slice.call(this._root.querySelectorAll('[data-reveal]'));
+    els.forEach((el) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = 'opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)';
+    });
+    const show = (el) => { el.style.opacity = '1'; el.style.transform = 'none'; };
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });
+    }, { threshold: 0.06 });
+    els.forEach((el) => io.observe(el));
+    // Safety net: never leave content stuck invisible if IO never fires
+    // (throttled/background tabs, screenshot/PDF export). Reveal anything
+    // already on-screen now, and force-reveal everything after a beat.
+    els.forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < window.innerHeight && r.bottom > 0) show(el); });
+    this._revealTimer = setTimeout(() => { els.forEach(show); }, 1200);
+  }
+
+  componentWillUnmount() { if (this._revealTimer) clearTimeout(this._revealTimer); }
+
+  data() {
+    return [
+      { model: 'Steinhart Ocean One 39', original: 'Submariner', price: 560, size: 39, movement: 'Automatic', fidelity: 92, slot: 'wh-steinhart' },
+      { model: 'San Martin SN004-G', original: 'Submariner', price: 319, size: 40, movement: 'Automatic', fidelity: 89, slot: 'wh-sanmartin' },
+      { model: 'Islander Kanaloa', original: 'Submariner', price: 349, size: 41, movement: 'Automatic', fidelity: 86, slot: 'wh-islander' },
+      { model: 'Steeldive SD1953', original: 'Submariner', price: 115, size: 41, movement: 'Automatic', fidelity: 84, slot: 'wh-steeldive' },
+      { model: 'Invicta Pro Diver 8926OB', original: 'Submariner', price: 89, size: 40, movement: 'Automatic', fidelity: 76, slot: 'wh-invicta' },
+      { model: 'Pagani Design PD-1667', original: 'GMT-Master', price: 129, size: 40, movement: 'Automatic', fidelity: 83, slot: 'wh-pd1667' },
+      { model: 'Sugess Moonwatch', original: 'Speedmaster', price: 299, size: 40, movement: 'Mechanical', fidelity: 88, slot: 'wh-sugess' },
+      { model: 'Cronos Airspeed', original: 'Speedmaster', price: 259, size: 40, movement: 'Meca-quartz', fidelity: 81, slot: 'wh-cronos' },
+      { model: 'Baltany Chronograph', original: 'Speedmaster', price: 239, size: 40, movement: 'Meca-quartz', fidelity: 79, slot: 'wh-baltany' },
+      { model: 'Tissot PRX', original: 'Royal Oak', price: 375, size: 40, movement: 'Quartz', fidelity: 72, slot: 'wh-prx' },
+      { model: 'Pagani Design PD-1728', original: 'Nautilus', price: 119, size: 40, movement: 'Automatic', fidelity: 74, slot: 'wh-pd1728' },
+      { model: 'Seiko 5 SRPD', original: 'Diver', price: 250, size: 42, movement: 'Automatic', fidelity: 80, slot: 'wh-seiko5' },
+    ];
+  }
+
+  renderVals() {
+    const st = this.state;
+    let rows = this.data();
+
+    if (st.original !== 'all') rows = rows.filter((w) => w.original === st.original);
+    if (st.movement !== 'all') rows = rows.filter((w) => w.movement === st.movement);
+    if (st.budget === 'lt') rows = rows.filter((w) => w.price < 150);
+    else if (st.budget === 'mid') rows = rows.filter((w) => w.price >= 150 && w.price <= 350);
+    else if (st.budget === 'gt') rows = rows.filter((w) => w.price > 350);
+
+    rows = rows.slice().sort((a, b) => (st.sort === 'price' ? a.price - b.price : b.fidelity - a.fidelity));
+
+    const watches = rows.map((w, i) => ({
+      model: w.model, original: w.original, movement: w.movement, slot: w.slot,
+      fidelity: w.fidelity, fidPct: w.fidelity,
+      index: String(i + 1).padStart(2, '0'),
+      initial: w.model.charAt(0).toUpperCase(),
+      sizeStr: w.size + 'mm',
+      priceStr: '$' + w.price.toLocaleString(),
+    }));
+
+    const chip = (active) => 'padding:8px 15px; border-radius:9999px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all .25s ease; border:0.5px solid ' + (active ? '#131211; background:#131211; color:#f6f4ef;' : 'rgba(19,18,17,0.2); background:transparent; color:#4a463f;');
+
+    const mkChips = (opts, current, set) => opts.map((o) => {
+      const val = Array.isArray(o) ? o[0] : o;
+      const label = Array.isArray(o) ? o[1] : (o === 'all' ? 'All' : o);
+      return { label, style: chip(current === val), onClick: () => set(val) };
+    });
+
+    return {
+      rootRef: (el) => { this._root = el; if (el) { this.applyVars(); this.setupReveal(); } },
+      watches,
+      resultCount: watches.length,
+
+      originalChips: mkChips(['all', 'Submariner', 'Speedmaster', 'GMT-Master', 'Royal Oak', 'Nautilus', 'Diver'], st.original, (v) => this.setState({ original: v })),
+      budgetChips: mkChips([['all', 'Any'], ['lt', 'Under $150'], ['mid', '$150–350'], ['gt', 'Over $350']], st.budget, (v) => this.setState({ budget: v })),
+      movementChips: mkChips(['all', 'Automatic', 'Mechanical', 'Meca-quartz', 'Quartz'], st.movement, (v) => this.setState({ movement: v })),
+      sortChips: mkChips([['fidelity', 'Fidelity'], ['price', 'Price, low to high']], st.sort, (v) => this.setState({ sort: v })),
+
+      icons: [
+        { num: 'i', name: 'Rolex Submariner', note: 'The dive-watch archetype, and the most-homaged design on earth.', price: '$9,200' },
+        { num: 'ii', name: 'Omega Speedmaster', note: 'The Moonwatch chronograph — straight lugs, three registers, tachymeter bezel.', price: '$7,000' },
+        { num: 'iii', name: 'Rolex GMT-Master II', note: 'The two-tone “Pepsi” bezel and a 24-hour hand for a second timezone.', price: '$10,700' },
+        { num: 'iv', name: 'Audemars Piguet Royal Oak', note: 'The octagonal, integrated-bracelet original with its Tapisserie dial.', price: '$35,000' },
+        { num: 'v', name: 'Patek Philippe Nautilus', note: 'The porthole case and embossed horizontal dial — the grail of integrated sport.', price: '$35,000' },
+        { num: 'vi', name: 'Rolex Explorer', note: 'The clean 3-6-9 field dial. Understated, and endlessly interpreted.', price: '$7,300' },
+      ],
+
+      rubric: [
+        { name: 'Dial & handset', weight: '30', desc: 'Layout, indices, printed text, lume plots and hand shapes against the original. The most recognisable element, so it carries the most weight.' },
+        { name: 'Case & proportions', weight: '25', desc: 'Diameter, lug-to-lug, crown guards and overall silhouette. A correctly-shaped case reads right from across a room.' },
+        { name: 'Movement', weight: '20', desc: 'Type and behaviour — automatic, hand-wound mechanical, meca-quartz or quartz — and how closely it matches the original’s cadence.' },
+        { name: 'Bezel & crystal', weight: '15', desc: 'Bezel style, insert material and font, plus the crystal profile: flat, domed, or box.' },
+        { name: 'Finishing & bracelet', weight: '10', desc: 'Brushing and polishing transitions, end-links, clasp and the small tells that separate a considered tribute from a toy.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
