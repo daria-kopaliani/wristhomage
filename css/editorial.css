@@ -182,15 +182,24 @@ section { scroll-margin-top: 72px; }
   border-color: var(--hair-20);
 }
 .eh-plate {
-  aspect-ratio: 4 / 5; position: relative; overflow: hidden;
+  aspect-ratio: 4 / 3; position: relative; overflow: hidden;
   background:
     radial-gradient(70% 60% at 78% 18%, rgba(168, 134, 78, 0.22), transparent 60%),
     linear-gradient(158deg, #201d19 0%, #131211 100%);
 }
-.eh-plate .initial {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: var(--serif); font-weight: 600; font-size: 170px;
-  color: rgba(255, 255, 255, 0.1); line-height: 1; user-select: none;
+.eh-mark {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 13px; user-select: none;
+}
+.eh-mark svg {
+  width: 96px; height: 96px;
+  color: rgba(205, 174, 128, 0.62);
+}
+.eh-mark .t {
+  font-size: 9.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.3em; color: rgba(246, 244, 239, 0.42);
+  padding-left: 0.3em; /* optically recenter — tracking adds a trailing gap */
 }
 .eh-plate .no {
   position: absolute; top: 14px; left: 16px;
