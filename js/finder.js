@@ -78,6 +78,16 @@
       '" href="' + esc(href) + '" rel="' + rel + '" target="_blank"' + title + ">Shop &rsaquo;</a>";
   }
 
+  function titleShop(h, text) {
+    var q = h.house + " " + h.name + " watch";
+    var amz = onAmazon(h);
+    var href = amz
+      ? "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG
+      : "https://www.google.com/search?q=" + encodeURIComponent(q);
+    return '<a class="shop" data-shop="' + (amz ? "amazon" : "search") + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
+      '" href="' + esc(href) + '" rel="' + (amz ? "sponsored nofollow noopener" : "nofollow noopener") + '" target="_blank">' + text + "</a>";
+  }
+
   function pass(r) {
     if (state.icon !== "all" && r.o.id !== state.icon) return false;
     var p = Number(r.h.priceUSD);
@@ -98,7 +108,7 @@
       '</div>' +
       '<div class="eh-body">' +
         '<div class="toprow"><div>' +
-          '<div class="eh-name">' + esc(h.house) + ' ' + esc(h.name) + '</div>' +
+          '<div class="eh-name">' + titleShop(h, esc(h.house) + ' ' + esc(h.name)) + '</div>' +
           '<div class="eh-homageto">Homage to ' + esc(o.name) + '</div>' +
         '</div>' +
         '<div class="eh-fid"><div class="n">' + (fid != null ? fid : "–") + '</div><div class="t">Fidelity</div></div></div>' +
