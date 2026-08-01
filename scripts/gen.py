@@ -10,8 +10,10 @@ pages are substantive, not thin doorways. The finder (index.html) is the wedge.
 Vocabulary discipline (non-negotiable): "homage" ONLY. Never replica/clone/fake.
 
 Monetization mirrors dupenote: houses sold on Amazon get a tagged affiliate search
-(wristhomage-20); off-Amazon houses (Steinhart, San Martin, Sugess, Baltany) get an
-honest, clearly-marked non-affiliate search — never a fake tag. FAQPage JSON-LD only
+(wristhomage-20); off-Amazon houses (Steinhart) get an honest, clearly-marked
+non-affiliate search — never a fake tag. (San Martin/Baltany/Sugess/Watchdives were
+verified genuinely on US Amazon 2026-08-01 and flipped to amazon:true; the honest
+"often cheaper direct" note stays on any entry with direct:true.) FAQPage JSON-LD only
 (Product/Offer schema deliberately omitted — it triggers GSC merchant-listing errors
 on non-shop pages).
 
@@ -28,7 +30,8 @@ AMAZON_TAG = "wristhomage-20"
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
 AMAZON_HOUSES = {"Pagani Design", "Invicta", "Casio", "Timex", "Bulova", "Seiko",
-                 "Orient", "Citizen", "Steeldive", "Cadisen", "Berny", "Addies"}
+                 "Orient", "Citizen", "Steeldive", "Cadisen", "Berny", "Addies",
+                 "San Martin", "Baltany", "Sugess", "Watchdives"}
 
 # Only BUILT pages go in the sitemap (unbuilt URLs → GSC 404s). Add each article
 # to this list as it ships.

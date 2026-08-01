@@ -20,7 +20,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "Pro Diver 8926OB", house: "Invicta", priceUSD: 95, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35-class)", fidelity: 80, amazon: true, note: "the classic entry Sub homage — coin-edge bezel, cyclops date, a workhorse Seiko-style auto for under a hundred dollars" },
         { name: "Ocean One 39", house: "Steinhart", priceUSD: 520, size_mm: 39, wr_m: 300, movement: "Automatic (Sellita SW200)", fidelity: 92, amazon: false, note: "the enthusiast benchmark — Swiss Sellita movement, ceramic bezel, proportions the community rates closest to the real thing" },
-        { name: "SN0004-G", house: "San Martin", priceUSD: 260, size_mm: 40, wr_m: 200, movement: "Automatic (NH35 / PT5000 option)", fidelity: 88, amazon: false, direct: true, note: "sharp finishing for the money and a well-cut ceramic bezel; usually cheaper direct than through resellers" },
+        { name: "SN0004-G", house: "San Martin", priceUSD: 260, size_mm: 40, wr_m: 200, movement: "Automatic (NH35 / PT5000 option)", fidelity: 88, amazon: true, direct: true, note: "sharp finishing for the money and a well-cut ceramic bezel; usually cheaper direct than through resellers" },
         { name: "SD1953", house: "Steeldive", priceUSD: 130, size_mm: 41, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 83, amazon: true, note: "genuine 300m diver with a ceramic bezel and Seiko auto — a lot of watch per dollar" },
         { name: "SRPE control (Seiko 5 dive)", house: "Seiko", priceUSD: 250, size_mm: 42.5, wr_m: 100, movement: "Automatic (Seiko 4R36)", fidelity: 58, amazon: true, note: "not a Sub copy — a spiritual budget diver the community reaches for instead; own identity, in-house auto" },
         { name: "AD2044 Diver", house: "Addiesdive", priceUSD: 95, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 77, amazon: true, direct: true, note: "a hugely popular budget Sub homage — ceramic bezel, sapphire, 200m and a Seiko auto; carried on Amazon, often cheaper still direct on AliExpress" }
@@ -33,7 +33,7 @@ window.HOMAGE_DATA = {
       cues: ["gmt", "24h bezel", "pepsi", "jubilee bracelet", "true gmt"],
       homages: [
         { name: "PD-1662 (Pepsi GMT)", house: "Pagani Design", priceUSD: 115, size_mm: 40, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 84, amazon: true, note: "the homage that made Pagani famous — a genuine NH34 GMT with a ceramic Pepsi bezel and jubilee, wildly over-delivering on price" },
-        { name: "SN004-G GMT", house: "San Martin", priceUSD: 340, size_mm: 39, wr_m: 200, movement: "Automatic GMT (NH34)", fidelity: 87, amazon: false, direct: true, note: "tighter finishing and a slimmer case than the budget set; community-favourite mid-tier GMT" },
+        { name: "SN004-G GMT", house: "San Martin", priceUSD: 340, size_mm: 39, wr_m: 200, movement: "Automatic GMT (NH34)", fidelity: 87, amazon: true, direct: true, note: "tighter finishing and a slimmer case than the budget set; community-favourite mid-tier GMT" },
         { name: "Ocean One GMT", house: "Steinhart", priceUSD: 560, size_mm: 42, wr_m: 300, movement: "Automatic GMT (ETA 2893 / SW330)", fidelity: 86, amazon: false, note: "Swiss true-GMT movement and dive-grade WR; a step up in movement over the Seiko-based field" },
         { name: "Pepsi GMT (NH34)", house: "Addiesdive", priceUSD: 110, size_mm: 39, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 80, amazon: true, direct: true, note: "a genuine NH34 GMT with a ceramic Pepsi bezel for around a hundred; carried on Amazon, often cheaper direct" }
       ]
@@ -45,8 +45,8 @@ window.HOMAGE_DATA = {
       cues: ["chronograph", "tachymeter bezel", "panda dial", "three subdials"],
       homages: [
         { name: "PD-1664 (Chrono)", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK63)", fidelity: 82, amazon: true, note: "panda dial and tachymeter bezel with a snappy meca-quartz chrono — the seconds hand sweeps, the pushers feel mechanical, and it costs almost nothing" },
-        { name: "SN021 Chrono", house: "San Martin", priceUSD: 360, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 83, amazon: false, direct: true, note: "cleaner dial printing and better bracelet than the budget tier; still meca-quartz, not automatic" },
-        { name: "Sugess Panda Chrono", house: "Sugess", priceUSD: 220, size_mm: 40, wr_m: 50, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 78, amazon: false, direct: true, note: "for purists who want a hand-wound mechanical column-wheel-style chrono instead of quartz; usually sourced direct" }
+        { name: "SN021 Chrono", house: "San Martin", priceUSD: 360, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 83, amazon: true, direct: true, note: "cleaner dial printing and better bracelet than the budget tier; still meca-quartz, not automatic" },
+        { name: "Sugess Panda Chrono", house: "Sugess", priceUSD: 220, size_mm: 40, wr_m: 50, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 78, amazon: true, direct: true, note: "for purists who want a hand-wound mechanical column-wheel-style chrono instead of quartz; usually sourced direct" }
       ]
     },
     {
@@ -57,7 +57,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1645", house: "Pagani Design", priceUSD: 90, size_mm: 40, wr_m: 30, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "fluted bezel, jubilee bracelet and cyclops date with a Seiko auto — the go-to affordable Datejust look, though it wears larger at 40mm" },
         { name: "C1032", house: "Cadisen", priceUSD: 130, size_mm: 40, wr_m: 50, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 74, amazon: true, note: "another sub-$150 Datejust-style auto; finishing is a notch below Pagani but the sizing options are handy" },
-        { name: "SN054", house: "San Martin", priceUSD: 300, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: false, direct: true, note: "the one that nails the 36mm proportions the original is known for, with a much better movement and bracelet" }
+        { name: "SN054", house: "San Martin", priceUSD: 300, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the one that nails the 36mm proportions the original is known for, with a much better movement and bracelet" }
       ]
     },
     {
@@ -67,8 +67,8 @@ window.HOMAGE_DATA = {
       cues: ["3-6-9 dial", "oyster bracelet", "field", "no date"],
       homages: [
         { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 83, amazon: true, note: "one of Pagani's best-proportioned pieces — correct 36mm, clean 3-6-9 dial, no date window to spoil the symmetry" },
-        { name: "SN017", house: "San Martin", priceUSD: 290, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000)", fidelity: 86, amazon: false, direct: true, note: "sapphire, better lume and a Swiss PT5000 (an ETA 2824 workalike); the community's default Explorer homage above the budget tier" },
-        { name: "Baltany Field 36", house: "Baltany", priceUSD: 180, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: false, direct: true, note: "vintage-leaning take with a domed crystal; usually cheaper direct on AliExpress" }
+        { name: "SN017", house: "San Martin", priceUSD: 290, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000)", fidelity: 86, amazon: true, direct: true, note: "sapphire, better lume and a Swiss PT5000 (an ETA 2824 workalike); the community's default Explorer homage above the budget tier" },
+        { name: "Baltany Field 36", house: "Baltany", priceUSD: 180, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, direct: true, note: "vintage-leaning take with a domed crystal; usually cheaper direct on AliExpress" }
       ]
     },
     {
@@ -78,8 +78,8 @@ window.HOMAGE_DATA = {
       cues: ["chronograph", "tachymeter", "black dial", "moonwatch", "manual wind"],
       homages: [
         { name: "PD-1963 Moon Chrono", house: "Pagani Design", priceUSD: 110, size_mm: 40, wr_m: 30, movement: "Meca-quartz (Seiko VK63)", fidelity: 80, amazon: true, note: "the Moonwatch look — stepped dial, tachymeter bezel, straight lugs — in a meca-quartz for pocket change; not hand-wound but the dial layout is close" },
-        { name: "1963 Chrono", house: "Sugess", priceUSD: 230, size_mm: 40, wr_m: 30, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 84, amazon: false, direct: true, note: "hand-wound column-wheel-style mechanical chrono — the enthusiast pick when you want the winding ritual, based on the storied Chinese 1963 pilot chrono" },
-        { name: "SN021 Speedy", house: "San Martin", priceUSD: 370, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 81, amazon: false, direct: true, note: "best build quality of the affordable Speedy set; sapphire and a solid bracelet, still quartz-hybrid" }
+        { name: "1963 Chrono", house: "Sugess", priceUSD: 230, size_mm: 40, wr_m: 30, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 84, amazon: true, direct: true, note: "hand-wound column-wheel-style mechanical chrono — the enthusiast pick when you want the winding ritual, based on the storied Chinese 1963 pilot chrono" },
+        { name: "SN021 Speedy", house: "San Martin", priceUSD: 370, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 81, amazon: true, direct: true, note: "best build quality of the affordable Speedy set; sapphire and a solid bracelet, still quartz-hybrid" }
       ]
     },
     {
@@ -89,7 +89,7 @@ window.HOMAGE_DATA = {
       cues: ["dive", "wave dial", "skeleton hands", "helium valve", "rotating bezel"],
       homages: [
         { name: "SD1970 (Wave Diver)", house: "Steeldive", priceUSD: 140, size_mm: 41, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, note: "the wave-textured dial and skeleton hands are unmistakable; a real 300m diver with ceramic bezel and Seiko auto" },
-        { name: "SN062", house: "San Martin", priceUSD: 320, size_mm: 41, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: false, direct: true, note: "crisper wave dial and applied markers; the mid-tier step up with better finishing" }
+        { name: "SN062", house: "San Martin", priceUSD: 320, size_mm: 41, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: true, direct: true, note: "crisper wave dial and applied markers; the mid-tier step up with better finishing" }
       ]
     },
     {
@@ -99,7 +99,7 @@ window.HOMAGE_DATA = {
       cues: ["integrated bracelet", "porthole case", "horizontal-groove dial", "luxury sport"],
       homages: [
         { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
-        { name: "SN035", house: "San Martin", priceUSD: 340, size_mm: 40, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 85, amazon: false, direct: true, note: "the integrated bracelet taper and case finishing the budget versions miss; a smoother 9015 auto" }
+        { name: "SN035", house: "San Martin", priceUSD: 340, size_mm: 40, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the integrated bracelet taper and case finishing the budget versions miss; a smoother 9015 auto" }
       ]
     },
     {
@@ -109,7 +109,7 @@ window.HOMAGE_DATA = {
       cues: ["octagonal bezel", "tapisserie dial", "integrated bracelet", "exposed screws"],
       homages: [
         { name: "PD-1736", house: "Pagani Design", priceUSD: 110, size_mm: 41, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 78, amazon: true, note: "octagonal bezel with the exposed screws and a tapisserie-style dial; the pattern is stamped rather than machined but the silhouette reads instantly" },
-        { name: "SN043", house: "San Martin", priceUSD: 350, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: false, direct: true, note: "a genuinely close tapisserie dial and better bracelet integration; the pick when the dial texture matters to you" }
+        { name: "SN043", house: "San Martin", priceUSD: 350, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: true, direct: true, note: "a genuinely close tapisserie dial and better bracelet integration; the pick when the dial texture matters to you" }
       ]
     },
     {
@@ -118,7 +118,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Tudor MT5402)",
       cues: ["dive", "snowflake hands", "gilt dial", "vintage diver", "domed crystal"],
       homages: [
-        { name: "SN008", house: "San Martin", priceUSD: 280, size_mm: 39, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 86, amazon: false, direct: true, note: "snowflake hands, gilt dial and a 39mm case that tracks the BB58 closely; a long-time community darling" },
+        { name: "SN008", house: "San Martin", priceUSD: 280, size_mm: 39, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 86, amazon: true, direct: true, note: "snowflake hands, gilt dial and a 39mm case that tracks the BB58 closely; a long-time community darling" },
         { name: "SD1954", house: "Steeldive", priceUSD: 135, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the vintage-diver look with snowflake hands and domed crystal at a budget price; Seiko auto inside" }
       ]
     },
@@ -128,7 +128,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Blancpain 1315)",
       cues: ["dive", "domed sapphire bezel", "vintage diver", "large case"],
       homages: [
-        { name: "Fifty Fathoms 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 83, amazon: false, direct: true, note: "the domed sapphire bezel and dial furniture are close; sized down a touch from the original's larger case for real wrists" },
+        { name: "Fifty Fathoms 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 83, amazon: true, direct: true, note: "the domed sapphire bezel and dial furniture are close; sized down a touch from the original's larger case for real wrists" },
         { name: "SD1952 Fathom", house: "Steeldive", priceUSD: 150, size_mm: 43, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "budget route to the Fifty Fathoms look with a sapphire bezel insert and 300m WR" }
       ]
     },
@@ -149,8 +149,8 @@ window.HOMAGE_DATA = {
       cues: ["pilot", "onion crown", "triangle at 12", "flieger dial", "large case"],
       homages: [
         { name: "PD-1703", house: "Pagani Design", priceUSD: 110, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the Big Pilot look — oversized onion crown, triangle and dots at 12, clean flieger dial — with a Seiko auto for around a hundred dollars" },
-        { name: "Big Pilot 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: false, direct: true, note: "the refined take, with sharper case finishing and a smoother movement; the community's default above the budget tier" },
-        { name: "Flieger 40", house: "Baltany", priceUSD: 190, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 70, amazon: false, direct: true, note: "a smaller, more wearable flieger in the same spirit rather than a strict Big Pilot copy; usually cheaper direct" }
+        { name: "Big Pilot 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the refined take, with sharper case finishing and a smoother movement; the community's default above the budget tier" },
+        { name: "Flieger 40", house: "Baltany", priceUSD: 190, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 70, amazon: true, direct: true, note: "a smaller, more wearable flieger in the same spirit rather than a strict Big Pilot copy; usually cheaper direct" }
       ]
     },
     {
@@ -169,8 +169,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Tudor MT5612)",
       cues: ["titanium", "ceramic bezel", "snowflake hands", "500m dive", "square markers"],
       homages: [
-        { name: "EXD Titanium", house: "Watchdives", priceUSD: 150, size_mm: 42, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "titanium case, ceramic bezel and snowflake hands for $150 — the community's surprise-value Pelagos alternative, sold direct" },
-        { name: "Pelagos (titanium)", house: "San Martin", priceUSD: 300, size_mm: 42, wr_m: 300, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: false, direct: true, note: "titanium with a ceramic bezel and better finishing; widely rated the closest affordable Pelagos" }
+        { name: "EXD Titanium", house: "Watchdives", priceUSD: 150, size_mm: 42, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, direct: true, note: "titanium case, ceramic bezel and snowflake hands for $150 — the community's surprise-value Pelagos alternative, sold direct" },
+        { name: "Pelagos (titanium)", house: "San Martin", priceUSD: 300, size_mm: 42, wr_m: 300, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: true, direct: true, note: "titanium with a ceramic bezel and better finishing; widely rated the closest affordable Pelagos" }
       ]
     },
     {
@@ -180,7 +180,7 @@ window.HOMAGE_DATA = {
       cues: ["24h fixed bezel", "orange gmt hand", "steve mcqueen", "tool gmt", "no cyclops"],
       homages: [
         { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
-        { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: false, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
+        { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: true, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
       ]
     },
     {
@@ -190,7 +190,7 @@ window.HOMAGE_DATA = {
       cues: ["cushion case", "crown-guard lever", "sandwich dial", "large case", "minimalist"],
       homages: [
         { name: "SD1940", house: "Steeldive", priceUSD: 130, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 81, amazon: true, note: "the cushion case, crown-guard lever and sandwich dial that define the Luminor, in steel with a Seiko auto for pocket change" },
-        { name: "SN041", house: "San Martin", priceUSD: 320, size_mm: 44, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: false, direct: true, note: "the sandwich dial and case finishing enthusiasts rate closest; a clear step up in bracelet and lume, sold direct" },
+        { name: "SN041", house: "San Martin", priceUSD: 320, size_mm: 44, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: true, direct: true, note: "the sandwich dial and case finishing enthusiasts rate closest; a clear step up in bracelet and lume, sold direct" },
         { name: "Cushion Diver", house: "Addiesdive", priceUSD: 95, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 75, amazon: true, direct: true, note: "the value pick — the Luminor silhouette for under a hundred; carried on Amazon, though often cheaper still direct on AliExpress" }
       ]
     },
@@ -200,7 +200,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Omega 8912)",
       cues: ["vintage diver", "broad-arrow hands", "no crown guard", "sword seconds", "faux-patina"],
       homages: [
-        { name: "Vintage Diver SN011", house: "San Martin", priceUSD: 300, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "a well-judged take on the vintage diver with broad-arrow hands and mostly brushed surfaces; the community favourite, sold direct" },
+        { name: "Vintage Diver SN011", house: "San Martin", priceUSD: 300, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: true, direct: true, note: "a well-judged take on the vintage diver with broad-arrow hands and mostly brushed surfaces; the community favourite, sold direct" },
         { name: "1957 Diver", house: "Steeldive", priceUSD: 150, size_mm: 41, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the vintage Seamaster look with a ceramic bezel over aluminium and no fragile lume pip; a lot of diver for the money" }
       ]
     },
@@ -220,8 +220,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Seiko 6R35)",
       cues: ["vintage diver", "no crown guard", "wide bezel", "62mas", "grey or gilt dial"],
       homages: [
-        { name: "62MAS SN007", house: "San Martin", priceUSD: 180, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 86, amazon: false, direct: true, note: "the go-to 62MAS homage — 40mm, sapphire with AR coating, 200m, and finishing that punches well above the price; sold direct" },
-        { name: "62MAS Diver", house: "Watchdives", priceUSD: 150, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "the same vintage-diver silhouette at a lower price, sold direct; a frequent value recommendation" }
+        { name: "62MAS SN007", house: "San Martin", priceUSD: 180, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 86, amazon: true, direct: true, note: "the go-to 62MAS homage — 40mm, sapphire with AR coating, 200m, and finishing that punches well above the price; sold direct" },
+        { name: "62MAS Diver", house: "Watchdives", priceUSD: 150, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, direct: true, note: "the same vintage-diver silhouette at a lower price, sold direct; a frequent value recommendation" }
       ]
     },
     {
@@ -230,8 +230,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Omega 8800)",
       cues: ["teak-striped dial", "dressy sport", "twisted lugs", "date", "sword hands"],
       homages: [
-        { name: "SN0113W", house: "San Martin", priceUSD: 300, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: false, direct: true, note: "the teak-striped dial and twisted lugs of the Aqua Terra in a tidy 38mm; a longtime community favourite, sold direct" },
-        { name: "Teak Dress 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 74, amazon: false, direct: true, note: "the striped-dial dressy-sport look at a lower price; its own dial identity rather than a strict copy, sold direct" }
+        { name: "SN0113W", house: "San Martin", priceUSD: 300, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 85, amazon: true, direct: true, note: "the teak-striped dial and twisted lugs of the Aqua Terra in a tidy 38mm; a longtime community favourite, sold direct" },
+        { name: "Teak Dress 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 74, amazon: true, direct: true, note: "the striped-dial dressy-sport look at a lower price; its own dial identity rather than a strict copy, sold direct" }
       ]
     },
     {
@@ -240,8 +240,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Longines L888)",
       cues: ["super-compressor", "internal rotating bezel", "twin crowns", "vintage diver", "domed crystal"],
       homages: [
-        { name: "Legend Diver 39", house: "San Martin", priceUSD: 230, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 84, amazon: false, direct: true, note: "the super-compressor look with an internal rotating bezel and twin crowns, in a wearable 39mm; a well-liked homage, sold direct" },
-        { name: "Compressor 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: false, direct: true, note: "the twin-crown compressor style at a lower price; its own dial identity rather than a strict copy, sold direct" }
+        { name: "Legend Diver 39", house: "San Martin", priceUSD: 230, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 84, amazon: true, direct: true, note: "the super-compressor look with an internal rotating bezel and twin crowns, in a wearable 39mm; a well-liked homage, sold direct" },
+        { name: "Compressor 39", house: "Baltany", priceUSD: 185, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, direct: true, note: "the twin-crown compressor style at a lower price; its own dial identity rather than a strict copy, sold direct" }
       ]
     },
     {
@@ -250,8 +250,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (IWC 82200)",
       cues: ["arabic numerals", "railroad minute track", "leaf hands", "clean dress", "slim case"],
       homages: [
-        { name: "Portugieser 40", house: "San Martin", priceUSD: 200, size_mm: 40, wr_m: 50, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: false, direct: true, note: "the clean Arabic-numeral dial, railroad track and leaf hands; a sharp, well-priced dress homage, sold direct" },
-        { name: "Portugieser Chrono", house: "Sugess", priceUSD: 220, size_mm: 41, wr_m: 30, movement: "Mechanical chronograph (Seagull ST19)", fidelity: 79, amazon: false, direct: true, note: "the chronograph take with a hand-wound Seagull movement for the winding ritual; sold direct" }
+        { name: "Portugieser 40", house: "San Martin", priceUSD: 200, size_mm: 40, wr_m: 50, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: true, direct: true, note: "the clean Arabic-numeral dial, railroad track and leaf hands; a sharp, well-priced dress homage, sold direct" },
+        { name: "Portugieser Chrono", house: "Sugess", priceUSD: 220, size_mm: 41, wr_m: 30, movement: "Mechanical chronograph (Seagull ST19)", fidelity: 79, amazon: true, direct: true, note: "the chronograph take with a hand-wound Seagull movement for the winding ritual; sold direct" }
       ]
     },
     {
@@ -260,8 +260,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Rolex 3131, antimagnetic)",
       cues: ["lightning-bolt seconds", "green sapphire", "orange accents", "antimagnetic", "smooth bezel"],
       homages: [
-        { name: "Lightning 40", house: "San Martin", priceUSD: 300, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: false, direct: true, note: "the lightning-bolt seconds hand, orange accents and green-tinted crystal edge that make the Milgauss instantly recognisable; sold direct" },
-        { name: "Bolt Antimagnetic", house: "Baltany", priceUSD: 190, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 72, amazon: false, direct: true, note: "the lightning-hand look at a budget price; its own dial rather than a strict copy, sold direct" }
+        { name: "Lightning 40", house: "San Martin", priceUSD: 300, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, direct: true, note: "the lightning-bolt seconds hand, orange accents and green-tinted crystal edge that make the Milgauss instantly recognisable; sold direct" },
+        { name: "Bolt Antimagnetic", house: "Baltany", priceUSD: 190, size_mm: 39, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 72, amazon: true, direct: true, note: "the lightning-hand look at a budget price; its own dial rather than a strict copy, sold direct" }
       ]
     }
   ]
