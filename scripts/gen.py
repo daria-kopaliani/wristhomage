@@ -41,8 +41,16 @@ ARTICLES = [
     "/articles/are-homage-watches-ok",
     "/articles/best-submariner-homage-under-200",
     "/articles/best-speedmaster-homage",
+    "/articles/best-gmt-homage",
     "/guides/pagani-design",
+    "/guides/san-martin",
 ]
+
+# Sitemap lastmod per URL; anything not listed keeps the site-wide default.
+LASTMOD = {
+    "/articles/best-gmt-homage": "2026-08-04",
+    "/guides/san-martin": "2026-08-04",
+}
 
 
 def esc(s):
@@ -224,6 +232,22 @@ def original_page(o):
     for q, a in faq:
         b.append(f'<p><strong>{esc(q)}</strong><br>{esc(a)}</p>')
 
+    # further reading — inbound links so hand-written guides/articles are never crawl orphans
+    further = []
+    houses = {c.get("house") for c in homages}
+    if o["id"] in ("rolex-gmt-master-ii", "rolex-explorer-ii"):
+        further.append('<a href="/articles/best-gmt-homage">The best Rolex GMT homage, ranked</a>')
+    if o["id"] == "rolex-submariner":
+        further.append('<a href="/articles/best-submariner-homage-under-200">The best Submariner homage under $200</a>')
+    if o["id"] == "omega-speedmaster":
+        further.append('<a href="/articles/best-speedmaster-homage">The best Speedmaster homage</a>')
+    if "San Martin" in houses:
+        further.append('<a href="/guides/san-martin">Are San Martin watches any good?</a>')
+    if "Pagani Design" in houses:
+        further.append('<a href="/guides/pagani-design">Pagani Design, model by model</a>')
+    if further:
+        b.append('<p><strong>Further reading:</strong> ' + ' · '.join(further) + '</p>')
+
     b.append('<p class="crumbs" style="padding-top:24px"><a href="/#finder">← Find an homage</a> · <a href="/#originals">All watches →</a></p>')
 
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage",
@@ -268,7 +292,7 @@ def sitemap(originals):
         if u in seen:
             continue
         seen.add(u)
-        out.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{YEAR}-07-06</lastmod></url>")
+        out.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{LASTMOD.get(u, f'{YEAR}-07-06')}</lastmod></url>")
     doc = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
            + "\n".join(out) + "\n</urlset>\n")
     write("sitemap.xml", doc)
@@ -282,7 +306,11 @@ def llms(originals):
              "", "## Watches"]
     for o in sorted(originals, key=lambda x: x["house"] + x["name"]):
         lines.append(f"- [{o['name']} homages]({SITE}/watches/{o['id']}): {len(o.get('homages',[]))} ranked homages of the {o['house']} {o['name']}")
-    lines += ["", "## About", f"- [Scoring rubric]({SITE}/rubric)", f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)", ""]
+    lines += ["", "## Guides",
+              f"- [Are San Martin watches any good?]({SITE}/guides/san-martin): honest brand review of the mid-tier homage maker, model by model",
+              f"- [Pagani Design, model by model]({SITE}/guides/pagani-design): the budget homage brand and the right model for each icon",
+              f"- [The best Rolex GMT homage]({SITE}/articles/best-gmt-homage): affordable GMT-Master II homages, ranked",
+              "", "## About", f"- [Scoring rubric]({SITE}/rubric)", f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)", ""]
     write("llms.txt", "\n".join(lines))
 
 
