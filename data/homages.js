@@ -61,6 +61,27 @@ window.HOMAGE_DATA = {
       ]
     },
     {
+      id: "rolex-day-date", name: "Day-Date 36", house: "Rolex", ref: "128238",
+      priceUSD: 41000, type: "dress", size_mm: 36, wr_m: 100,
+      movement: "Automatic day-date (Rolex 3255)",
+      cues: ["president bracelet", "fluted bezel", "day display", "cyclops date", "gold dress"],
+      homages: [
+        { name: "PD-1752", house: "Pagani Design", priceUSD: 135, size_mm: 36, wr_m: 30, movement: "Automatic day-date (ST16-class)", fidelity: 82, amazon: true, note: "the one that keeps the 36mm President proportions — fluted bezel, president-style bracelet, day and date under sapphire for around $135" },
+        { name: "PD-1783 (DD40)", house: "Pagani Design", priceUSD: 145, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH36)", fidelity: 78, amazon: true, note: "the modern 40mm take with a proper NH36 day-date auto and a 100m rating; wears larger and sportier than the classic 36" },
+        { name: "Contemporary day-date (RA-AA0C)", house: "Orient", priceUSD: 180, size_mm: 42, wr_m: 50, movement: "Automatic (Orient F6922)", fidelity: 55, amazon: true, note: "not a President copy — the honest budget day-date automatic the community reaches for since the old Orient President left the catalog; own identity, in-house auto" }
+      ]
+    },
+    {
+      id: "rolex-oyster-perpetual", name: "Oyster Perpetual 41", house: "Rolex", ref: "124300",
+      priceUSD: 6500, type: "everyday", size_mm: 41, wr_m: 100,
+      movement: "Automatic (Rolex 3230)",
+      cues: ["time-only", "bright lacquer dial", "oyster bracelet", "no date"],
+      homages: [
+        { name: "PD-1690", house: "Pagani Design", priceUSD: 140, size_mm: 38, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 86, amazon: true, note: "the turquoise-dial favourite that rode the Tiffany-OP craze — clean time-only dial, real 200m rating and an NH35 auto for around $140" },
+        { name: "5 Sports control (SRPE dress)", house: "Seiko", priceUSD: 250, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko 4R36)", fidelity: 52, amazon: true, note: "not an OP copy — the budget time-and-date automatic the community cross-shops instead; own identity, in-house auto" }
+      ]
+    },
+    {
       id: "rolex-explorer", name: "Explorer", house: "Rolex", ref: "124270",
       priceUSD: 7700, type: "field", size_mm: 36, wr_m: 100,
       movement: "Automatic (Rolex 3230)",
@@ -100,6 +121,16 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
         { name: "SN035", house: "San Martin", priceUSD: 340, size_mm: 40, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the integrated bracelet taper and case finishing the budget versions miss; a smoother 9015 auto" }
+      ]
+    },
+    {
+      id: "patek-aquanaut", name: "Aquanaut", house: "Patek Philippe", ref: "5167A",
+      priceUSD: 24000, type: "integrated", size_mm: 40, wr_m: 120,
+      movement: "Automatic (Patek 26-330)",
+      cues: ["rounded octagon case", "embossed dial", "tropical rubber strap", "luxury sport"],
+      homages: [
+        { name: "Aquanaut automatic", house: "Specht & Söhne", priceUSD: 139, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 8215)", fidelity: 84, amazon: true, note: "the rounded-octagon case, embossed grid dial and tropical-style rubber strap with a workhorse Miyota auto — the closest currently-sold Aquanaut homage; the field here is far thinner than the Nautilus's" },
+        { name: "Aquanaut chrono", house: "Specht & Söhne", priceUSD: 86, size_mm: 42, wr_m: 30, movement: "Quartz chronograph", fidelity: 74, amazon: true, note: "the 5968-chrono look for well under a hundred; quartz inside, so treat it as a style buy rather than a movement buy" }
       ]
     },
     {
