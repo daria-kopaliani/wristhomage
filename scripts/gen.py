@@ -46,11 +46,39 @@ ARTICLES = [
     "/guides/san-martin",
 ]
 
-# Sitemap lastmod per URL; anything not listed keeps the site-wide default.
-LASTMOD = {
-    "/articles/best-gmt-homage": "2026-08-04",
-    "/guides/san-martin": "2026-08-04",
-}
+# Sitemap lastmod. Derived from git: the last commit that touched the HTML file a URL
+# serves IS when that page's content last changed, so lastmod stays honest without
+# anyone remembering to bump a hand-maintained table. (It used to be a dict with a
+# hardcoded 07-06 fallback, which silently froze 33/35 URLs at July 6 while the pages
+# were edited through 08-05 — Google saw "nothing changed here" sitewide.)
+# An uncommitted edit reports today, since the regenerate-then-commit flow commits next.
+LASTMOD_FALLBACK = f"{YEAR}-07-06"
+
+
+def url_to_file(u):
+    """Map a sitemap URL to the repo-relative HTML file that serves it."""
+    if u == "/":
+        return "index.html"
+    if u.endswith("/"):
+        return u.strip("/") + "/index.html"
+    return u.lstrip("/") + ".html"
+
+
+def git_lastmod(u):
+    rel = url_to_file(u)
+    if not os.path.exists(os.path.join(ROOT, rel)):
+        return LASTMOD_FALLBACK
+    try:
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", rel],
+                               cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        if dirty:
+            return subprocess.run(["date", "+%Y-%m-%d"],
+                                  capture_output=True, text=True).stdout.strip()
+        d = subprocess.run(["git", "log", "-1", "--format=%cs", "--", rel],
+                           cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        return d or LASTMOD_FALLBACK
+    except Exception:
+        return LASTMOD_FALLBACK
 
 
 def esc(s):
@@ -257,23 +285,139 @@ def original_page(o):
     return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
 
 
+ONES = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve")
+
+
+def _median(xs):
+    s = sorted(xs)
+    m = len(s) // 2
+    return s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2
+
+
+def hub_stats(originals):
+    """Every figure quoted in the hub prose, computed from the dataset.
+
+    The overview paragraphs and FAQ below are the section root's substance — a thin
+    /watches/ suppressed crawl of the whole section once already (fixed 2026-08-05).
+    Deriving the numbers instead of hardcoding them keeps that prose true as the data
+    moves, so the fix can't rot into a wrong-but-confident page.
+    """
+    hs = [h for o in originals for h in o.get("homages", [])]
+    prices = [h["priceUSD"] for h in hs]
+    fids = [h["fidelity"] for h in hs]
+    houses = {}
+    for h in hs:
+        houses[h["house"]] = houses.get(h["house"], 0) + 1
+    top = sorted(houses.items(), key=lambda kv: (-kv[1], kv[0]))
+    best = max(hs, key=lambda h: h["fidelity"])
+    best_orig = next(o for o in originals if best in o.get("homages", []))
+    sub = next((o for o in originals if o["id"] == "rolex-submariner"), None)
+    sub_p = [h["priceUSD"] for h in sub["homages"]] if sub else []
+    return {
+        "n_orig": len(originals), "n_hom": len(hs),
+        "p_min": min(prices), "p_max": max(prices), "p_med": int(_median(prices)),
+        "under150": sum(1 for p in prices if p < 150),
+        "over400": sum(1 for p in prices if p > 400),
+        "autos": sum(1 for h in hs if re.search(r"Automatic", h["movement"], re.I)),
+        "f_min": min(fids), "f_max": max(fids),
+        "n_top": sum(1 for f in fids if f >= 90),
+        "best": best, "best_orig": best_orig, "top_houses": top,
+        "amazon": sum(1 for h in hs if h.get("amazon")),
+        "orig_med_k": int(round(_median([o["priceUSD"] for o in originals]) / 1000)),
+        "sub_n": len(sub_p), "sub_min": min(sub_p) if sub_p else 0,
+        "sub_max": max(sub_p) if sub_p else 0,
+    }
+
+
+def hub_faq(s):
+    """Q/A pairs shared by the visible 'Common questions' section and the FAQPage JSON-LD."""
+    h3 = ", ".join(f"<strong>{esc(n)}</strong> ({c} entries)" if i == 0 else
+                   (f"<strong>{esc(n)}</strong> and <strong>{esc(s['top_houses'][i+1][0])}</strong> ({c} each)"
+                    if i == 2 else f"<strong>{esc(n)}</strong> ({c})")
+                   for i, (n, c) in enumerate(s["top_houses"][:3]))
+    return [
+        ("What counts as a watch homage, and what doesn't?",
+         "A homage is a watch openly sold under its own brand that borrows the design language of an "
+         "icon. It is not a replica: nothing in this database carries another brand's name, logo or "
+         "reference, and counterfeit product is never listed.",
+         "<strong>What counts as a homage, and what doesn't?</strong> A homage is a watch openly sold "
+         "under its own brand that borrows the design language of an icon — the case shape, the bezel, "
+         "the dial furniture. It is not a replica: nothing in this database carries another brand's "
+         "name, logo or reference, and we never list counterfeit product. The line matters legally and "
+         "morally, and it's why houses like Steinhart, San Martin and Pagani Design can sell these "
+         "watches in the open."),
+        ("How are the fidelity scores set?",
+         f"Five weighted checks from the published rubric: dial and handset, bezel, case shape and "
+         f"proportions, movement class, and spec parity. Scores run {s['f_min']}–{s['f_max']} in the "
+         f"current database; only {ONES[s['n_top']]} watch clears 90.",
+         '<strong>How are the fidelity scores set?</strong> Five weighted checks from the '
+         '<a href="/rubric">published rubric</a>: dial and handset, bezel, case shape and proportions, '
+         'movement class, and spec parity (size, water resistance, crystal). Each homage is scored '
+         'against its specific original, not against an abstract ideal — which is why a $95 watch can '
+         'outscore a $500 one when it simply looks closer.'),
+        ("How much do watch homages cost?",
+         f"The {s['n_hom']} homages in the database run ${s['p_min']} to ${s['p_max']} street with a "
+         f"median around ${s['p_med']}; {s['under150']} come in under $150. Most ({s['autos']} of "
+         f"{s['n_hom']}) are automatics on Seiko NH35/NH34-class or Swiss Sellita/ETA movements.",
+         f"<strong>Why do most entries cost $100–$400 when the originals cost five figures?</strong> "
+         f"Because that's where the homage market actually lives. The median original in the database "
+         f"lists around {ONES[s['orig_med_k']]} thousand dollars; the median homage is ${s['p_med']}. "
+         f"The gap pays for the crown on the dial, the in-house movement and the waiting list — not, "
+         f"for the most part, for timekeeping. A Seiko NH35 or Sellita SW200 in a well-machined case "
+         f"keeps time within seconds a day."),
+        ("Which type should a first-time homage buyer start with?",
+         f"Dive watches are the deepest field — the Submariner alone has {ONES[s['sub_n']]} ranked "
+         f"homages from ${s['sub_min']} to ${s['sub_max']}. Each original's page ranks its field by "
+         f"fidelity, so the shortlist is already made.",
+         f"<strong>Which type should a first-time buyer start with?</strong> Dive watches are the "
+         f"deepest field here (the Submariner alone has {ONES[s['sub_n']]} ranked homages, from "
+         f"${s['sub_min']} to ${s['sub_max']}) and the most forgiving to wear. If a dressier profile "
+         f"fits better, the Tank and Santos fields cover quartz and automatic options under $300. "
+         f"Every original page ranks its field by fidelity, so the shortlist is already made."),
+    ], h3
+
+
 def hub_page(originals):
     title = f"Watch homage database — {len(originals)} icons, ranked homages | wristhomage"
     desc = ("A spec-rich, filterable database of watch homages — Submariner, Speedmaster, Datejust and more, "
             "each with real homages ranked by fidelity, price, movement and case size.")
     canon = f"{SITE}/watches/"
+    s = hub_stats(originals)
+    faq, houses_txt = hub_faq(s)
     b = [f'<div class="crumbs"><a href="/">Home</a> › Watches</div>',
          '<h1>Watch homage database</h1>',
          '<p class="lede">Every iconic original and its honest field of homages, ranked by fidelity to the '
          '<a href="/rubric">published rubric</a>. Pick a watch to see prices, movements and where to buy.</p>',
+         f'<p>The database currently covers <strong>{s["n_orig"]} originals and {s["n_hom"]} homages</strong>, '
+         f'every one a real, currently-sold product. Street prices run from <strong>${s["p_min"]} to '
+         f'${s["p_max"]}</strong> with a median around <strong>${s["p_med"]}</strong> — {s["under150"]} of the '
+         f'{s["n_hom"]} come in under $150, and only {ONES[s["over400"]]} cross $400. The overwhelming majority '
+         f'are proper automatics ({s["autos"]} of {s["n_hom"]}, mostly Seiko NH35/NH34-class or Swiss '
+         f'Sellita/ETA), with a handful of meca-quartz chronographs and hand-wound mechanicals where that\'s '
+         f'what the segment actually sells.</p>',
+         f'<p>Fidelity scores range from {s["f_min"]} to {s["f_max"]}. The scale is deliberately hard to max '
+         f'out: a score in the 80s means the watch reads unmistakably like its inspiration on the wrist, and '
+         f'only {ONES[s["n_top"]]} watch in the database — {esc(s["best"]["house"])}\'s '
+         f'{esc(s["best"]["name"])}, against the {esc(s["best_orig"]["name"])} — clears 90. The score measures '
+         f'design closeness only; it says nothing about build quality, and it is never a claim that anything '
+         f'is a copy. Houses that show up most: {houses_txt}. Nearly the whole field ({s["amazon"]} of '
+         f'{s["n_hom"]}) is carried on Amazon; where a house sells cheaper direct, the entry says so.</p>',
          '<div class="tablewrap"><table><thead><tr><th>Original</th><th>Brand</th><th>Type</th><th>Homages</th></tr></thead><tbody>']
     for o in sorted(originals, key=lambda x: x["house"] + x["name"]):
         b.append(f'<tr><td class="row-nm"><span class="row-art">{art_svg(o.get("type","dive"))}</span>'
                  f'<strong><a href="/watches/{esc(o["id"])}">{esc(o["name"])} homages</a></strong></td>'
                  f'<td>{esc(o["house"])}</td><td>{esc(o.get("type",""))}</td><td>{len(o.get("homages",[]))}</td></tr>')
     b.append('</tbody></table></div>')
+    b.append('<h2>Common questions</h2>')
+    for _q, _a, prose in faq:
+        b.append(f'<p>{prose}</p>')
     coll = {"@context": "https://schema.org", "@type": "CollectionPage", "name": "Watch homage database", "url": canon}
-    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=ld(coll), sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage",
+              "mainEntity": [{"@type": "Question", "name": q,
+                              "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, _p in faq]}
+    schema = ld(coll) + "\n  " + ld(faq_ld)
+    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
 
 
 def write(path, content):
@@ -283,16 +427,22 @@ def write(path, content):
         f.write(content)
 
 
-def sitemap(originals):
+def sitemap_urls(originals):
     urls = ["/", "/watches/", "/rubric", "/disclosure"]
     urls += [f"/watches/{o['id']}" for o in originals]
     urls += ARTICLES
-    seen, out = set(), []
+    seen, ordered = set(), []
     for u in urls:
-        if u in seen:
-            continue
-        seen.add(u)
-        out.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{LASTMOD.get(u, f'{YEAR}-07-06')}</lastmod></url>")
+        if u not in seen:
+            seen.add(u)
+            ordered.append(u)
+    return ordered
+
+
+def sitemap(originals, lastmods):
+    out = []
+    for u in sitemap_urls(originals):
+        out.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{lastmods[u]}</lastmod></url>")
     doc = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
            + "\n".join(out) + "\n</urlset>\n")
     write("sitemap.xml", doc)
@@ -317,10 +467,13 @@ def llms(originals):
 def main():
     data = load_data()
     originals = data["originals"]
+    # Snapshot lastmod BEFORE writing anything: the writes below would otherwise dirty
+    # every generated page and make git_lastmod report today for all of them.
+    lastmods = {u: git_lastmod(u) for u in sitemap_urls(originals)}
     for o in originals:
         write(f"watches/{o['id']}.html", original_page(o))
     write("watches/index.html", hub_page(originals))
-    n = sitemap(originals)
+    n = sitemap(originals, lastmods)
     llms(originals)
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
 
