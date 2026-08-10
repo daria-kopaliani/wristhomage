@@ -44,6 +44,8 @@ ARTICLES = [
     "/articles/best-gmt-homage",
     "/guides/pagani-design",
     "/guides/san-martin",
+    "/guides/steeldive",
+    "/guides/baltany",
 ]
 
 # Sitemap lastmod. Derived from git: the last commit that touched the HTML file a URL
@@ -273,6 +275,10 @@ def original_page(o):
         further.append('<a href="/guides/san-martin">Are San Martin watches any good?</a>')
     if "Pagani Design" in houses:
         further.append('<a href="/guides/pagani-design">Pagani Design, model by model</a>')
+    if "Steeldive" in houses:
+        further.append('<a href="/guides/steeldive">Are Steeldive watches any good?</a>')
+    if "Baltany" in houses:
+        further.append('<a href="/guides/baltany">Baltany watches review</a>')
     if further:
         b.append('<p><strong>Further reading:</strong> ' + ' · '.join(further) + '</p>')
 
@@ -459,6 +465,8 @@ def llms(originals):
     lines += ["", "## Guides",
               f"- [Are San Martin watches any good?]({SITE}/guides/san-martin): honest brand review of the mid-tier homage maker, model by model",
               f"- [Pagani Design, model by model]({SITE}/guides/pagani-design): the budget homage brand and the right model for each icon",
+              f"- [Are Steeldive watches any good?]({SITE}/guides/steeldive): honest brand review of the budget dive-watch specialist, model by model",
+              f"- [Baltany watches review]({SITE}/guides/baltany): honest brand review of the vintage-proportions homage maker, model by model",
               f"- [The best Rolex GMT homage]({SITE}/articles/best-gmt-homage): affordable GMT-Master II homages, ranked",
               "", "## About", f"- [Scoring rubric]({SITE}/rubric)", f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)", ""]
     write("llms.txt", "\n".join(lines))
