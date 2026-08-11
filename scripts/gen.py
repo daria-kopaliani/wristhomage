@@ -415,6 +415,21 @@ def hub_page(originals):
                  f'<strong><a href="/watches/{esc(o["id"])}">{esc(o["name"])} homages</a></strong></td>'
                  f'<td>{esc(o["house"])}</td><td>{esc(o.get("type",""))}</td><td>{len(o.get("homages",[]))}</td></tr>')
     b.append('</tbody></table></div>')
+    # The hub is the natural index for the hand-written pages: without these the brand
+    # reviews and rankings are only reachable from whichever watch pages happen to carry
+    # the house, which leaves new guides sitting as crawl islands until those index.
+    b.append('<h2>Brand reviews and rankings</h2>')
+    b.append('<p>The table above scores individual watches. One level up, the houses that build '
+             'them: <a href="/guides/san-martin">San Martin</a>, '
+             '<a href="/guides/pagani-design">Pagani Design</a>, '
+             '<a href="/guides/steeldive">Steeldive</a> and '
+             '<a href="/guides/baltany">Baltany</a>, each reviewed model by model.</p>')
+    b.append('<p>Ranked by icon: <a href="/articles/best-submariner-homage-under-200">the best '
+             'Submariner homage under $200</a>, <a href="/articles/best-gmt-homage">the best Rolex '
+             'GMT homage</a> and <a href="/articles/best-speedmaster-homage">the best Speedmaster '
+             'homage</a>. If you are still deciding whether to buy one at all, start with '
+             '<a href="/articles/are-homage-watches-ok">are homage watches OK?</a> and '
+             '<a href="/articles/homage-vs-replica">homage vs replica</a>.</p>')
     b.append('<h2>Common questions</h2>')
     for _q, _a, prose in faq:
         b.append(f'<p>{prose}</p>')
