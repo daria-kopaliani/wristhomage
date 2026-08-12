@@ -45,7 +45,7 @@ window.HOMAGE_DATA = {
       cues: ["chronograph", "tachymeter bezel", "panda dial", "three subdials"],
       homages: [
         { name: "PD-1664 (Chrono)", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK63)", fidelity: 82, amazon: true, note: "panda dial and tachymeter bezel with a snappy meca-quartz chrono — the seconds hand sweeps, the pushers feel mechanical, and it costs almost nothing" },
-        { name: "SN021 Chrono", house: "San Martin", priceUSD: 360, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 83, amazon: true, direct: true, note: "cleaner dial printing and better bracelet than the budget tier; still meca-quartz, not automatic" },
+        { name: "SN0116", house: "San Martin", priceUSD: 360, size_mm: 39.5, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 83, amazon: true, direct: true, verified: "2026-08-12", note: "San Martin's panda chronograph: cleaner dial printing and a better bracelet than the budget tier, on a ceramic chronograph bezel; still meca-quartz, not an automatic chronograph" },
         { name: "Sugess Panda Chrono", house: "Sugess", priceUSD: 220, size_mm: 40, wr_m: 50, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 78, amazon: true, direct: true, note: "for purists who want a hand-wound mechanical column-wheel-style chrono instead of quartz; usually sourced direct" }
       ]
     },
@@ -100,7 +100,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1963 Moon Chrono", house: "Pagani Design", priceUSD: 110, size_mm: 40, wr_m: 30, movement: "Meca-quartz (Seiko VK63)", fidelity: 80, amazon: true, note: "the Moonwatch look — stepped dial, tachymeter bezel, straight lugs — in a meca-quartz for pocket change; not hand-wound but the dial layout is close" },
         { name: "1963 Chrono", house: "Sugess", priceUSD: 230, size_mm: 40, wr_m: 30, movement: "Mechanical chronograph (Seagull ST1901)", fidelity: 84, amazon: true, direct: true, note: "hand-wound column-wheel-style mechanical chrono — the enthusiast pick when you want the winding ritual, based on the storied Chinese 1963 pilot chrono" },
-        { name: "SN021 Speedy", house: "San Martin", priceUSD: 370, size_mm: 40, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 81, amazon: true, direct: true, note: "best build quality of the affordable Speedy set; sapphire and a solid bracelet, still quartz-hybrid" }
+        { name: "SN0103", house: "San Martin", priceUSD: 370, size_mm: 39.5, wr_m: 100, movement: "Meca-quartz (Seiko VK64)", fidelity: 81, amazon: true, direct: true, note: "best build quality of the affordable Speedy set; sapphire and a solid bracelet, still quartz-hybrid" }
       ]
     },
     {
