@@ -18,6 +18,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Rolex 3235)",
       cues: ["dive", "rotating bezel", "oyster bracelet", "mercedes hands", "date"],
       homages: [
+        { name: "SD1954", house: "Steeldive", priceUSD: 135, size_mm: 41, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, verified: "2026-08-12", note: "modern Submariner case dimensions with a flat black no-date dial that reads as a quasi-tribute to the Comex Subs; ceramic bezel, sapphire, and the same 300m as its SD1953 stablemate" },
         { name: "Pro Diver 8926OB", house: "Invicta", priceUSD: 95, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35-class)", fidelity: 80, amazon: true, note: "the classic entry Sub homage — coin-edge bezel, cyclops date, a workhorse Seiko-style auto for under a hundred dollars" },
         { name: "Ocean One 39", house: "Steinhart", priceUSD: 520, size_mm: 39, wr_m: 300, movement: "Automatic (Sellita SW200)", fidelity: 92, amazon: false, note: "the enthusiast benchmark — Swiss Sellita movement, ceramic bezel, proportions the community rates closest to the real thing" },
         { name: "SN0004-G", house: "San Martin", priceUSD: 260, size_mm: 40, wr_m: 200, movement: "Automatic (NH35 / PT5000 option)", fidelity: 88, amazon: true, direct: true, note: "sharp finishing for the money and a well-cut ceramic bezel; usually cheaper direct than through resellers" },
@@ -150,7 +151,6 @@ window.HOMAGE_DATA = {
       cues: ["dive", "snowflake hands", "gilt dial", "vintage diver", "domed crystal"],
       homages: [
         { name: "SN008", house: "San Martin", priceUSD: 280, size_mm: 39, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 86, amazon: true, direct: true, note: "snowflake hands, gilt dial and a 39mm case that tracks the BB58 closely; a long-time community darling" },
-        { name: "SD1954", house: "Steeldive", priceUSD: 135, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the vintage-diver look with snowflake hands and domed crystal at a budget price; Seiko auto inside" }
       ]
     },
     {
@@ -179,6 +179,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (IWC 52110)",
       cues: ["pilot", "onion crown", "triangle at 12", "flieger dial", "large case"],
       homages: [
+        { name: "SD1940", house: "Steeldive", priceUSD: 130, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 72, amazon: true, verified: "2026-08-12", note: "strictly a Mark XVIII homage rather than a Big Pilot one — 39mm where the Big Pilot is 46mm, so it is the flieger dial language at a wearable size rather than the oversized original; sapphire and a real 200m rating" },
         { name: "PD-1703", house: "Pagani Design", priceUSD: 110, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the Big Pilot look — oversized onion crown, triangle and dots at 12, clean flieger dial — with a Seiko auto for around a hundred dollars" },
         { name: "Big Pilot 43", house: "San Martin", priceUSD: 330, size_mm: 43, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the refined take, with sharper case finishing and a smoother movement; the community's default above the budget tier" },
         { name: "Flieger 40", house: "Baltany", priceUSD: 190, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 70, amazon: true, direct: true, note: "a smaller, more wearable flieger in the same spirit rather than a strict Big Pilot copy; usually cheaper direct" }
@@ -221,7 +222,6 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Panerai P.9010)",
       cues: ["cushion case", "crown-guard lever", "sandwich dial", "large case", "minimalist"],
       homages: [
-        { name: "SD1940", house: "Steeldive", priceUSD: 130, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 81, amazon: true, note: "the cushion case, crown-guard lever and sandwich dial that define the Luminor, in steel with a Seiko auto for pocket change" },
         { name: "SN041", house: "San Martin", priceUSD: 320, size_mm: 44, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 85, amazon: true, direct: true, note: "the sandwich dial and case finishing enthusiasts rate closest; a clear step up in bracelet and lume, sold direct" },
         { name: "Cushion Diver", house: "Addiesdive", priceUSD: 95, size_mm: 44, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 75, amazon: true, direct: true, note: "the value pick — the Luminor silhouette for under a hundred; carried on Amazon, though often cheaper still direct on AliExpress" }
       ]
