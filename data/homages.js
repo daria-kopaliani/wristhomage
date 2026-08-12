@@ -109,8 +109,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Omega 8800)",
       cues: ["dive", "wave dial", "skeleton hands", "helium valve", "rotating bezel"],
       homages: [
-        { name: "SD1970 (Wave Diver)", house: "Steeldive", priceUSD: 140, size_mm: 41, wr_m: 300, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, note: "the wave-textured dial and skeleton hands are unmistakable; a real 300m diver with ceramic bezel and Seiko auto" },
-        { name: "SN062", house: "San Martin", priceUSD: 320, size_mm: 41, wr_m: 200, movement: "Automatic (NH35 / PT5000)", fidelity: 84, amazon: true, direct: true, note: "crisper wave dial and applied markers; the mid-tier step up with better finishing" }
+        { name: "PD-1685", house: "Pagani Design", priceUSD: 130, size_mm: 42, wr_m: 200, movement: "Automatic (Seiko NH35A)", fidelity: 80, amazon: true, verified: "2026-08-12", note: "the genuine article in this field: a real wave-textured dial, ceramic bezel and curved sapphire, at exactly the original's 42mm and double its rated depth" },
       ]
     },
     {
