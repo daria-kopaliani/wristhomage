@@ -57,7 +57,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1645", house: "Pagani Design", priceUSD: 90, size_mm: 40, wr_m: 30, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "fluted bezel, jubilee bracelet and cyclops date with a Seiko auto — the go-to affordable Datejust look, though it wears larger at 40mm" },
         { name: "C1032", house: "Cadisen", priceUSD: 130, size_mm: 40, wr_m: 50, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 74, amazon: true, note: "another sub-$150 Datejust-style auto; finishing is a notch below Pagani but the sizing options are handy" },
-        { name: "SN0058-G-X", house: "San Martin", priceUSD: 330, size_mm: 36.5, wr_m: 100, movement: "Automatic (PT5000 / SW200)", fidelity: 85, amazon: true, direct: true, note: "the one that nails the proportions the original is known for — 36.5mm and 11.9mm thin, on a five-link bracelet, with a carved bezel rather than a stamped one; a Swiss-class PT5000 or SW200 rather than the Seiko autos the budget tier runs" },
+        { name: "SN0058-G-X", house: "San Martin", priceUSD: 330, size_mm: 36.5, wr_m: 100, movement: "Automatic (PT5000 / SW200)", fidelity: 85, amazon: true, direct: true, verified: "2026-08-12", note: "the one that nails the proportions the original is known for — 36.5mm and 11.9mm thin, on a five-link bracelet, with a carved bezel rather than a stamped one; a Swiss-class PT5000 or SW200 rather than the Seiko autos the budget tier runs" },
       ]
     },
     {
@@ -87,8 +87,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Rolex 3230)",
       cues: ["3-6-9 dial", "oyster bracelet", "field", "no date"],
       homages: [
-        { name: "PD-1751", house: "Pagani Design", priceUSD: 100, size_mm: 36, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, note: "a clean 36mm three-hander with sapphire and a genuine 200m rating for around a hundred dollars; Pagani markets it as a Ranger homage rather than an Explorer one, and the 3-6-9 dial language serves both — read it as the shape rather than a line-for-line copy" },
-        { name: "SN017", house: "San Martin", priceUSD: 290, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000)", fidelity: 86, amazon: true, direct: true, note: "sapphire, better lume and a Swiss PT5000 (an ETA 2824 workalike); the community's default Explorer homage above the budget tier" },
+        { name: "PD-1751", house: "Pagani Design", priceUSD: 100, size_mm: 36, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, verified: "2026-08-12", note: "a clean 36mm three-hander with sapphire and a genuine 200m rating for around a hundred dollars; Pagani markets it as a Ranger homage rather than an Explorer one, and the 3-6-9 dial language serves both — read it as the shape rather than a line-for-line copy" },
+        { name: "SN021-G", house: "San Martin", priceUSD: 290, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000 / SW200)", fidelity: 86, amazon: true, direct: true, verified: "2026-08-12", note: "the community default for a 36mm Explorer: a Swiss-class PT5000 or SW200 rather than a Seiko auto, top-hat sapphire with AR, and 11mm thick so it wears like the original rather than a modern reissue" },
         { name: "Baltany Field 36", house: "Baltany", priceUSD: 180, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, direct: true, note: "vintage-leaning take with a domed crystal; usually cheaper direct on AliExpress" }
       ]
     },
@@ -119,8 +119,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Patek 26-330)",
       cues: ["integrated bracelet", "porthole case", "horizontal-groove dial", "luxury sport"],
       homages: [
-        { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seagull ST6)", fidelity: 80, amazon: true, note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
-        { name: "SN076-G", house: "San Martin", priceUSD: 340, size_mm: 42, wr_m: 200, movement: "Automatic (PT5000 / SW200)", fidelity: 82, amazon: true, direct: true, note: "the case finishing and bracelet taper the budget versions miss, on a Swiss-class PT5000 or SW200 rather than a Seiko auto, with a genuine 200m rating; it wears 42mm against the original's 40mm, which is the one thing it does not get right" },
+        { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seagull ST6)", fidelity: 80, amazon: true, verified: "2026-08-12", note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
+        { name: "SN076-G", house: "San Martin", priceUSD: 340, size_mm: 42, wr_m: 200, movement: "Automatic (PT5000 / SW200)", fidelity: 82, amazon: true, direct: true, verified: "2026-08-12", note: "the case finishing and bracelet taper the budget versions miss, on a Swiss-class PT5000 or SW200 rather than a Seiko auto, with a genuine 200m rating; it wears 42mm against the original's 40mm, which is the one thing it does not get right" },
       ]
     },
     {
@@ -139,9 +139,9 @@ window.HOMAGE_DATA = {
       movement: "Automatic (AP 4302)",
       cues: ["octagonal bezel", "tapisserie dial", "integrated bracelet", "exposed screws"],
       homages: [
-        { name: "PD-1673", house: "Pagani Design", priceUSD: 110, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 78, amazon: true, note: "octagonal bezel with the exposed screws and a tapisserie-style dial; the pattern is stamped rather than machined but the silhouette reads instantly; sapphire crystal at this price is unusual" },
-        { name: "SN013-G", house: "San Martin", priceUSD: 350, size_mm: 38.5, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: true, direct: true, note: "the closest bracelet integration in the field and a 9.5mm case that actually wears like the original; San Martin calls the bezel a Royal Oak/Nautilus hybrid rather than a straight copy, and at 38.5mm it is the smallest here" },
-        { name: "C8180", house: "Cadisen", priceUSD: 87, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 75, amazon: true, note: "the cheapest way into the octagonal-bezel look with a real Seiko automatic and an exhibition caseback; wears a full 42mm against the original's 41mm and the stamped waffle dial is a step behind Pagani's finishing, but 100m of water resistance is double what the original offers" }
+        { name: "PD-1673", house: "Pagani Design", priceUSD: 110, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 78, amazon: true, verified: "2026-08-12", note: "octagonal bezel with the exposed screws and a tapisserie-style dial; the pattern is stamped rather than machined but the silhouette reads instantly; sapphire crystal at this price is unusual" },
+        { name: "SN013-G", house: "San Martin", priceUSD: 350, size_mm: 38.5, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: true, direct: true, verified: "2026-08-12", note: "the closest bracelet integration in the field and a 9.5mm case that actually wears like the original; San Martin calls the bezel a Royal Oak/Nautilus hybrid rather than a straight copy, and at 38.5mm it is the smallest here" },
+        { name: "C8180", house: "Cadisen", priceUSD: 87, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 75, amazon: true, verified: "2026-08-12", note: "the cheapest way into the octagonal-bezel look with a real Seiko automatic and an exhibition caseback; wears a full 42mm against the original's 41mm and the stamped waffle dial is a step behind Pagani's finishing, but 100m of water resistance is double what the original offers" }
       ]
     },
     {
@@ -212,7 +212,7 @@ window.HOMAGE_DATA = {
       cues: ["24h fixed bezel", "orange gmt hand", "steve mcqueen", "tool gmt", "no cyclops"],
       homages: [
         { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
-        { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 42, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 77, amazon: true, note: "the freccione orange 24-hour hand and fixed bezel at a fraction of the money, with sapphire and a real 200m rating; it wears 42mm, a size up on the modern original and two on the vintage one it echoes" },
+        { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 42, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 77, amazon: true, verified: "2026-08-12", note: "the freccione orange 24-hour hand and fixed bezel at a fraction of the money, with sapphire and a real 200m rating; it wears 42mm, a size up on the modern original and two on the vintage one it echoes" },
         { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: true, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
       ]
     },
@@ -243,7 +243,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Rolex 3235)",
       cues: ["bidirectional bezel", "sunburst dial", "oyster bracelet", "dressy diver", "raised bezel numerals"],
       homages: [
-        { name: "PD-1651", house: "Pagani Design", priceUSD: 95, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, note: "one of the visually closest Yacht-Master homages — bidirectional bezel, sunburst dial, oyster bracelet — with a Seiko auto for well under a hundred" },
+        { name: "PD-1651", house: "Pagani Design", priceUSD: 95, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, verified: "2026-08-12", note: "one of the visually closest Yacht-Master homages — bidirectional bezel, sunburst dial, oyster bracelet — with a Seiko auto for well under a hundred" },
         { name: "Sunburst Diver", house: "Cadisen", priceUSD: 140, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 70, amazon: true, note: "a dressy rotating-bezel diver in the same vein; its own dial identity rather than a strict copy, but the flavour is there" }
       ]
     },
