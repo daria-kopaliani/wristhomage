@@ -180,6 +180,25 @@ def search_query(house, name):
     return re.sub(r"\s{2,}", " ", q)
 
 
+def price_cell(c):
+    """Price with its provenance, where we have it.
+
+    Until 2026-08-12 every price was an unsourced "approximate street price", and
+    the audit found them understated by up to 46% against the brand's own store
+    (PD-1673 listed at $110 against $157.69, PD-1685 at $130 against $189.99).
+    A number nobody can check is worth little on a site whose whole claim is that
+    you can check everything, so verified prices now carry where and when they
+    came from. `priceFrom` marks stores that quote a range across configurations —
+    the figure is the base config, hence "from".
+    """
+    p = money(c.get("priceUSD"))
+    if not c.get("priceSource"):
+        return f'~{p}'
+    prefix = "from " if c.get("priceFrom") else ""
+    return (f'{prefix}{p}<span class="muted src"> · {esc(c["priceSource"])} '
+            f'{esc(c.get("priceDate",""))}</span>')
+
+
 def shop_link(homage):
     """Buy link for one homage row. Tagged Amazon search for Amazon houses; honest
     non-affiliate search otherwise. Never a fake tag."""
@@ -241,12 +260,13 @@ def original_page(o):
                  f'<td><strong>{esc(c.get("name"))}</strong><div class="note">{esc(note)}{direct}</div></td>'
                  f'<td>{esc(c.get("house",""))}</td>'
                  f'<td><b>{esc(c.get("fidelity","–"))}</b></td>'
-                 f'<td>~{money(c.get("priceUSD"))}<span class="muted"> / {esc(c.get("wr_m","?"))}m</span></td>'
+                 f'<td>{price_cell(c)}<span class="muted"> / {esc(c.get("wr_m","?"))}m</span></td>'
                  f'<td>{esc(c.get("movement",""))}</td>'
                  f'<td>{esc(c.get("size_mm","?"))}mm</td>'
                  f'<td>{shop_link(c)}</td>'
                  '</tr>')
     b.append('</tbody></table></div>')
+    b.append('<p class="muted">Prices are approximate and drift — check the listing before you buy. Where a price shows a source and date it was read from that seller on that day; \u201cfrom\u201d means the seller quotes a range across configurations and this is the base one. Amazon pricing for these brands often differs from the brand\u2019s own store, in both directions.</p>')
 
     # picks callout
     picks = []
