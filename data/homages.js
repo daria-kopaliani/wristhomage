@@ -140,7 +140,8 @@ window.HOMAGE_DATA = {
       cues: ["octagonal bezel", "tapisserie dial", "integrated bracelet", "exposed screws"],
       homages: [
         { name: "PD-1736", house: "Pagani Design", priceUSD: 110, size_mm: 41, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 78, amazon: true, note: "octagonal bezel with the exposed screws and a tapisserie-style dial; the pattern is stamped rather than machined but the silhouette reads instantly" },
-        { name: "SN043", house: "San Martin", priceUSD: 350, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: true, direct: true, note: "a genuinely close tapisserie dial and better bracelet integration; the pick when the dial texture matters to you" }
+        { name: "SN043", house: "San Martin", priceUSD: 350, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 9015)", fidelity: 83, amazon: true, direct: true, note: "a genuinely close tapisserie dial and better bracelet integration; the pick when the dial texture matters to you" },
+        { name: "C8180", house: "Cadisen", priceUSD: 87, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 75, amazon: true, note: "the cheapest way into the octagonal-bezel look with a real Seiko automatic and an exhibition caseback; wears a full 42mm against the original's 41mm and the stamped waffle dial is a step behind Pagani's finishing, but 100m of water resistance is double what the original offers" }
       ]
     },
     {

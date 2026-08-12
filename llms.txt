@@ -3,7 +3,7 @@
 > Independent, spec-rich database of watch homages — affordable watches that pay homage to iconic designs (Submariner, Speedmaster, Datejust and more), each ranked by a published fidelity rubric.
 
 ## Watches
-- [Royal Oak homages](https://wristhomage.com/watches/ap-royal-oak): 2 ranked homages of the Audemars Piguet Royal Oak
+- [Royal Oak homages](https://wristhomage.com/watches/ap-royal-oak): 3 ranked homages of the Audemars Piguet Royal Oak
 - [Fifty Fathoms homages](https://wristhomage.com/watches/blancpain-fifty-fathoms): 2 ranked homages of the Blancpain Fifty Fathoms
 - [Santos homages](https://wristhomage.com/watches/cartier-santos): 2 ranked homages of the Cartier Santos
 - [Tank Must homages](https://wristhomage.com/watches/cartier-tank): 2 ranked homages of the Cartier Tank Must
