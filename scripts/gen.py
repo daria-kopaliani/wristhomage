@@ -162,11 +162,29 @@ DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are af
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
 
+def search_query(house, name):
+    """Build the retailer search string from a row.
+
+    The naive f"{house} {name} watch" leaked editorial text straight into the
+    query (found 2026-08-12): parentheticals meant for readers — "PD-1664 (Chrono)",
+    "SRPE control (Seiko 5 dive)" — and rows whose name repeats the brand, giving
+    "Baltany Baltany Field 36". "control" is our own word for a reference watch
+    that is not a homage; no shopper ever types it. Each of those makes the search
+    worse than the bare model number would be.
+    """
+    name = re.sub(r"\s*\([^)]*\)", "", name).strip()          # drop reader-facing asides
+    if house and name.lower().startswith(house.lower()):        # "Baltany Baltany Field 36"
+        name = name[len(house):].strip()
+    name = re.sub(r"\bcontrol\b", "", name, flags=re.I).strip()
+    q = " ".join(part for part in (house, name, "watch") if part)
+    return re.sub(r"\s{2,}", " ", q)
+
+
 def shop_link(homage):
     """Buy link for one homage row. Tagged Amazon search for Amazon houses; honest
     non-affiliate search otherwise. Never a fake tag."""
     house, name = homage.get("house", ""), homage.get("name", "")
-    q = f"{house} {name} watch"
+    q = search_query(house, name)
     on_amazon = homage.get("amazon") or house in AMAZON_HOUSES
     if homage.get("amazon") is False:
         on_amazon = False
