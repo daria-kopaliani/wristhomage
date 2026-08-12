@@ -87,7 +87,7 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Rolex 3230)",
       cues: ["3-6-9 dial", "oyster bracelet", "field", "no date"],
       homages: [
-        { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 83, amazon: true, note: "one of Pagani's best-proportioned pieces — correct 36mm, clean 3-6-9 dial, no date window to spoil the symmetry" },
+        { name: "PD-1751", house: "Pagani Design", priceUSD: 100, size_mm: 36, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, note: "a clean 36mm three-hander with sapphire and a genuine 200m rating for around a hundred dollars; Pagani markets it as a Ranger homage rather than an Explorer one, and the 3-6-9 dial language serves both — read it as the shape rather than a line-for-line copy" },
         { name: "SN017", house: "San Martin", priceUSD: 290, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000)", fidelity: 86, amazon: true, direct: true, note: "sapphire, better lume and a Swiss PT5000 (an ETA 2824 workalike); the community's default Explorer homage above the budget tier" },
         { name: "Baltany Field 36", house: "Baltany", priceUSD: 180, size_mm: 36, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 76, amazon: true, direct: true, note: "vintage-leaning take with a domed crystal; usually cheaper direct on AliExpress" }
       ]
@@ -212,6 +212,7 @@ window.HOMAGE_DATA = {
       cues: ["24h fixed bezel", "orange gmt hand", "steve mcqueen", "tool gmt", "no cyclops"],
       homages: [
         { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
+        { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 42, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 77, amazon: true, note: "the freccione orange 24-hour hand and fixed bezel at a fraction of the money, with sapphire and a real 200m rating; it wears 42mm, a size up on the modern original and two on the vintage one it echoes" },
         { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: true, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
       ]
     },
