@@ -57,7 +57,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1645", house: "Pagani Design", priceUSD: 90, size_mm: 40, wr_m: 30, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "fluted bezel, jubilee bracelet and cyclops date with a Seiko auto — the go-to affordable Datejust look, though it wears larger at 40mm" },
         { name: "C1032", house: "Cadisen", priceUSD: 130, size_mm: 40, wr_m: 50, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 74, amazon: true, note: "another sub-$150 Datejust-style auto; finishing is a notch below Pagani but the sizing options are handy" },
-        { name: "SN054", house: "San Martin", priceUSD: 300, size_mm: 36, wr_m: 100, movement: "Automatic (PT5000 / Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the one that nails the 36mm proportions the original is known for, with a much better movement and bracelet" }
+        { name: "SN0058-G-X", house: "San Martin", priceUSD: 330, size_mm: 36.5, wr_m: 100, movement: "Automatic (PT5000 / SW200)", fidelity: 85, amazon: true, direct: true, note: "the one that nails the proportions the original is known for — 36.5mm and 11.9mm thin, on a five-link bracelet, with a carved bezel rather than a stamped one; a Swiss-class PT5000 or SW200 rather than the Seiko autos the budget tier runs" },
       ]
     },
     {
