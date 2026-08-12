@@ -119,8 +119,8 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Patek 26-330)",
       cues: ["integrated bracelet", "porthole case", "horizontal-groove dial", "luxury sport"],
       homages: [
-        { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 80, amazon: true, note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
-        { name: "SN035", house: "San Martin", priceUSD: 340, size_mm: 40, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 85, amazon: true, direct: true, note: "the integrated bracelet taper and case finishing the budget versions miss; a smoother 9015 auto" }
+        { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seagull ST6)", fidelity: 80, amazon: true, note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
+        { name: "SN076-G", house: "San Martin", priceUSD: 340, size_mm: 42, wr_m: 200, movement: "Automatic (PT5000 / SW200)", fidelity: 82, amazon: true, direct: true, note: "the case finishing and bracelet taper the budget versions miss, on a Swiss-class PT5000 or SW200 rather than a Seiko auto, with a genuine 200m rating; it wears 42mm against the original's 40mm, which is the one thing it does not get right" },
       ]
     },
     {
