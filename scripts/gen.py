@@ -46,10 +46,14 @@ ARTICLES = [
     "/articles/best-daytona-homage",
     "/articles/best-royal-oak-homage",
     "/articles/best-seamaster-homage",
+    "/articles/best-explorer-2-homage",
+    "/articles/best-nautilus-homage",
+    "/articles/best-santos-homage",
     "/guides/pagani-design",
     "/guides/san-martin",
     "/guides/steeldive",
     "/guides/baltany",
+    "/guides/cadisen",
 ]
 
 # Sitemap lastmod. Derived from git: the last commit that touched the HTML file a URL
@@ -309,6 +313,12 @@ def original_page(o):
     houses = {c.get("house") for c in homages}
     if o["id"] in ("rolex-gmt-master-ii", "rolex-explorer-ii"):
         further.append('<a href="/articles/best-gmt-homage">The best Rolex GMT homage, ranked</a>')
+    if o["id"] == "rolex-explorer-ii":
+        further.append('<a href="/articles/best-explorer-2-homage">The best Explorer II homage, ranked</a>')
+    if o["id"] == "patek-nautilus":
+        further.append('<a href="/articles/best-nautilus-homage">The best Nautilus homage, ranked</a>')
+    if o["id"] == "cartier-santos":
+        further.append('<a href="/articles/best-santos-homage">The best Santos homage, ranked</a>')
     if o["id"] == "rolex-submariner":
         further.append('<a href="/articles/best-submariner-homage-under-200">The best Submariner homage under $200</a>')
     if o["id"] == "omega-speedmaster":
@@ -329,6 +339,8 @@ def original_page(o):
         further.append('<a href="/guides/steeldive">Are Steeldive watches any good?</a>')
     if "Baltany" in houses:
         further.append('<a href="/guides/baltany">Baltany watches review</a>')
+    if "Cadisen" in houses:
+        further.append('<a href="/guides/cadisen">Cadisen watches review</a>')
     if further:
         b.append('<p><strong>Further reading:</strong> ' + ' · '.join(further) + '</p>')
 
@@ -472,14 +484,18 @@ def hub_page(originals):
     b.append('<p>The table above scores individual watches. One level up, the houses that build '
              'them: <a href="/guides/san-martin">San Martin</a>, '
              '<a href="/guides/pagani-design">Pagani Design</a>, '
-             '<a href="/guides/steeldive">Steeldive</a> and '
-             '<a href="/guides/baltany">Baltany</a>, each reviewed model by model.</p>')
+             '<a href="/guides/steeldive">Steeldive</a>, '
+             '<a href="/guides/baltany">Baltany</a> and '
+             '<a href="/guides/cadisen">Cadisen</a>, each reviewed model by model.</p>')
     b.append('<p>Ranked by icon: <a href="/articles/best-submariner-homage-under-200">Submariner '
              'under $200</a>, <a href="/articles/best-gmt-homage">Rolex GMT</a>, '
+             '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
              '<a href="/articles/best-speedmaster-homage">Speedmaster</a>, '
              '<a href="/articles/best-datejust-homage">Datejust</a>, '
              '<a href="/articles/best-daytona-homage">Daytona</a>, '
-             '<a href="/articles/best-royal-oak-homage">Royal Oak</a> and '
+             '<a href="/articles/best-royal-oak-homage">Royal Oak</a>, '
+             '<a href="/articles/best-nautilus-homage">Nautilus</a>, '
+             '<a href="/articles/best-santos-homage">Santos</a> and '
              '<a href="/articles/best-seamaster-homage">Seamaster</a>. If you are still deciding '
              'whether to buy one at all, start with '
              '<a href="/articles/are-homage-watches-ok">are homage watches OK?</a> and '
@@ -536,7 +552,11 @@ def llms(originals):
               f"- [Pagani Design, model by model]({SITE}/guides/pagani-design): the budget homage brand and the right model for each icon",
               f"- [Are Steeldive watches any good?]({SITE}/guides/steeldive): honest brand review of the budget dive-watch specialist, model by model",
               f"- [Baltany watches review]({SITE}/guides/baltany): honest brand review of the vintage-proportions homage maker, model by model",
+              f"- [Cadisen watches review]({SITE}/guides/cadisen): honest brand review of the spec-per-dollar budget brand, model by model",
               f"- [The best Rolex GMT homage]({SITE}/articles/best-gmt-homage): affordable GMT-Master II homages, ranked",
+              f"- [The best Explorer II homage]({SITE}/articles/best-explorer-2-homage): polar dials and freccione hands, ranked",
+              f"- [The best Nautilus homage]({SITE}/articles/best-nautilus-homage): the porthole field, verified and ranked",
+              f"- [The best Santos homage]({SITE}/articles/best-santos-homage): the square-bezel field, verified and ranked",
               f"- [The best Datejust homage]({SITE}/articles/best-datejust-homage): why 36mm decides it, and the three worth knowing",
               f"- [The best Daytona homage]({SITE}/articles/best-daytona-homage): meca-quartz explained, and the three worth knowing",
               f"- [The best AP Royal Oak homage]({SITE}/articles/best-royal-oak-homage): stamped vs machined tapisserie, and the two worth knowing",

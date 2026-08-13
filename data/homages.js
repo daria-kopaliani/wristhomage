@@ -63,7 +63,7 @@ window.HOMAGE_DATA = {
       cues: ["fluted bezel", "jubilee bracelet", "cyclops date", "everyday dress"],
       homages: [
         { name: "PD-1645", house: "Pagani Design", priceUSD: 90, size_mm: 40, wr_m: 30, movement: "Automatic (Seiko NH35)", fidelity: 79, amazon: true, note: "fluted bezel, jubilee bracelet and cyclops date with a Seiko auto — the go-to affordable Datejust look, though it wears larger at 40mm" },
-        { name: "C1032", house: "Cadisen", priceUSD: 130, size_mm: 40, wr_m: 50, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 74, amazon: true, note: "another sub-$150 Datejust-style auto; finishing is a notch below Pagani but the sizing options are handy" },
+        { name: "C8053", house: "Cadisen", priceUSD: 80, size_mm: 38, wr_m: 50, movement: "Automatic (Miyota 8215)", fidelity: 76, priceSource: "cadisenwatch.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "Cadisen's own catalog titles this one Datejust — fluted-look bezel, cyclops date and sapphire at 38mm, a size closer to the original than the Pagani's 40; the cheapest way into the look with dial and gold combinations the budget tier rarely offers" },
         { name: "SN0058-G-X", house: "San Martin", priceFrom: true, priceUSD: 326, size_mm: 36.5, wr_m: 100, movement: "Automatic (PT5000 / SW200)", fidelity: 85, priceSource: "sanmartinwatches.com", priceDate: "2026-08-12", amazon: true, direct: true, verified: "2026-08-12", note: "the one that nails the proportions the original is known for — 36.5mm and 11.9mm thin, on a five-link bracelet, with a carved bezel rather than a stamped one; a Swiss-class PT5000 or SW200 rather than the Seiko autos the budget tier runs" },
       ]
     },
@@ -75,6 +75,7 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1752", house: "Pagani Design", priceUSD: 135, size_mm: 36, wr_m: 30, movement: "Automatic day-date (ST16-class)", fidelity: 82, amazon: true, note: "the one that keeps the 36mm President proportions — fluted bezel, president-style bracelet, day and date under sapphire for around $135" },
         { name: "PD-1783 (DD40)", house: "Pagani Design", priceUSD: 145, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH36)", fidelity: 78, amazon: true, note: "the modern 40mm take with a proper NH36 day-date auto and a 100m rating; wears larger and sportier than the classic 36" },
+        { name: "C8185", house: "Cadisen", priceUSD: 104, size_mm: 40, wr_m: 100, movement: "Automatic day-date (Miyota 8285)", fidelity: 74, priceSource: "cadisenwatch.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "Cadisen's presidential-style day-date on a genuine Miyota 8285, with a dial range the segment is famous for — full gold, meteorite white and Tiffany blue — plus sapphire and a 100m rating at 40mm" },
         { name: "Contemporary day-date (RA-AA0C)", house: "Orient", priceUSD: 180, size_mm: 42, wr_m: 50, movement: "Automatic (Orient F6922)", fidelity: 55, amazon: true, note: "not a President copy — the honest budget day-date automatic the community reaches for since the old Orient President left the catalog; own identity, in-house auto" }
       ]
     },
@@ -127,16 +128,8 @@ window.HOMAGE_DATA = {
       homages: [
         { name: "PD-1728", house: "Pagani Design", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seagull ST6)", fidelity: 80, amazon: true, verified: "2026-08-12", note: "the porthole case, ears and grooved dial in steel with an integrated bracelet — the reason Pagani sells out; wears close to the original's 40mm" },
         { name: "SN076-G", house: "San Martin", priceFrom: true, priceUSD: 299, size_mm: 42, wr_m: 200, movement: "Automatic (PT5000 / SW200)", fidelity: 82, priceSource: "sanmartinwatches.com", priceDate: "2026-08-12", amazon: true, direct: true, verified: "2026-08-12", note: "the case finishing and bracelet taper the budget versions miss, on a Swiss-class PT5000 or SW200 rather than a Seiko auto, with a genuine 200m rating; it wears 42mm against the original's 40mm, which is the one thing it does not get right" },
-      ]
-    },
-    {
-      id: "patek-aquanaut", name: "Aquanaut", house: "Patek Philippe", ref: "5167A",
-      priceUSD: 24000, type: "integrated", size_mm: 40, wr_m: 120,
-      movement: "Automatic (Patek 26-330)",
-      cues: ["rounded octagon case", "embossed dial", "tropical rubber strap", "luxury sport"],
-      homages: [
-        { name: "Aquanaut automatic", house: "Specht & Söhne", priceUSD: 139, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota 8215)", fidelity: 84, amazon: true, note: "the rounded-octagon case, embossed grid dial and tropical-style rubber strap with a workhorse Miyota auto — the closest currently-sold Aquanaut homage; the field here is far thinner than the Nautilus's" },
-        { name: "Aquanaut chrono", house: "Specht & Söhne", priceUSD: 86, size_mm: 42, wr_m: 30, movement: "Quartz chronograph", fidelity: 74, amazon: true, note: "the 5968-chrono look for well under a hundred; quartz inside, so treat it as a style buy rather than a movement buy" }
+        { name: "S466 Heritage", house: "Sugess", priceUSD: 259, size_mm: 38.5, wr_m: 50, movement: "Automatic (Miyota 9015)", fidelity: 75, priceSource: "sugesswatch.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "the porthole octagonal case and integrated bracelet on a genuine hi-beat Miyota 9015, in a 9mm case that respects the original's slimness; the day display and enamel or MOP dial options stray from the 5711's horizontal grooves, and 50m is well short of the original's 120m" },
+        { name: "Automatic 1983 E-Line", house: "Timex", priceUSD: 279, size_mm: 34, wr_m: 50, movement: "Automatic (Miyota 8215)", fidelity: 60, priceSource: "timex.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "not a Nautilus copy — a revival of Timex's own 1983 TV-dial design that lands in the same rounded-porthole territory, from a mainstream brand with a real warranty; 34mm and an acrylic crystal, so treat it as the character buy" },
       ]
     },
     {
@@ -197,8 +190,9 @@ window.HOMAGE_DATA = {
       movement: "Automatic (Cartier 1847 MC)",
       cues: ["square case", "exposed screws", "roman numerals", "integrated bracelet", "dress-sport"],
       homages: [
+        { name: "SP0037A1", house: "Specht & Söhne", priceUSD: 278, size_mm: 37, wr_m: 50, movement: "Automatic (Miyota 8215)", fidelity: 81, priceSource: "spechtandsohnewatches.com", priceDate: "2026-08-13", amazon: false, direct: true, verified: "2026-08-13", note: "the closest square in the field — exposed bezel screws, roman dial and a screwed integrated bracelet on a workhorse Miyota automatic; it wears 37mm against the large Santos's 39.8mm and carries half the water resistance. Sold direct only — beware lookalike domains the brand itself flags as scams" },
         { name: "PD-1644", house: "Pagani Design", priceUSD: 100, size_mm: 40, wr_m: 30, movement: "Quartz (Japanese)", fidelity: 80, amazon: true, note: "the square bezel with exposed screws, roman-numeral dial and an integrated bracelet; the affordable Santos look, kept slim with a quartz movement" },
-        { name: "Santos-style Auto", house: "Cadisen", priceUSD: 135, size_mm: 40, wr_m: 50, movement: "Automatic (Miyota)", fidelity: 72, amazon: true, note: "an automatic take on the square dress-sport with the screw motif; finishing a step below but a sharp everyday look for the money" }
+        { name: "SP0011Q3", house: "Specht & Söhne", priceUSD: 134, size_mm: 34, wr_m: 50, movement: "Quartz (Seiko VH31)", fidelity: 62, priceSource: "spechtandsohnewatches.com", priceDate: "2026-08-13", amazon: false, direct: true, verified: "2026-08-13", note: "the smooth-bezel square — really a Santos-Dumont homage rather than the screwed-bezel modern watch: 8.6mm thin with a sweeping VH31 quartz, the dressier take; the brand's mid-range automatic squares sell out often" }
       ]
     },
     {
@@ -218,8 +212,11 @@ window.HOMAGE_DATA = {
       cues: ["24h fixed bezel", "orange gmt hand", "steve mcqueen", "tool gmt", "no cyclops"],
       homages: [
         { name: "Expedition North GMT Titanium", house: "Timex", priceUSD: 550, size_mm: 41, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 76, amazon: true, note: "titanium case, a real Seiko GMT movement and a 24h bezel with clear Steve McQueen Explorer II styling; a genuinely good tool GMT, not just a lookalike" },
+        { name: "WD16570 V2 Pioneer", house: "Watchdives", priceUSD: 229, size_mm: 37, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 81, priceSource: "watchdives.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "named straight after the 16570 reference and the closest dial in the field — enamel polar-white with the orange GMT hand, fixed 24h steel bezel and sapphire; it wears a compact 37mm against the original's 42mm, which is the one big honest gap" },
         { name: "PD-1693", house: "Pagani Design", priceUSD: 90, size_mm: 42, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 77, amazon: true, verified: "2026-08-12", note: "the freccione orange 24-hour hand and fixed bezel at a fraction of the money, with sapphire and a real 200m rating; it wears 42mm, a size up on the modern original and two on the vintage one it echoes" },
-        { name: "Explorer II-style GMT", house: "Baltany", priceUSD: 210, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, amazon: true, direct: true, note: "the orange-hand tool-GMT look at a budget price, sold direct; smaller and more wearable than the original" }
+        { name: "SN0054-G-C2", house: "San Martin", priceFrom: true, priceUSD: 309, size_mm: 39, wr_m: 100, movement: "Automatic GMT (Seiko NH34)", fidelity: 75, priceSource: "sanmartinwatches.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "the watch the community means by a San Martin Explorer II — honestly a hybrid: fixed steel bezel, matte white or black dial and a true NH34 GMT, but Tudor-style snowflake hands and 39mm where the original is 42mm" },
+        { name: "S6073AB", house: "Baltany", priceUSD: 283, size_mm: 39, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 73, priceSource: "baltany.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "Baltany's only fixed-bezel GMT — the orange-hand tool-GMT look in a vintage-leaning 39mm case; periodically sells out direct, so check both stores" },
+        { name: "SSK023 (Seiko 5 Field GMT)", house: "Seiko", priceUSD: 450, size_mm: 39.4, wr_m: 100, movement: "Automatic GMT (Seiko 4R34)", fidelity: 64, priceSource: "seikowatches.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "not a copy — the spiritual fixed-24h-bezel alternative from a real watchmaking house, with an in-house GMT caliber and its own red-hand dial identity; the polar-dial SSK059 sibling is a limited release that comes and goes" }
       ]
     },
     {
@@ -249,7 +246,7 @@ window.HOMAGE_DATA = {
       cues: ["bidirectional bezel", "sunburst dial", "oyster bracelet", "dressy diver", "raised bezel numerals"],
       homages: [
         { name: "PD-1651", house: "Pagani Design", priceUSD: 95, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 82, amazon: true, verified: "2026-08-12", note: "one of the visually closest Yacht-Master homages — bidirectional bezel, sunburst dial, oyster bracelet — with a Seiko auto for well under a hundred" },
-        { name: "Sunburst Diver", house: "Cadisen", priceUSD: 140, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35 / Miyota)", fidelity: 70, amazon: true, note: "a dressy rotating-bezel diver in the same vein; its own dial identity rather than a strict copy, but the flavour is there" }
+        { name: "C8210", house: "Cadisen", priceUSD: 105, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 70, priceSource: "cadisenwatch.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "Cadisen's own catalog titles it Yacht-Master — a dressy rotating-bezel diver at the original's 40mm with sapphire and lume; its own dial colours rather than a strict copy, but the flavour is there" }
       ]
     },
     {

@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects.
+# Aquanaut page retired 2026-08-13: its only two rows were Specht & Söhne models the
+# brand's own store no longer sells (the line survives only on domains the brand
+# flags as scams), and no verifiable replacement exists. Closest live field:
+/watches/patek-aquanaut  /watches/patek-nautilus  301

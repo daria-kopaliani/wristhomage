@@ -5,7 +5,7 @@
 ## Watches
 - [Royal Oak homages](https://wristhomage.com/watches/ap-royal-oak): 3 ranked homages of the Audemars Piguet Royal Oak
 - [Fifty Fathoms homages](https://wristhomage.com/watches/blancpain-fifty-fathoms): 2 ranked homages of the Blancpain Fifty Fathoms
-- [Santos homages](https://wristhomage.com/watches/cartier-santos): 2 ranked homages of the Cartier Santos
+- [Santos homages](https://wristhomage.com/watches/cartier-santos): 3 ranked homages of the Cartier Santos
 - [Tank Must homages](https://wristhomage.com/watches/cartier-tank): 2 ranked homages of the Cartier Tank Must
 - [Big Pilot homages](https://wristhomage.com/watches/iwc-big-pilot): 4 ranked homages of the IWC Big Pilot
 - [Portugieser homages](https://wristhomage.com/watches/iwc-portugieser): 2 ranked homages of the IWC Portugieser
@@ -15,13 +15,12 @@
 - [Seamaster Diver 300M homages](https://wristhomage.com/watches/omega-seamaster-300m): 1 ranked homages of the Omega Seamaster Diver 300M
 - [Speedmaster Moonwatch homages](https://wristhomage.com/watches/omega-speedmaster): 3 ranked homages of the Omega Speedmaster Moonwatch
 - [Luminor Marina homages](https://wristhomage.com/watches/panerai-luminor): 2 ranked homages of the Panerai Luminor Marina
-- [Aquanaut homages](https://wristhomage.com/watches/patek-aquanaut): 2 ranked homages of the Patek Philippe Aquanaut
-- [Nautilus homages](https://wristhomage.com/watches/patek-nautilus): 2 ranked homages of the Patek Philippe Nautilus
+- [Nautilus homages](https://wristhomage.com/watches/patek-nautilus): 4 ranked homages of the Patek Philippe Nautilus
 - [Datejust homages](https://wristhomage.com/watches/rolex-datejust): 3 ranked homages of the Rolex Datejust
-- [Day-Date 36 homages](https://wristhomage.com/watches/rolex-day-date): 3 ranked homages of the Rolex Day-Date 36
+- [Day-Date 36 homages](https://wristhomage.com/watches/rolex-day-date): 4 ranked homages of the Rolex Day-Date 36
 - [Daytona homages](https://wristhomage.com/watches/rolex-daytona): 3 ranked homages of the Rolex Daytona
 - [Explorer homages](https://wristhomage.com/watches/rolex-explorer): 3 ranked homages of the Rolex Explorer
-- [Explorer II homages](https://wristhomage.com/watches/rolex-explorer-ii): 3 ranked homages of the Rolex Explorer II
+- [Explorer II homages](https://wristhomage.com/watches/rolex-explorer-ii): 6 ranked homages of the Rolex Explorer II
 - [GMT-Master II homages](https://wristhomage.com/watches/rolex-gmt-master-ii): 4 ranked homages of the Rolex GMT-Master II
 - [Milgauss homages](https://wristhomage.com/watches/rolex-milgauss): 2 ranked homages of the Rolex Milgauss
 - [Oyster Perpetual 41 homages](https://wristhomage.com/watches/rolex-oyster-perpetual): 2 ranked homages of the Rolex Oyster Perpetual 41
@@ -36,7 +35,11 @@
 - [Pagani Design, model by model](https://wristhomage.com/guides/pagani-design): the budget homage brand and the right model for each icon
 - [Are Steeldive watches any good?](https://wristhomage.com/guides/steeldive): honest brand review of the budget dive-watch specialist, model by model
 - [Baltany watches review](https://wristhomage.com/guides/baltany): honest brand review of the vintage-proportions homage maker, model by model
+- [Cadisen watches review](https://wristhomage.com/guides/cadisen): honest brand review of the spec-per-dollar budget brand, model by model
 - [The best Rolex GMT homage](https://wristhomage.com/articles/best-gmt-homage): affordable GMT-Master II homages, ranked
+- [The best Explorer II homage](https://wristhomage.com/articles/best-explorer-2-homage): polar dials and freccione hands, ranked
+- [The best Nautilus homage](https://wristhomage.com/articles/best-nautilus-homage): the porthole field, verified and ranked
+- [The best Santos homage](https://wristhomage.com/articles/best-santos-homage): the square-bezel field, verified and ranked
 - [The best Datejust homage](https://wristhomage.com/articles/best-datejust-homage): why 36mm decides it, and the three worth knowing
 - [The best Daytona homage](https://wristhomage.com/articles/best-daytona-homage): meca-quartz explained, and the three worth knowing
 - [The best AP Royal Oak homage](https://wristhomage.com/articles/best-royal-oak-homage): stamped vs machined tapisserie, and the two worth knowing
