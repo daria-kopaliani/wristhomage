@@ -4,17 +4,12 @@
 
 ## Watches
 - [Royal Oak homages](https://wristhomage.com/watches/ap-royal-oak): 3 ranked homages of the Audemars Piguet Royal Oak
-- [Fifty Fathoms homages](https://wristhomage.com/watches/blancpain-fifty-fathoms): 2 ranked homages of the Blancpain Fifty Fathoms
-- [Santos homages](https://wristhomage.com/watches/cartier-santos): 3 ranked homages of the Cartier Santos
+- [Fifty Fathoms homages](https://wristhomage.com/watches/blancpain-fifty-fathoms): 1 ranked homages of the Blancpain Fifty Fathoms
+- [Santos homages](https://wristhomage.com/watches/cartier-santos): 2 ranked homages of the Cartier Santos
 - [Tank Must homages](https://wristhomage.com/watches/cartier-tank): 2 ranked homages of the Cartier Tank Must
-- [Big Pilot homages](https://wristhomage.com/watches/iwc-big-pilot): 4 ranked homages of the IWC Big Pilot
-- [Portugieser homages](https://wristhomage.com/watches/iwc-portugieser): 2 ranked homages of the IWC Portugieser
-- [Legend Diver homages](https://wristhomage.com/watches/longines-legend-diver): 2 ranked homages of the Longines Legend Diver
-- [Aqua Terra homages](https://wristhomage.com/watches/omega-aqua-terra): 2 ranked homages of the Omega Aqua Terra
-- [Seamaster 300 (Heritage) homages](https://wristhomage.com/watches/omega-seamaster-300-heritage): 2 ranked homages of the Omega Seamaster 300 (Heritage)
-- [Seamaster Diver 300M homages](https://wristhomage.com/watches/omega-seamaster-300m): 1 ranked homages of the Omega Seamaster Diver 300M
-- [Speedmaster Moonwatch homages](https://wristhomage.com/watches/omega-speedmaster): 3 ranked homages of the Omega Speedmaster Moonwatch
-- [Luminor Marina homages](https://wristhomage.com/watches/panerai-luminor): 2 ranked homages of the Panerai Luminor Marina
+- [Big Pilot homages](https://wristhomage.com/watches/iwc-big-pilot): 2 ranked homages of the IWC Big Pilot
+- [Seamaster Diver 300M homages](https://wristhomage.com/watches/omega-seamaster-300m): 2 ranked homages of the Omega Seamaster Diver 300M
+- [Speedmaster Moonwatch homages](https://wristhomage.com/watches/omega-speedmaster): 2 ranked homages of the Omega Speedmaster Moonwatch
 - [Nautilus homages](https://wristhomage.com/watches/patek-nautilus): 4 ranked homages of the Patek Philippe Nautilus
 - [Datejust homages](https://wristhomage.com/watches/rolex-datejust): 3 ranked homages of the Rolex Datejust
 - [Day-Date 36 homages](https://wristhomage.com/watches/rolex-day-date): 4 ranked homages of the Rolex Day-Date 36
@@ -22,7 +17,6 @@
 - [Explorer homages](https://wristhomage.com/watches/rolex-explorer): 3 ranked homages of the Rolex Explorer
 - [Explorer II homages](https://wristhomage.com/watches/rolex-explorer-ii): 6 ranked homages of the Rolex Explorer II
 - [GMT-Master II homages](https://wristhomage.com/watches/rolex-gmt-master-ii): 4 ranked homages of the Rolex GMT-Master II
-- [Milgauss homages](https://wristhomage.com/watches/rolex-milgauss): 2 ranked homages of the Rolex Milgauss
 - [Oyster Perpetual 41 homages](https://wristhomage.com/watches/rolex-oyster-perpetual): 2 ranked homages of the Rolex Oyster Perpetual 41
 - [Submariner homages](https://wristhomage.com/watches/rolex-submariner): 7 ranked homages of the Rolex Submariner
 - [Yacht-Master homages](https://wristhomage.com/watches/rolex-yacht-master): 2 ranked homages of the Rolex Yacht-Master

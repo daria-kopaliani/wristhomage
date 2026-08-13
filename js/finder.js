@@ -10,7 +10,7 @@
   var DATA = (window.HOMAGE_DATA || { originals: [] });
   var AMAZON_TAG = "wristhomage-20";
   var AMAZON_HOUSES = { "Pagani Design": 1, "Invicta": 1, "Casio": 1, "Timex": 1, "Bulova": 1,
-    "Seiko": 1, "Orient": 1, "Citizen": 1, "Steeldive": 1, "Cadisen": 1, "Berny": 1, "Addies": 1,
+    "Seiko": 1, "Orient": 1, "Citizen": 1, "Steeldive": 1, "Cadisen": 1, "Berny": 1, "Addiesdive": 1,
     // verified on US Amazon 2026-08-01 (data also flipped to amazon:true; keep in sync with gen.py)
     "San Martin": 1, "Baltany": 1, "Sugess": 1, "Watchdives": 1 };
 

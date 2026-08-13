@@ -30,7 +30,7 @@ AMAZON_TAG = "wristhomage-20"
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
 AMAZON_HOUSES = {"Pagani Design", "Invicta", "Casio", "Timex", "Bulova", "Seiko",
-                 "Orient", "Citizen", "Steeldive", "Cadisen", "Berny", "Addies",
+                 "Orient", "Citizen", "Steeldive", "Cadisen", "Berny", "Addiesdive",
                  "San Martin", "Baltany", "Sugess", "Watchdives"}
 
 # Only BUILT pages go in the sitemap (unbuilt URLs → GSC 404s). Add each article

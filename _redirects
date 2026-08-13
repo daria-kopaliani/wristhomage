@@ -1,5 +1,23 @@
 # Cloudflare Pages redirects.
-# Aquanaut page retired 2026-08-13: its only two rows were Specht & Söhne models the
-# brand's own store no longer sells (the line survives only on domains the brand
-# flags as scams), and no verifiable replacement exists. Closest live field:
+#
+# Pages retired because a first-party audit left them with no verifiable inventory.
+# The rule: a watch page exists only while at least one homage on it has been checked
+# against the brand's own store. Filling a page to keep it alive is what produced the
+# ghost rows in the first place.
+#
+# 2026-08-13: the Aquanaut's only two rows were Specht & Söhne models the brand's own
+# store no longer sells (the line survives only on domains the brand flags as scams).
 /watches/patek-aquanaut  /watches/patek-nautilus  301
+#
+# 2026-08-13, second pass: six fields lost every row to the same audit. San Martin's
+# 319-product catalog contains no Fifty Fathoms, Portugieser, Milgauss or Panerai
+# homage and no SN011 or SN041 at all; Baltany's 76-model catalog contains no Big
+# Pilot, super-compressor or Milgauss homage; the "Aqua Terra" rows were a San Martin
+# 1957 retro and a Baltany Datejust homage. Nothing verifiable was left to list.
+/watches/panerai-luminor              /watches/                          301
+/watches/iwc-portugieser              /watches/                          301
+/watches/rolex-milgauss               /watches/                          301
+/watches/longines-legend-diver        /watches/                          301
+# Nearest genuine fields for the two that have one:
+/watches/omega-seamaster-300-heritage /watches/omega-seamaster-300m      301
+/watches/omega-aqua-terra             /watches/rolex-oyster-perpetual    301
