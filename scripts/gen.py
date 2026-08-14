@@ -565,6 +565,79 @@ def llms(originals):
     write("llms.txt", "\n".join(lines))
 
 
+def homepage_ssr(originals):
+    """Server-render the finder into index.html, and describe it as an ItemList.
+
+    The homepage's whole substance — every homage, ranked — was drawn by finder.js
+    into #cards / #icons-list, so anything that does not run JavaScript saw the
+    literal string "Loading the index…" and nothing else. That is the entire value
+    of the site invisible to AI crawlers, on the one property that has earned.
+    Sibling score sites got this treatment on 2026-07-29; wristhomage never did.
+
+    finder.js overwrites both containers' innerHTML on load, so this is pure
+    progressive enhancement — real users see no change. Idempotent: the markers
+    let it be re-run on every generate.
+    """
+    ranked = sorted(
+        ((h, o) for o in originals for h in o.get("homages", [])),
+        key=lambda t: (-(t[0].get("fidelity") or 0), t[0].get("priceUSD") or 0))
+
+    cards = []
+    for h, o in ranked:
+        price = f"${h['priceUSD']:,}" if h.get("priceUSD") else "price n/a"
+        cards.append(
+            f'<article class="eh-card"><h3>{esc(h["house"])} {esc(h["name"])}</h3>'
+            f'<p>Homage to the {esc(o["house"])} {esc(o["name"])}'
+            f'{" (" + esc(o["ref"]) + ")" if o.get("ref") else ""}. '
+            f'Fidelity {h.get("fidelity","—")}/100 on the published rubric. '
+            f'{price}{", " + str(h["size_mm"]) + "mm" if h.get("size_mm") else ""}'
+            f'{", " + str(h["wr_m"]) + "m WR" if h.get("wr_m") else ""}'
+            f'{", " + esc(h["movement"]) if h.get("movement") else ""}.'
+            f'{" " + esc(h["note"]) if h.get("note") else ""}</p></article>')
+
+    icons = [f'<article class="eh-ix"><h3><a href="/watches/{esc(o["id"])}">'
+             f'{esc(o["house"])} {esc(o["name"])}</a></h3>'
+             f'<p>{len(o.get("homages", []))} ranked homages'
+             f'{" · " + esc(o["ref"]) if o.get("ref") else ""}'
+             f'{" · ~$" + format(o["priceUSD"], ",") + " retail" if o.get("priceUSD") else ""}.</p>'
+             f'</article>' for o in originals]
+
+    # ItemList: the ranked index itself, machine-readable. Position order matches
+    # the rendered ranking so a citing engine can quote "ranked Nth" honestly.
+    item_list = ld({
+        "@context": "https://schema.org", "@type": "ItemList",
+        "name": "The Watch Homage Index",
+        "description": ("Watch homages ranked by a published 100-point fidelity rubric "
+                        "measuring design closeness to a specific original."),
+        "numberOfItems": len(ranked),
+        "itemListOrder": "https://schema.org/ItemListOrderDescending",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1,
+             "name": f"{h['house']} {h['name']}",
+             "description": (f"Homage to the {o['house']} {o['name']}; "
+                             f"fidelity {h.get('fidelity','n/a')}/100"
+                             + (f"; ${h['priceUSD']:,}" if h.get("priceUSD") else ""))}
+            for i, (h, o) in enumerate(ranked)],
+    })
+
+    path = os.path.join(ROOT, "index.html")
+    s = open(path, encoding="utf-8").read()
+    for cid, body in (("cards", "\n".join(cards)), ("icons-list", "\n".join(icons))):
+        pat = re.compile(r'(<div class="[^"]*" id="' + cid + r'">).*?(</div>)', re.S)
+        new, n = pat.subn(lambda m: m.group(1) + "<!--SSR-->" + body + m.group(2), s, count=1)
+        if not n:
+            raise SystemExit(f"homepage_ssr: no #{cid} container in index.html")
+        s = new
+    # Drop any ItemList block we wrote before re-adding, so repeat runs don't stack
+    # them. Must tolerate json.dumps' spacing ("@type": "ItemList") — matching the
+    # compact form silently never fired, and the blocks accumulated on every run.
+    s = re.sub(r'<script type="application/ld\+json">(?:(?!</script>).)*?"@type":\s*"ItemList".*?</script>\s*',
+               "", s, flags=re.S)
+    s = s.replace("</head>", item_list + "\n</head>", 1)
+    open(path, "w", encoding="utf-8").write(s)
+    return len(ranked), len(icons)
+
+
 def main():
     data = load_data()
     originals = data["originals"]
@@ -576,7 +649,9 @@ def main():
     write("watches/index.html", hub_page(originals))
     n = sitemap(originals, lastmods)
     llms(originals)
+    nh, ni = homepage_ssr(originals)
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
+    print(f"homepage SSR: {nh} homage cards + {ni} icon rows + ItemList({nh})")
 
 
 if __name__ == "__main__":
