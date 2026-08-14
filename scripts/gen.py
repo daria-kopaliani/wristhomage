@@ -622,6 +622,13 @@ def homepage_ssr(originals):
 
     path = os.path.join(ROOT, "index.html")
     s = open(path, encoding="utf-8").read()
+    # #count is a separate node from #cards, so it kept saying "Loading the index…"
+    # to anything without JS — a misleading sentence sitting right above the data,
+    # and exactly the kind of line an engine might quote. finder.js rewrites it.
+    s = re.sub(r'(<p class="eh-count" id="count">).*?(</p>)',
+               lambda m: (m.group(1) + f"<strong>{len(ranked)}</strong> watches ranked by "
+                          f"fidelity across <strong>{len(originals)}</strong> icons." + m.group(2)),
+               s, count=1, flags=re.S)
     for cid, body in (("cards", "\n".join(cards)), ("icons-list", "\n".join(icons))):
         pat = re.compile(r'(<div class="[^"]*" id="' + cid + r'">).*?(</div>)', re.S)
         new, n = pat.subn(lambda m: m.group(1) + "<!--SSR-->" + body + m.group(2), s, count=1)
