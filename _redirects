@@ -20,4 +20,19 @@
 /watches/longines-legend-diver        /watches/                          301
 # Nearest genuine fields for the two that have one:
 /watches/omega-seamaster-300-heritage /watches/omega-seamaster-300m      301
-/watches/omega-aqua-terra             /watches/rolex-oyster-perpetual    301
+#
+# 2026-08-17 — /watches/omega-aqua-terra UN-RETIRED, rule satisfied rather than bent.
+# The 08-13 retirement was correct: the rows then listed were a San Martin 1957 retro
+# and a Baltany Datejust homage, neither an Aqua Terra homage. The field itself was
+# never empty, only our rows were wrong. It now carries two homages checked against
+# the brand's own store on 2026-08-17 — San Martin SN0113W V2 ($289, watchdives.com)
+# and Pagani Design PD-1688 ($130, paganidesignwatch.com) — so the page exists on the
+# same condition every other one does. Four further candidates were checked and left
+# off rather than used to pad it: San Martin SN0144 (original JianZhan design),
+# Cadisen C1032 and Baltany S4094 (Datejust homages), ADDIESDIVE AD2075 (sold as its
+# own bark-texture dial, no homage claim).
+#
+# Note for whoever revisits the other retirements: demand is NOT what is missing.
+# Autocomplete carries panerai luminor homage (6 phrases), patek aquanaut homage (6),
+# iwc portugieser homage (4) and rolex milgauss homage (4). The binding constraint is
+# verifiable inventory, so re-opening any of them means finding real rows first.
