@@ -29,9 +29,26 @@ AMAZON_TAG = "wristhomage-20"
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
+# Houses genuinely findable on US Amazon. Re-checked by brand-level search on
+# 2026-08-17 (hits in the top 10 organic results):
+#   Baltany 10/10 · Cadisen 9/10 · Sugess 9/10 · Addiesdive 9/10 · Watchdives 8/10
+#   San Martin 0/10 · Steeldive 1/10   <- REMOVED
+#
+# San Martin and Steeldive were in this set on the strength of a 2026-08-01
+# brand-level check, and every row on them emitted a tagged Amazon search. Neither
+# is on US Amazon now: "San Martin watch automatic" returns "1963 Watch" and Specht
+# & Söhne, and "San Martin SN0113W" returns no San Martin at all. So the site's most
+# clicked buy link — out/amazon/san-martin-sn043, 11 clicks in 30 days — was landing
+# people on a page with none of the product on it, which is the likeliest reason 66
+# affiliate clicks in August produced zero orders.
+#
+# Note when re-checking: these brands' Amazon titles do NOT contain model numbers,
+# so a model-level search is not a valid test of presence — it returns junk even for
+# houses that are stocked. Test at brand level, and beware "PAGRNE DESIGN", a
+# typosquat that outranks genuine Pagani Design on its own model queries.
 AMAZON_HOUSES = {"Pagani Design", "Invicta", "Casio", "Timex", "Bulova", "Seiko",
-                 "Orient", "Citizen", "Steeldive", "Cadisen", "Berny", "Addiesdive",
-                 "San Martin", "Baltany", "Sugess", "Watchdives"}
+                 "Orient", "Citizen", "Cadisen", "Berny", "Addiesdive",
+                 "Baltany", "Sugess", "Watchdives"}
 
 # Only BUILT pages go in the sitemap (unbuilt URLs → GSC 404s). Add each article
 # to this list as it ships.
