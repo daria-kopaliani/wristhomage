@@ -234,6 +234,16 @@ window.HOMAGE_DATA = {
         { name: "SN007-G-V3", house: "San Martin", priceUSD: 238, size_mm: 40, wr_m: 200, movement: "Automatic (Seiko NH35 / NH36)", fidelity: 86, priceSource: "sanmartinwatches.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "the go-to 62MAS homage — 40mm, sapphire with AR coating, 200m, and finishing that punches well above the price; the 37mm SN007-G-X1 is usually the one in stock" },
         { name: "WD1965 V2", house: "Watchdives", priceUSD: 119, size_mm: 37, wr_m: 200, movement: "Quartz (Seiko VH31 sweep)", fidelity: 72, priceSource: "watchdives.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "the vintage-diver silhouette with a domed sapphire and a real 200m rating at the lowest price here; two honest caveats — it is a VH31 sweep-second quartz rather than an automatic, and the case is 37mm against the reissue's 40mm" }
       ]
+    },
+    {
+      id: "omega-aqua-terra", name: "Seamaster Aqua Terra 150M", house: "Omega", ref: "220.10.41",
+      priceUSD: 7100, type: "everyday", size_mm: 41, wr_m: 150,
+      movement: "Automatic (Omega 8900, METAS Master Chronometer)",
+      cues: ["dress-sport", "teak dial", "date", "everyday dress", "sunburst dial"],
+      homages: [
+        { name: "SN0113W V2", house: "San Martin", priceUSD: 289, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 86, priceSource: "watchdives.com", priceDate: "2026-08-17", amazon: true, direct: true, verified: "2026-08-17", note: "the closest thing to an Aqua Terra under three hundred — vertical teak-striped dial, applied indices, date at 3, sapphire with AR, at 38mm against Omega's own 38mm variant. Two honest caveats: it is 100m where the original is 150m, and despite being sold as a \"Chronometer\" it runs a Seiko NH35, which carries no chronometer certification — the word here describes the model line, not a COSC or METAS rating" },
+        { name: "PD-1688", house: "Pagani Design", priceUSD: 130, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 78, priceSource: "paganidesignwatch.com", priceDate: "2026-08-17", amazon: true, verified: "2026-08-17", note: "the cheap way into the look and the closest here to the original's 41mm case, with sapphire, 100m and a Seiko auto for about a third of the San Martin. The dial texture and bracelet finishing are where the money was saved — this reads as an Aqua Terra at arm's length rather than up close" }
+      ]
     }
   ]
 };

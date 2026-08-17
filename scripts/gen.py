@@ -604,6 +604,17 @@ def homepage_ssr(originals):
 
     # ItemList: the ranked index itself, machine-readable. Position order matches
     # the rendered ranking so a citing engine can quote "ranked Nth" honestly.
+    #
+    # Every entry carries the URL of the page that covers it. Without a url the
+    # entries are bare product names beside a price, and Google reads that as
+    # Product markup missing offers/review/aggregateRating — a critical Product
+    # snippets error. That is not hypothetical: it fired on canningscore and
+    # generatorscore on 2026-08-17 and the URL Inspection API confirmed the same
+    # ItemList shape as the cause on all eight score sites. This page had the
+    # stronger version of the signal (name AND price, still no url). The site sells
+    # nothing itself, so offers/aggregateRating would be a lie; pointing each entry
+    # at our own analysis is the honest fix and matches what gen.py already does
+    # by refusing to emit Product/Offer schema at all.
     item_list = ld({
         "@context": "https://schema.org", "@type": "ItemList",
         "name": "The Watch Homage Index",
@@ -614,6 +625,7 @@ def homepage_ssr(originals):
         "itemListElement": [
             {"@type": "ListItem", "position": i + 1,
              "name": f"{h['house']} {h['name']}",
+             "url": f"{SITE}/watches/{o['id']}",
              "description": (f"Homage to the {o['house']} {o['name']}; "
                              f"fidelity {h.get('fidelity','n/a')}/100"
                              + (f"; ${h['priceUSD']:,}" if h.get("priceUSD") else ""))}
