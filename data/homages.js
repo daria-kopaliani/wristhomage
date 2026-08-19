@@ -150,6 +150,7 @@ window.HOMAGE_DATA = {
       cues: ["dive", "snowflake hands", "gilt dial", "vintage diver", "domed crystal"],
       homages: [
         { name: "SN008-G", house: "San Martin", priceFrom: true, priceUSD: 326, size_mm: 40, wr_m: 200, movement: "Automatic (PT5000 / SW200)", fidelity: 85, priceSource: "sanmartinwatches.com", priceDate: "2026-08-13", amazon: false, direct: true, verified: "2026-08-13", note: "snowflake hands and a gilt dial that track the BB58 closely, on a Swiss-class movement; it wears 40mm against the original's 39, and the cheaper Seiko-powered version is a separate reference, the SN008-G-B" },
+        { name: "AD2043", house: "Addiesdive", priceUSD: 149, size_mm: 39, wr_m: 200, movement: "Automatic (Seiko NH35)", fidelity: 81, priceSource: "addiesdivewatches.com", priceDate: "2026-08-19", amazon: true, direct: true, verified: "2026-08-19", note: "the only row here that matches the original on both numbers that matter — 39mm and a real 200m — with snowflake hands Addiesdive names on its own product page, sapphire with AR and an aluminium 120-click bezel; the giveaway is height, 14.5mm over the crystal, so it stacks noticeably taller than the slim diver it follows, and the white dial is Addiesdive's own idea rather than the original's" },
       ]
     },
     {
