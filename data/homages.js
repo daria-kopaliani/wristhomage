@@ -1,3 +1,41 @@
+/* AMAZON-FLAG POLICY — audited 2026-08-27, read this before flipping `amazon: true`.
+ *
+ * 23 of 63 rows carry `amazon: false` and link to an honest, untagged search. That is
+ * NOT a monetisation leak to be "fixed" in bulk. Each was re-checked against amazon.com
+ * on 2026-08-27 and the honest link is the correct behaviour for almost all of them:
+ *
+ *   EXACT MODEL NOT ON AMAZON — a tagged search returns the brand but the wrong watch,
+ *   which is the failure the 08-12 sweep spent ten commits undoing:
+ *     San Martin SN076-G   0 exact hits of 48 branded results
+ *     San Martin SN013-G   0 exact hits of 48   (this row sits on the site's #1 page)
+ *     San Martin SN0058-G-X 0 exact hits of 48
+ *     Specht & Söhne SP0037A1 / SP0011Q3 — brand is on Amazon (38/48) but every listing
+ *       is generic, and the square one that IS identifiable is a 5711 (Nautilus) shape,
+ *       not the Santos this row is filed under
+ *     Steinhart — 0 of 5 results; genuinely direct-only, unchanged since July
+ *
+ *   EXACT MODEL FOUND BUT AMAZON COSTS 40-80% MORE than the price this site quotes:
+ *     San Martin SN0054-G-C2   $439 on Amazon vs $309 direct   (+42%)
+ *     San Martin SN0111-T-A1   $699 on Amazon vs $389 direct   (+80%)
+ *     Steeldive SD1953         $195 on Amazon vs $118 direct   (+65%)
+ *     Steeldive SD1952         $235 on Amazon vs $138 direct   (+70%)
+ *     Steeldive SD1940         $210 on Amazon vs $130 direct   (+62%)
+ *   Tagging these would earn a commission by sending a reader to a worse deal on a page
+ *   that quotes the lower number. The commission is not worth the page being wrong.
+ *
+ *   FLIPPED, because it passes both tests: SN0134-G1, exact model listed, $349 vs $329
+ *   direct (+6%). Price and priceSource updated to match where the link actually lands.
+ *
+ * RULE for future passes: flip only when (a) the exact reference appears in the listing
+ * title AND (b) Amazon is within ~15% of the direct price. Brand presence alone is not
+ * sufficient — that is how a reader ends up on a watch we did not recommend.
+ *
+ * SEPARATE, UNRESOLVED: sanmartinwatches.com's own widget shows SN017, SN007, SN004,
+ * SN008, SN030 and SN019 as "Out of stock" while its current shop (12 products, none
+ * out of stock) has moved to newer references (SN0126, SN0138, SN0144). SN004-G and
+ * SN008-G are live rows here. Worth a proper per-model stock check — this is the same
+ * class as the 08-13 "the Explorer II page ranks a watch you cannot buy" commit.
+ */
 /* wristhomage — HOMAGE_DATA
  *
  * Every homage is a real, currently-sold product. Rows carrying `verified` have had
@@ -40,7 +78,7 @@ window.HOMAGE_DATA = {
       cues: ["gmt", "24h bezel", "pepsi", "jubilee bracelet", "true gmt"],
       homages: [
         { name: "PD-1662", house: "Pagani Design", priceUSD: 122, size_mm: 40, wr_m: 100, movement: "Automatic GMT (Pearl DG5833)", fidelity: 82, priceSource: "paganidesign.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "the homage that made Pagani famous — a true independently-set GMT hand with a ceramic Pepsi bezel and jubilee, at the original's 40mm; note the movement is a Pearl DG5833, not the Seiko NH34 the internet often claims — Pagani sells the NH34 version as a separate model at about $320" },
-        { name: "SN0134-G1", house: "San Martin", priceUSD: 329, size_mm: 40, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 87, priceSource: "sanmartinwatches.com", priceDate: "2026-08-13", amazon: false, direct: true, verified: "2026-08-13", note: "the in-stock member of San Martin's SN005 GMT family — tighter finishing than the budget set, a red-and-blue sapphire bezel and the original's exact 40mm; the canonical SN005-B-1S is the same watch at about $308 but is routinely sold out" },
+        { name: "SN0134-G1", house: "San Martin", priceUSD: 349, size_mm: 40, wr_m: 200, movement: "Automatic GMT (Seiko NH34)", fidelity: 87, priceSource: "amazon.com", priceDate: "2026-08-27", amazon: true, direct: true, verified: "2026-08-13", note: "the in-stock member of San Martin's SN005 GMT family — tighter finishing than the budget set, a red-and-blue sapphire bezel and the original's exact 40mm; the canonical SN005-B-1S is the same watch at about $308 but is routinely sold out" },
         { name: "Ocean One GMT BLUE-RED", house: "Steinhart", priceUSD: 582, size_mm: 42, wr_m: 300, movement: "Automatic GMT (Sellita SW330-2 Elaboré)", fidelity: 86, priceSource: "steinhartwatches.de", priceDate: "2026-08-13", amazon: false, verified: "2026-08-13", note: "Swiss true-GMT movement and dive-grade water resistance; a step up in movement over the Seiko-based field. Priced excluding German VAT, which Steinhart deducts outside the EU (about $693 including it); a ceramic-bezel version costs more" },
         { name: "AD2050", house: "Addiesdive", priceUSD: 79, size_mm: 40, wr_m: 200, movement: "Quartz GMT (Ronda 515)", fidelity: 68, priceSource: "addiesdivewatches.com", priceDate: "2026-08-13", amazon: true, direct: true, verified: "2026-08-13", note: "the cheapest way to a genuine independently-set 24-hour hand, at the original's 40mm with a 200m rating — but it is a Swiss quartz movement, not an automatic, and the Pepsi colourway was sold out on Addiesdive's own store at our last check" }
       ]
