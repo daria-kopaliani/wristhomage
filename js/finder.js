@@ -163,6 +163,13 @@
   /* Shop-click events (delegated — cards re-render) */
   els.cards.addEventListener("click", function (e) {
     var a = e.target.closest("a.shop"); if (!a || !window.goatcounter || !window.goatcounter.count) return;
+    // The homepage is the ONLY page carrying both trackers: index.html has the inline
+    // a[href*=amazon] handler AND loads this file, so an Amazon shop click used to log
+    // twice — once as out/amazon/<query>-watch and once as shop/amazon/<slug>. That put
+    // the same product on two rows of every click report and made any earns-vs-dead
+    // total unreliable. Amazon clicks belong to the inline tracker; this one now owns
+    // only the non-Amazon links, which is the data nothing else records.
+    if (a.getAttribute("data-shop") === "amazon") return;
     window.goatcounter.count({ path: "shop/" + a.getAttribute("data-shop") + "/" + a.getAttribute("data-slug"), title: "shop click", event: true });
   });
 
