@@ -570,24 +570,68 @@ def llms(originals):
              "", "## Watches"]
     for o in sorted(originals, key=lambda x: x["house"] + x["name"]):
         lines.append(f"- [{o['name']} homages]({SITE}/watches/{o['id']}): {len(o.get('homages',[]))} ranked homages of the {o['house']} {o['name']}")
-    lines += ["", "## Guides",
-              f"- [Are San Martin watches any good?]({SITE}/guides/san-martin): honest brand review of the mid-tier homage maker, model by model",
-              f"- [Pagani Design, model by model]({SITE}/guides/pagani-design): the budget homage brand and the right model for each icon",
-              f"- [Are Steeldive watches any good?]({SITE}/guides/steeldive): honest brand review of the budget dive-watch specialist, model by model",
-              f"- [Baltany watches review]({SITE}/guides/baltany): honest brand review of the vintage-proportions homage maker, model by model",
-              f"- [Cadisen watches review]({SITE}/guides/cadisen): honest brand review of the spec-per-dollar budget brand, model by model",
-              f"- [The best Rolex GMT homage]({SITE}/articles/best-gmt-homage): affordable GMT-Master II homages, ranked",
-              f"- [The best Explorer II homage]({SITE}/articles/best-explorer-2-homage): polar dials and freccione hands, ranked",
-              f"- [The best Nautilus homage]({SITE}/articles/best-nautilus-homage): the porthole field, verified and ranked",
-              f"- [The best Santos homage]({SITE}/articles/best-santos-homage): the square-bezel field, verified and ranked",
-              f"- [The best Datejust homage]({SITE}/articles/best-datejust-homage): why 36mm decides it, and the three worth knowing",
-              f"- [The best Daytona homage]({SITE}/articles/best-daytona-homage): meca-quartz explained, and the three worth knowing",
-              f"- [The best AP Royal Oak homage]({SITE}/articles/best-royal-oak-homage): stamped vs machined tapisserie, and the two worth knowing",
-              f"- [The best Seamaster homage]({SITE}/articles/best-seamaster-homage): the budget pick that keeps the original's 300m rating",
-              f"- [The best Explorer homage]({SITE}/articles/best-explorer-homage): why 36mm is the whole argument, and which picks are in stock",
-              f"- [The best Black Bay 58 homage]({SITE}/articles/best-black-bay-homage): snowflake hands, and why one popular pick is actually a BB54",
-              "", "## About", f"- [Scoring rubric]({SITE}/rubric)", f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)", ""]
-    write("llms.txt", "\n".join(lines))
+    # The Guides block used to be a hardcoded list maintained separately from ARTICLES,
+    # which the sitemap is built from — so it drifted. On 2026-08-28 four live pages were
+    # absent from llms.txt: /disclosure, /articles/are-homage-watches-ok,
+    # /articles/best-submariner-homage-under-200 and /articles/best-speedmaster-homage.
+    # The last two are exactly the shape that earns here — best-datejust-homage and
+    # best-royal-oak-homage are among this site's most-visited pages — and llms.txt is
+    # the first thing an AI crawler reads. AI sends this site 567 visits a month against
+    # Google's 5, so a page missing here is missing from the channel that pays.
+    BLURBS = {
+        "/guides/san-martin": "honest brand review of the mid-tier homage maker, model by model",
+        "/guides/pagani-design": "the budget homage brand and the right model for each icon",
+        "/guides/steeldive": "honest brand review of the budget dive-watch specialist, model by model",
+        "/guides/baltany": "honest brand review of the vintage-proportions homage maker, model by model",
+        "/guides/cadisen": "honest brand review of the spec-per-dollar budget brand, model by model",
+        "/articles/best-gmt-homage": "affordable GMT-Master II homages, ranked",
+        "/articles/best-explorer-2-homage": "polar dials and freccione hands, ranked",
+        "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
+        "/articles/best-santos-homage": "the square-bezel field, verified and ranked",
+        "/articles/best-datejust-homage": "why 36mm decides it, and the three worth knowing",
+        "/articles/best-daytona-homage": "meca-quartz explained, and the three worth knowing",
+        "/articles/best-royal-oak-homage": "stamped vs machined tapisserie, and the two worth knowing",
+        "/articles/best-seamaster-homage": "the budget pick that keeps the original's 300m rating",
+        "/articles/best-explorer-homage": "why 36mm is the whole argument, and which picks are in stock",
+        "/articles/best-black-bay-homage": "snowflake hands, and why one popular pick is actually a BB54",
+    }
+    ABOUT = {"/rubric", "/articles/homage-vs-replica", "/disclosure"}
+
+    def _meta(path):
+        """(title, description) from the page itself, for entries with no blurb."""
+        for cand in (path.lstrip("/") + ".html", path.lstrip("/") + "/index.html"):
+            f = os.path.join(ROOT, cand)
+            if os.path.exists(f):
+                h = open(f, encoding="utf-8").read()
+                t = re.search(r"<title>(.*?)</title>", h, re.S)
+                d = re.search(r'<meta\s+name="description"\s+content="(.*?)"', h, re.S)
+                title = html.unescape(t.group(1)).split(" — ")[0].strip() if t else None
+                desc = html.unescape(d.group(1)).strip() if d else None
+                if desc and len(desc) > 150:
+                    desc = desc[:147].rsplit(" ", 1)[0] + "..."
+                return title, desc
+        return None, None
+
+    lines += ["", "## Guides"]
+    for a in ARTICLES:
+        if a in ABOUT:
+            continue
+        title, desc = _meta(a)
+        blurb = BLURBS.get(a) or desc
+        label = title or a.rsplit("/", 1)[-1].replace("-", " ")
+        lines.append(f"- [{label}]({SITE}{a})" + (f": {blurb}" if blurb else ""))
+
+    lines += ["", "## About",
+              f"- [Scoring rubric]({SITE}/rubric)",
+              f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)",
+              f"- [Methodology & affiliate disclosure]({SITE}/disclosure)", ""]
+
+    body = "\n".join(lines)
+    # Same contract the sitemap keeps: never publish a map that omits a live page.
+    absent = sorted(a for a in ARTICLES + ["/disclosure"] if f"{SITE}{a})" not in body)
+    if absent:
+        raise SystemExit("gen.py: llms.txt would omit these live pages:\n  " + "\n  ".join(absent))
+    write("llms.txt", body)
 
 
 def homepage_ssr(originals):
