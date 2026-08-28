@@ -65,6 +65,8 @@ ARTICLES = [
     "/articles/best-seamaster-homage",
     "/articles/best-explorer-2-homage",
     "/articles/best-nautilus-homage",
+    "/articles/best-explorer-homage",
+    "/articles/best-black-bay-homage",
     "/articles/best-santos-homage",
     "/guides/pagani-design",
     "/guides/san-martin",
@@ -334,6 +336,10 @@ def original_page(o):
         further.append('<a href="/articles/best-explorer-2-homage">The best Explorer II homage, ranked</a>')
     if o["id"] == "patek-nautilus":
         further.append('<a href="/articles/best-nautilus-homage">The best Nautilus homage, ranked</a>')
+    if o["id"] == "rolex-explorer":
+        further.append('<a href="/articles/best-explorer-homage">The best Explorer homage, ranked</a>')
+    if o["id"] == "tudor-black-bay":
+        further.append('<a href="/articles/best-black-bay-homage">The best Black Bay 58 homage, ranked</a>')
     if o["id"] == "cartier-santos":
         further.append('<a href="/articles/best-santos-homage">The best Santos homage, ranked</a>')
     if o["id"] == "rolex-submariner":
@@ -578,6 +584,8 @@ def llms(originals):
               f"- [The best Daytona homage]({SITE}/articles/best-daytona-homage): meca-quartz explained, and the three worth knowing",
               f"- [The best AP Royal Oak homage]({SITE}/articles/best-royal-oak-homage): stamped vs machined tapisserie, and the two worth knowing",
               f"- [The best Seamaster homage]({SITE}/articles/best-seamaster-homage): the budget pick that keeps the original's 300m rating",
+              f"- [The best Explorer homage]({SITE}/articles/best-explorer-homage): why 36mm is the whole argument, and which picks are in stock",
+              f"- [The best Black Bay 58 homage]({SITE}/articles/best-black-bay-homage): snowflake hands, and why one popular pick is actually a BB54",
               "", "## About", f"- [Scoring rubric]({SITE}/rubric)", f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)", ""]
     write("llms.txt", "\n".join(lines))
 
