@@ -26,6 +26,13 @@ SITE = "https://wristhomage.com"
 YEAR = "2026"
 
 AMAZON_TAG = "wristhomage-20"
+# SPLIT BY LINK KIND (2026-08-30). Amazon reports orders per tracking ID and nothing
+# finer, so with one ID on every link this site could not answer whether pointing at the
+# exact product beats pointing at a search — the question its own link audit has been
+# circling since 08-12. It is answerable here now only because the 08-30 ASIN pass took
+# exact links from 4 to 27 against 107 searches; before that there was no exact bucket.
+# This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
+AMAZON_TAG_DP = "wristhomagedp-20"
 REVIEWED_HUMAN = "August 2026"   # bump when the field is re-checked
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
@@ -247,7 +254,7 @@ def shop_link(homage):
         # title — an unverified asin is how one wrong identifier becomes another.
         asin = (homage.get("asin") or "").strip()
         if asin:
-            href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG
+            href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP
         else:
             href = "https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG
         rel, title = "sponsored nofollow noopener", ""
@@ -295,7 +302,7 @@ def top_cta(homage, siblings=()):
     q = search_query(house, name)
     if on_amazon:
         asin = (homage.get("asin") or "").strip()
-        href = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG) if asin \
+        href = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
             else ("https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG)
         label = (f"Check the exact {esc(name)} on Amazon" if asin
                  else f"See current {esc(name)} prices on Amazon")
@@ -314,7 +321,7 @@ def top_cta(homage, siblings=()):
     if alt:
         aq = search_query(alt.get("house", ""), alt.get("name", ""))
         asin = (alt.get("asin") or "").strip()
-        ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG) if asin \
+        ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
             else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
         out += (f'<p class="cta-alt muted">Closest one you can buy on Amazon: '
                 f'<a href="{esc(ahref)}" rel="sponsored nofollow noopener" target="_blank">'

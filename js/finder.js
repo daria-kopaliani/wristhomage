@@ -9,6 +9,12 @@
   "use strict";
   var DATA = (window.HOMAGE_DATA || { originals: [] });
   var AMAZON_TAG = "wristhomage-20";
+  // Exact /dp/ links carry their own tracking ID so Amazon's own report separates
+  // exact-product conversion from search conversion — it reports per ID and nothing
+  // finer, so this split IS the measurement. Must stay in step with scripts/gen.py,
+  // which builds the same links server-side; moondog-affiliate-audit.py fails if the
+  // tag and the link shape ever disagree.
+  var AMAZON_TAG_DP = "wristhomagedp-20";
   var AMAZON_HOUSES = { "Pagani Design": 1, "Invicta": 1, "Casio": 1, "Timex": 1, "Bulova": 1,
     "Seiko": 1, "Orient": 1, "Citizen": 1, "Steeldive": 1, "Cadisen": 1, "Berny": 1, "Addiesdive": 1,
     // verified on US Amazon 2026-08-01 (data also flipped to amazon:true; keep in sync with gen.py)
@@ -74,7 +80,7 @@
   // cannot disagree about where a row points.
   function amazonHref(h, q) {
     return h.asin
-      ? "https://www.amazon.com/dp/" + encodeURIComponent(h.asin) + "?tag=" + AMAZON_TAG
+      ? "https://www.amazon.com/dp/" + encodeURIComponent(h.asin) + "?tag=" + AMAZON_TAG_DP
       : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
   }
 
