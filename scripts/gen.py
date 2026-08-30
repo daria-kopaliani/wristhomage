@@ -26,6 +26,7 @@ SITE = "https://wristhomage.com"
 YEAR = "2026"
 
 AMAZON_TAG = "wristhomage-20"
+REVIEWED_HUMAN = "August 2026"   # bump when the field is re-checked
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
@@ -277,9 +278,30 @@ def original_page(o):
     b.append(f'<div class="crumbs"><a href="/">Home</a> › <a href="/#originals">Watches</a> › {esc(name)} homages</div>')
     b.append(f'<div class="watch-hero">{art_svg(o.get("type","dive"))}<div class="watch-hero-txt">')
     b.append(f'<h1>{esc(name)} homages — the affordable {esc(full)} alternatives</h1>')
-    b.append(f'<p class="lede">{n} spec-checked homages of the {esc(full)} ({esc(cues)}), ranked by how '
-             f'closely they follow the original by our <a href="/rubric">published rubric</a> — with prices, '
-             f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
+    # ANSWER FIRST, then the description. The lede used to open by describing the
+    # page — "N spec-checked homages of the X, ranked by..." — which tells a reader
+    # what they are looking at but gives a model nothing to lift. An assistant asked
+    # "what is the best Royal Oak homage" had to parse the table to answer.
+    # ledmaskscore's best-of guide already does this properly ("the best LED face
+    # mask we rank is Omnilux Contour Face — it measured 26.7 mW/cm²...") and it is
+    # the most extractable page in the portfolio. AI referrals are ~70% of this
+    # site's traffic against Google's 1%, so being liftable IS the distribution.
+    top = max((h for h in (o.get("homages") or []) if h.get("fidelity") is not None),
+              key=lambda h: h["fidelity"], default=None)
+    if top:
+        b.append(f'<p class="lede"><strong>The closest {esc(full)} homage we rank is the '
+                 f'{esc(top.get("house",""))} {esc(top.get("name",""))}</strong> — it scores '
+                 f'{top["fidelity"]}/100 on our <a href="/rubric">published fidelity rubric</a> at about '
+                 f'{money(top.get("priceUSD"))}, against {money(o.get("priceUSD"))} for the original. '
+                 f'Below: all {n} spec-checked homages ({esc(cues)}), closest first, with prices, '
+                 f'movements and honest notes.</p>')
+    else:
+        b.append(f'<p class="lede">{n} spec-checked homages of the {esc(full)} ({esc(cues)}), ranked by how '
+                 f'closely they follow the original by our <a href="/rubric">published rubric</a> — with prices, '
+                 f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
+    # A visible review date. Models and search indexes both weight currency, and the
+    # item pages carried none while the guides did.
+    b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {REVIEWED_HUMAN}.</p>')
     b.append('</div></div>')
     b.append(DISC)
 
