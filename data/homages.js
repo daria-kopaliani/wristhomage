@@ -30,6 +30,23 @@
  * title AND (b) Amazon is within ~15% of the direct price. Brand presence alone is not
  * sufficient — that is how a reader ends up on a watch we did not recommend.
  *
+ * AMENDMENT 2026-08-30, from the SN013-G case. Two corrections to the note above.
+ *
+ * First, "0 exact hits of 48" was measured with a KEYWORD SEARCH, and a keyword search
+ * failing does not mean the watch is absent from Amazon. SN013-G is listed, in stock,
+ * with the exact reference in the title, under ASIN B09PYXWYDZ — the search simply
+ * cannot surface it. Before recording a model as not-on-Amazon, check the ASIN if one
+ * is known; the search is the weaker instrument.
+ *
+ * Second, test (b) compares Amazon against "the direct price", which assumes the direct
+ * price is buyable. Where the brand has DISCONTINUED the reference, it is not: San
+ * Martin's own store returned SN0130/0133/0134/0138 and no SN013 at all on 2026-08-30,
+ * so the $335 this row quoted was a price nobody could pay. In that case Amazon is not a
+ * worse deal, it is the only deal, and the honest move is to link it AND move priceUSD /
+ * priceSource to match where the link lands — the same thing the SN0134-G1 flip did.
+ * What must never happen is the state this row was actually in: quoting a dead direct
+ * price while sending 10 clicks a week to a search showing the wrong watch.
+ *
  * SEPARATE, UNRESOLVED: sanmartinwatches.com's own widget shows SN017, SN007, SN004,
  * SN008, SN030 and SN019 as "Out of stock" while its current shop (12 products, none
  * out of stock) has moved to newer references (SN0126, SN0138, SN0144). SN004-G and
@@ -181,7 +198,7 @@ window.HOMAGE_DATA = {
       cues: ["octagonal bezel", "tapisserie dial", "integrated bracelet", "exposed screws"],
       homages: [
         { name: "PD-1673", house: "Pagani Design", priceUSD: 144, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 78, priceSource: "paganidesign.com", priceDate: "2026-08-13", amazon: true, verified: "2026-08-13", note: "octagonal bezel with the exposed screws and a tapisserie-style dial; the pattern is stamped rather than machined but the silhouette reads instantly; sapphire crystal at this price is unusual" },
-        { name: "SN013-G", house: "San Martin", priceUSD: 335, size_mm: 38.5, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 83, priceSource: "sanmartinwatches.com", priceDate: "2026-08-27", amazon: false, direct: true, verified: "2026-08-27", note: "the closest bracelet integration in the field and a 9.5mm case that actually wears like the original; San Martin calls the bezel a Royal Oak/Nautilus hybrid rather than a straight copy, and at 38.5mm it is the smallest here. Sold out in every variant on San Martin's own store at our 2026-08-27 check, and this is the closest match on the page — treat it as the target to watch for a restock rather than a buy today." },
+        { name: "SN013-G", house: "San Martin", priceUSD: 460, size_mm: 38.5, wr_m: 100, movement: "Automatic (Miyota 9015)", fidelity: 83, priceSource: "amazon.com", priceDate: "2026-08-30", asin: "B09PYXWYDZ", amazon: true, direct: false, verified: "2026-08-30", note: "the closest bracelet integration in the field and a 9.5mm case that actually wears like the original; San Martin calls the bezel a Royal Oak/Nautilus hybrid rather than a straight copy, and at 38.5mm it is the smallest here. San Martin has discontinued it: a 2026-08-30 search of its own store returns SN0130/0133/0134/0138 and no SN013 at all, so the $335 direct price this row used to quote is no longer buyable anywhere. Amazon is now the only source, at $459.90 — a third more than it cost when San Martin still listed it, which is the honest reason to consider the newer references above before this one." },
         { name: "C8180", house: "Cadisen", priceUSD: 87, size_mm: 42, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 75, priceSource: "cadisenwatch.com", priceDate: "2026-08-12", amazon: true, verified: "2026-08-12", note: "the cheapest way into the octagonal-bezel look with a real Seiko automatic and an exhibition caseback; wears a full 42mm against the original's 41mm and the stamped waffle dial is a step behind Pagani's finishing, but 100m of water resistance is double what the original offers" },
         { name: "PRX 40mm (T137.407.11.051.01)", house: "Tissot", priceUSD: 850, size_mm: 40, wr_m: 100, movement: "Swiss automatic (Powermatic 80)", fidelity: 62, priceSource: "tissotwatches.com", priceDate: "2026-08-27", amazon: true, verified: "2026-08-27", note: "the integrated-bracelet alternative rather than a Royal Oak homage, and the distinction is the point. It gets the case-to-bracelet integration and a textured dial, but there is no octagonal bezel and no exposed screws — the two cues that actually say Royal Oak. Buy it if what you wanted was the 1970s integrated-steel-sports idea done properly: Swiss automatic, 80-hour reserve, sapphire, 100m, real warranty" }
       ]

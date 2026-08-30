@@ -16,7 +16,7 @@ product it names.
 | query | clicks | resolves? | what the search actually returns |
 |---|---|---|---|
 | San Martin SN0058-G-X watch | 11 | ✗ | SN0017G-E, and **SN058G** (36.5 mm dress) — the real code is likely `SN058G`, not `SN0058-G-X` |
-| San Martin SN013-G watch | 10 | ✗ | SN0129GC2/C3, SN0017G-E, SN0136 — none is SN013-G. The model IS real (ASIN **B09PYXWYDZ**, verified 08-12); the SEARCH just cannot find it |
+| San Martin SN013-G watch | 10 | ✅ FIXED 08-30 | Was: SN0129GC2/C3, SN0017G-E, SN0136 — none is SN013-G. Now links `/dp/B09PYXWYDZ` (re-verified live 08-30: in stock, exact reference in title, $459.90). San Martin has discontinued the reference — its own store returns SN0130/0133/0134/0138 and no SN013 — so the $335 direct price this row quoted was unbuyable; priceUSD/priceSource moved to Amazon to match where the link lands |
 | Pagani Design PD-1728 watch | 6 | ✓ | "Pagani Design 1728" — correct |
 | Pagani Design PD-1690 watch | 6 | ✗ | generic Pagani listings; 1690 not findable |
 | Pagani Design PD-1693 watch | 5 | ✗ | returns PD1645 instead |
