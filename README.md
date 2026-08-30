@@ -54,6 +54,15 @@ thin because **the rows do not exist**, and the reason is the same in both direc
   `sitemap.xml` is open, `/shop/<range>/<model>/`). Across all 320 pages the only trademarked
   original it ever names is **62MAS** — already row 1 on that page. San Martin does not reference
   Tank, Santos, Pelagos, Yacht-Master, Aqua Terra or Oyster Perpetual anywhere in its own copy.
+- **Addiesdive re-read end to end 2026-08-30** (379 products, 298 watches). Two things came out
+  of it, both now in the repo, so don't redo the read for either. First, our Explorer row's
+  reference was wrong: AD2035 is a 39mm Ronda 515 quartz GMT at $89, and the 36mm ST2130
+  bubble-crystal Explorer style we recommend is **AD2556**. Second, Addiesdive names only two
+  trademarked originals in its own titles — *Seamaster* once, *Explorer* four times, plus the
+  abbreviations *Sub* and *BB58*. It never says Daytona, Datejust, Nautilus, Royal Oak,
+  Speedmaster, Santos, Tank, Pelagos, Yacht-Master, Aqua Terra or Milgauss, so none of its ~30
+  VK-series meca-quartz chronographs may be filed against an original here. Brand page:
+  `guides/addiesdive.html`.
 - **Baltany (HTTP 406) and Steeldive (403) block everything** — `products.json`, `sitemap.xml` and
   the HTML collections. Neither is machine-crawlable at all.
 
