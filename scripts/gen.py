@@ -174,7 +174,7 @@ FOOT = """  </main>
     <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
   </div></footer>
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{var k=new URL(a.href).searchParams.get("k")||"link";goatcounter.count({{path:"out/amazon/"+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
+<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var k=dp?dp[1]:(u.searchParams.get("k")||"link");goatcounter.count({{path:"out/amazon/"+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
 </body>
 </html>
 """
@@ -231,7 +231,22 @@ def shop_link(homage):
     if homage.get("amazon") is False:
         on_amazon = False
     if on_amazon:
-        href = "https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG
+        # A VERIFIED asin beats a keyword search, and on this site that gap is the
+        # single largest known revenue defect. Audited 2026-08-29/30 against live US
+        # Amazon, ordered by actual clicks: 10 of the 13 most-clicked searches do not
+        # surface the watch they name — 80% of the clicks. Some are wrong identifiers
+        # (SN0058-G-X returns SN058G; WD16570 returns WD16760, a digit transposition),
+        # but others name a real watch the SEARCH simply cannot find: SN013-G exists
+        # and has ASIN B09PYXWYDZ, and the keyword query still misses it.
+        # So: where an asin has been verified by hand, link the product directly and
+        # skip the search entirely. Everything else keeps the search, unchanged.
+        # See AFFILIATE_LINK_AUDIT.md. Do NOT fill this field from an Amazon search
+        # title — an unverified asin is how one wrong identifier becomes another.
+        asin = (homage.get("asin") or "").strip()
+        if asin:
+            href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG
+        else:
+            href = "https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG
         rel, title = "sponsored nofollow noopener", ""
     else:
         href = "https://www.google.com/search?q=" + urllib.parse.quote(q)

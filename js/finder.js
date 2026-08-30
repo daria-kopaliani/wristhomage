@@ -65,12 +65,25 @@
 
   function onAmazon(h) { return h.amazon === true || (h.amazon !== false && AMAZON_HOUSES[h.house]); }
 
+  // A verified asin beats a keyword search. Audited 2026-08-29/30 against live US
+  // Amazon by click volume: 10 of the 13 most-clicked searches never surface the
+  // watch they name (80% of clicks) — some are wrong identifiers, others name a
+  // real watch the search simply cannot find. Where an asin has been verified by
+  // hand in homages.js, link the product directly; otherwise keep the search.
+  // Mirrors shop_link() in scripts/gen.py so the homepage and the generated pages
+  // cannot disagree about where a row points.
+  function amazonHref(h, q) {
+    return h.asin
+      ? "https://www.amazon.com/dp/" + encodeURIComponent(h.asin) + "?tag=" + AMAZON_TAG
+      : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
+  }
+
   function shopLink(h) {
     var q = h.house + " " + h.name + " watch";
     var kind, href, rel, title = "";
     if (onAmazon(h)) {
       kind = "amazon"; rel = "sponsored nofollow noopener";
-      href = "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
+      href = amazonHref(h, q);
     } else {
       kind = "search"; rel = "nofollow noopener";
       href = "https://www.google.com/search?q=" + encodeURIComponent(q);
@@ -84,7 +97,7 @@
     var q = h.house + " " + h.name + " watch";
     var amz = onAmazon(h);
     var href = amz
-      ? "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG
+      ? amazonHref(h, q)
       : "https://www.google.com/search?q=" + encodeURIComponent(q);
     return '<a class="shop" data-shop="' + (amz ? "amazon" : "search") + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
       '" href="' + esc(href) + '" rel="' + (amz ? "sponsored nofollow noopener" : "nofollow noopener") + '" target="_blank">' + text + "</a>";
