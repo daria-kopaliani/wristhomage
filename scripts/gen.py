@@ -180,8 +180,9 @@ FOOT = """  </main>
 </html>
 """
 
-DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are affiliate links — we may earn '
-        'a commission at no extra cost to you; other brands link to a plain, non-affiliate search, and many '
+DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are affiliate links: '
+        '<strong>as an Amazon Associate we earn from qualifying purchases</strong>, at no extra cost '
+        'to you. Other brands link to a plain, non-affiliate search, and many '
         'are cheaper bought direct. Affiliate status never affects a fidelity score. Scores follow the '
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
