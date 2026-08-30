@@ -277,3 +277,21 @@ a.shop:hover { filter: brightness(1.08); border: none !important; }
   border-radius: 50%; background: rgba(255,255,255,0.035);
   border: 1px solid rgba(255,255,255,0.09); flex: 0 0 auto; }
 .article tbody td.row-nm { vertical-align: middle; }
+
+/* the buying moment ------------------------------------------------------- */
+/* One CTA directly under the lede that named a watch, instead of asking the reader to
+   find that watch again in the table below. Deliberately NOT class="shop": finder.js
+   binds a.shop, and a static CTA carrying that class would fire a second event on every
+   click alongside the inline amazon handler — the double-count that inflated this site's
+   click reports for a week. */
+.cta { margin: 16px 0 4px; }
+.cta a.buy {
+  display: inline-block; white-space: nowrap;
+  padding: 8px 16px; border-radius: 999px;
+  background: var(--accent); color: var(--accent-text) !important;
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  text-decoration: none; border: none !important; line-height: 1.4;
+}
+.cta a.buy:hover { filter: brightness(1.08); border: none !important; }
+.cta .muted { display: inline-block; margin-left: 10px; font-size: 13px; }
+.cta-alt { margin: 6px 0 14px; font-size: 13px; }

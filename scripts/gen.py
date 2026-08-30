@@ -258,6 +258,71 @@ def shop_link(homage):
     return f'<a class="shop" href="{esc(href)}" rel="{rel}" target="_blank"{title}>Shop&nbsp;&rsaquo;</a>'
 
 
+# --- the buying moment ----------------------------------------------------------------
+# The lede names one watch — "the closest Submariner homage we rank is the Steinhart Ocean
+# One 39" — and then asked the reader to go find it again in a seven-row table. The moment
+# someone has been given a specific answer is the moment they will act on it, and the page
+# spent it on scrolling. This puts one clear CTA for the named watch immediately under the
+# verdict, using exactly the link the table row would use — a verified ASIN where one
+# exists, the tagged search otherwise, and the honest non-affiliate search for houses with
+# no programme, which is labelled as such rather than dressed up as a buy.
+#
+# DIRECT MERCHANT WOULD COME FIRST IF THERE WERE ONE. A brand's own programme pays
+# multiples of Amazon's 1-4% on a 24-hour cookie. Nothing here is approved: 71 unpaid
+# outbound clicks on this site are the argument for applying, and the four Awin
+# applications filed 2026-08-30 are all still pending. Promoting an untagged direct link
+# above the tagged Amazon one today would move clicks off the only link that earns.
+def _on_amazon(h):
+    if h.get("amazon") is False:
+        return False
+    return bool(h.get("amazon") or h.get("house", "") in AMAZON_HOUSES)
+
+
+def top_cta(homage, siblings=()):
+    """One CTA for the watch the lede just named, or "" when there is nothing to link.
+
+    On 12 of the 21 original pages the highest-fidelity homage is NOT on Amazon, so the
+    most prominent link on the page earns nothing. The fix is NOT to point the CTA at a
+    lower-scoring watch that happens to pay — affiliate status not moving a fidelity score
+    is the promise this site is built on, and the lede has already named the winner. It is
+    to add a SECOND, plainly labelled line for the closest homage you can actually buy on
+    Amazon, which is a question a reader in front of an unbuyable recommendation is
+    already asking."""
+    if not homage:
+        return ""
+    house, name = homage.get("house", ""), homage.get("name", "")
+    on_amazon = _on_amazon(homage)
+    q = search_query(house, name)
+    if on_amazon:
+        asin = (homage.get("asin") or "").strip()
+        href = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG) if asin \
+            else ("https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG)
+        label = (f"Check the exact {esc(name)} on Amazon" if asin
+                 else f"See current {esc(name)} prices on Amazon")
+        return (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="sponsored nofollow noopener" '
+                f'target="_blank">{label} &rsaquo;</a></p>')
+    # No affiliate programme for this house. Say so; the click is still worth having,
+    # and pretending otherwise is how a verdict starts looking bought.
+    href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
+    out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+           f'target="_blank">Find the {esc(name)} &rsaquo;</a> '
+           f'<span class="muted">No affiliate programme for {esc(house)} — plain search, '
+           f'and often cheaper bought direct.</span></p>')
+    alt = max((h for h in siblings
+               if h is not homage and _on_amazon(h) and h.get("fidelity") is not None),
+              key=lambda h: h["fidelity"], default=None)
+    if alt:
+        aq = search_query(alt.get("house", ""), alt.get("name", ""))
+        asin = (alt.get("asin") or "").strip()
+        ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG) if asin \
+            else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
+        out += (f'<p class="cta-alt muted">Closest one you can buy on Amazon: '
+                f'<a href="{esc(ahref)}" rel="sponsored nofollow noopener" target="_blank">'
+                f'{esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
+                f'&mdash; fidelity {esc(alt.get("fidelity"))}/100 at about {money(alt.get("priceUSD"))}.</p>')
+    return out
+
+
 def money(n):
     try:
         return f"${int(round(float(n))):,}"
@@ -306,6 +371,7 @@ def original_page(o):
     b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {REVIEWED_HUMAN}.</p>')
     b.append('</div></div>')
     b.append(DISC)
+    b.append(top_cta(top, homages))
 
     b.append(f'<p>The {esc(full)} (ref {esc(o.get("ref","—"))}) is a {esc(o.get("size_mm","?"))}mm '
              f'{esc(o.get("type",""))} watch, {esc(o.get("wr_m","?"))}m water resistant, running a '
