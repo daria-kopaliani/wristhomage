@@ -13,9 +13,14 @@ product it names.
 
 ## Result: 36 of the 46 clicks checked (78%) land on a search that does not surface the product
 
+**Progress 2026-08-30: 21 of those 36 clicks now resolve** — SN013-G (10) links its verified
+ASIN, SN058 (11) is corrected and pointed at the brand store. Both were the same underlying
+defect in different disguises: a model identifier in our data that does not match anything
+real. Remaining: Pagani PD-1690 (6), PD-1693 (5), Cadisen C8053 (4), Timex E-Line (3).
+
 | query | clicks | resolves? | what the search actually returns |
 |---|---|---|---|
-| San Martin SN0058-G-X watch | 11 | ✗ | SN0017G-E, and **SN058G** (36.5 mm dress) — the real code is likely `SN058G`, not `SN0058-G-X` |
+| San Martin SN0058-G-X watch | 11 | ✅ FIXED 08-30 | The hypothesis was right: the real reference is **SN058**, verified against San Martin's own store (two SN058 products, the 36mm dress in stock at $326 on 08-30) — not against an Amazon title. `SN0058-G-X` does not exist, which is why the search returned nothing useful. Amazon does NOT carry SN058 either: a search for it returns unrelated 1963-branded watches, so this is direct-only and the link is now an honest unpaid one to San Martin's store. Two hand-written pages were also carrying a **tagged** Amazon search for the dead reference; both corrected. The row's "sold out" note was stale too — it is in stock. |
 | San Martin SN013-G watch | 10 | ✅ FIXED 08-30 | Was: SN0129GC2/C3, SN0017G-E, SN0136 — none is SN013-G. Now links `/dp/B09PYXWYDZ` (re-verified live 08-30: in stock, exact reference in title, $459.90). San Martin has discontinued the reference — its own store returns SN0130/0133/0134/0138 and no SN013 — so the $335 direct price this row quoted was unbuyable; priceUSD/priceSource moved to Amazon to match where the link lands |
 | Pagani Design PD-1728 watch | 6 | ✓ | "Pagani Design 1728" — correct |
 | Pagani Design PD-1690 watch | 6 | ✗ | generic Pagani listings; 1690 not findable |
