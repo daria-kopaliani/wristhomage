@@ -74,6 +74,7 @@ ARTICLES = [
     "/guides/steeldive",
     "/guides/baltany",
     "/guides/cadisen",
+    "/guides/addiesdive",
 ]
 
 # Sitemap lastmod. Derived from git: the last commit that touched the HTML file a URL
@@ -402,6 +403,8 @@ def original_page(o):
         further.append('<a href="/guides/baltany">Baltany watches review</a>')
     if "Cadisen" in houses:
         further.append('<a href="/guides/cadisen">Cadisen watches review</a>')
+    if "Addiesdive" in houses:
+        further.append('<a href="/guides/addiesdive">Addiesdive watches review</a>')
     if further:
         b.append('<p><strong>Further reading:</strong> ' + ' · '.join(further) + '</p>')
 
@@ -546,8 +549,9 @@ def hub_page(originals):
              'them: <a href="/guides/san-martin">San Martin</a>, '
              '<a href="/guides/pagani-design">Pagani Design</a>, '
              '<a href="/guides/steeldive">Steeldive</a>, '
-             '<a href="/guides/baltany">Baltany</a> and '
-             '<a href="/guides/cadisen">Cadisen</a>, each reviewed model by model.</p>')
+             '<a href="/guides/baltany">Baltany</a>, '
+             '<a href="/guides/cadisen">Cadisen</a> and '
+             '<a href="/guides/addiesdive">Addiesdive</a>, each reviewed model by model.</p>')
     b.append('<p>Ranked by icon: <a href="/articles/best-submariner-homage-under-200">Submariner '
              'under $200</a>, <a href="/articles/best-gmt-homage">Rolex GMT</a>, '
              '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
@@ -622,6 +626,7 @@ def llms(originals):
         "/guides/steeldive": "honest brand review of the budget dive-watch specialist, model by model",
         "/guides/baltany": "honest brand review of the vintage-proportions homage maker, model by model",
         "/guides/cadisen": "honest brand review of the spec-per-dollar budget brand, model by model",
+        "/guides/addiesdive": "honest brand review of the $79-$150 brand: which models are quartz, and what the codes mean",
         "/articles/best-gmt-homage": "affordable GMT-Master II homages, ranked",
         "/articles/best-explorer-2-homage": "polar dials and freccione hands, ranked",
         "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
