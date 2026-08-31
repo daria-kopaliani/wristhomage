@@ -84,29 +84,32 @@
       : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
   }
 
+  function destination(h, q) {
+    if (onAmazon(h)) {
+      return { kind: "amazon", href: amazonHref(h, q), rel: "sponsored nofollow noopener", title: "" };
+    }
+    if (h.directUrl) {
+      return { kind: "direct", href: h.directUrl, rel: "nofollow noopener",
+        title: ' title="Exact first-party product page — not an affiliate link"' };
+    }
+    return { kind: "search", href: "https://www.google.com/search?q=" + encodeURIComponent(q),
+      rel: "nofollow noopener",
+      title: ' title="No affiliate program for this brand — plain search, and often cheaper bought direct"' };
+  }
+
   function shopLink(h) {
     var q = h.house + " " + h.name + " watch";
-    var kind, href, rel, title = "";
-    if (onAmazon(h)) {
-      kind = "amazon"; rel = "sponsored nofollow noopener";
-      href = amazonHref(h, q);
-    } else {
-      kind = "search"; rel = "nofollow noopener";
-      href = "https://www.google.com/search?q=" + encodeURIComponent(q);
-      title = ' title="No affiliate program for this brand — plain search, and often cheaper bought direct"';
-    }
-    return '<a class="shop" data-shop="' + kind + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
-      '" href="' + esc(href) + '" rel="' + rel + '" target="_blank"' + title + ">Shop &rsaquo;</a>";
+    var dest = destination(h, q);
+    var label = h.availability === "sold-out" ? "Check availability" : (dest.kind === "direct" ? "View product" : "Shop");
+    return '<a class="shop" data-shop="' + dest.kind + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
+      '" href="' + esc(dest.href) + '" rel="' + dest.rel + '" target="_blank"' + dest.title + '>' + label + ' &rsaquo;</a>';
   }
 
   function titleShop(h, text) {
     var q = h.house + " " + h.name + " watch";
-    var amz = onAmazon(h);
-    var href = amz
-      ? amazonHref(h, q)
-      : "https://www.google.com/search?q=" + encodeURIComponent(q);
-    return '<a class="shop" data-shop="' + (amz ? "amazon" : "search") + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
-      '" href="' + esc(href) + '" rel="' + (amz ? "sponsored nofollow noopener" : "nofollow noopener") + '" target="_blank">' + text + "</a>";
+    var dest = destination(h, q);
+    return '<a class="shop" data-shop="' + dest.kind + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
+      '" href="' + esc(dest.href) + '" rel="' + dest.rel + '" target="_blank"' + dest.title + '>' + text + '</a>';
   }
 
   function pass(r) {

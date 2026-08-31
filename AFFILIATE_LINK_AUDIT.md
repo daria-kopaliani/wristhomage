@@ -114,3 +114,21 @@ the brand's own store before anything is changed here.
 than one page); keyword searches drop from 112 to 107. That is what makes the
 `wristhomage-20` / exact-vs-search split worth doing — before this there was no exact
 bucket to compare.
+
+## Pass 4 — 2026-08-30: the three highest-clicked unresolved rows no longer misroute
+
+The current ledger put approximately 18 clicks into PD-1690, C8053 and PD-1693 searches
+that did not surface the named watch. None has a verified Amazon ASIN, so inventing one
+would repeat the original defect. Each row was instead checked against the brand's own
+catalogue and now opens its exact first-party product page:
+
+- **Cadisen C8053** — exact Cadisen page, in stock at $79.99. The row is now an honest,
+  untagged direct link.
+- **Pagani Design PD-1690** — exact Pagani page, every variant sold out. The CTA says
+  “Check availability” and does not pretend there is a buyable Amazon listing.
+- **Pagani Design PD-1693** — exact Pagani page, every variant sold out. The official
+  specification also corrected the movement from Seiko NH34 to Pearl DG5833A.
+
+`directUrl` is now a first-class destination in both the generator and homepage finder.
+It is tracked as `shop/direct/<slug>`, separately from honest searches and Amazon, so a
+future merchant programme can be evaluated without corrupting the search cohort.

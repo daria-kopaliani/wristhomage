@@ -258,6 +258,14 @@ def shop_link(homage):
         else:
             href = "https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG
         rel, title = "sponsored nofollow noopener", ""
+    elif homage.get("directUrl"):
+        href = homage["directUrl"]
+        rel = "nofollow noopener"
+        sold_out = homage.get("availability") == "sold-out"
+        label = "Check availability" if sold_out else "View product"
+        title = ' title="Exact first-party product page — not an affiliate link"'
+        return (f'<a class="shop" href="{esc(href)}" rel="{rel}" target="_blank"{title}>'
+                f'{label}&nbsp;&rsaquo;</a>')
     else:
         href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
         rel = "nofollow noopener"
@@ -310,11 +318,21 @@ def top_cta(homage, siblings=()):
                 f'target="_blank">{label} &rsaquo;</a></p>')
     # No affiliate programme for this house. Say so; the click is still worth having,
     # and pretending otherwise is how a verdict starts looking bought.
-    href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
-    out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
-           f'target="_blank">Find the {esc(name)} &rsaquo;</a> '
-           f'<span class="muted">No affiliate programme for {esc(house)} — plain search, '
-           f'and often cheaper bought direct.</span></p>')
+    if homage.get("directUrl"):
+        href = homage["directUrl"]
+        sold_out = homage.get("availability") == "sold-out"
+        label = (f"Check official availability for the {esc(name)}" if sold_out
+                 else f"View the exact {esc(name)} at {esc(house)}")
+        detail = ("Official page currently shows every variant sold out. " if sold_out else "")
+        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+               f'target="_blank">{label} &rsaquo;</a> '
+               f'<span class="muted">{detail}Exact first-party link; not affiliated.</span></p>')
+    else:
+        href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
+        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+               f'target="_blank">Find the {esc(name)} &rsaquo;</a> '
+               f'<span class="muted">No affiliate programme for {esc(house)} — plain search, '
+               f'and often cheaper bought direct.</span></p>')
     alt = max((h for h in siblings
                if h is not homage and _on_amazon(h) and h.get("fidelity") is not None),
               key=lambda h: h["fidelity"], default=None)
