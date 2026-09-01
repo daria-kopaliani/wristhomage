@@ -68,6 +68,7 @@ ARTICLES = [
     "/articles/best-speedmaster-homage",
     "/articles/best-gmt-homage",
     "/articles/best-datejust-homage",
+    "/articles/best-day-date-homage",
     "/articles/best-daytona-homage",
     "/articles/best-royal-oak-homage",
     "/articles/best-seamaster-homage",
@@ -478,6 +479,8 @@ def original_page(o):
         further.append('<a href="/articles/best-speedmaster-homage">The best Speedmaster homage</a>')
     if o["id"] == "rolex-datejust":
         further.append('<a href="/articles/best-datejust-homage">The best Datejust homage, ranked</a>')
+    if o["id"] == "rolex-day-date":
+        further.append('<a href="/articles/best-day-date-homage">The best Day-Date homage, ranked</a>')
     if o["id"] == "rolex-daytona":
         further.append('<a href="/articles/best-daytona-homage">The best Daytona homage, ranked</a>')
     if o["id"] == "ap-royal-oak":
@@ -648,6 +651,7 @@ def hub_page(originals):
              '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
              '<a href="/articles/best-speedmaster-homage">Speedmaster</a>, '
              '<a href="/articles/best-datejust-homage">Datejust</a>, '
+             '<a href="/articles/best-day-date-homage">Day-Date</a>, '
              '<a href="/articles/best-daytona-homage">Daytona</a>, '
              '<a href="/articles/best-royal-oak-homage">Royal Oak</a>, '
              '<a href="/articles/best-nautilus-homage">Nautilus</a>, '
@@ -723,6 +727,7 @@ def llms(originals):
         "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
         "/articles/best-santos-homage": "the square-bezel field, verified and ranked",
         "/articles/best-datejust-homage": "why 36mm decides it, and the three worth knowing",
+        "/articles/best-day-date-homage": "the only 36mm one is the mid-priced one; gold, meteorite and why they are all automatics",
         "/articles/best-daytona-homage": "meca-quartz explained, and the three worth knowing",
         "/articles/best-royal-oak-homage": "stamped vs machined tapisserie, and the two worth knowing",
         "/articles/best-seamaster-homage": "the budget pick that keeps the original's 300m rating",
