@@ -132,3 +132,61 @@ catalogue and now opens its exact first-party product page:
 `directUrl` is now a first-class destination in both the generator and homepage finder.
 It is tracked as `shop/direct/<slug>`, separately from honest searches and Amazon, so a
 future merchant programme can be evaluated without corrupting the search cohort.
+
+
+## Pass 4 — 2026-09-04: the articles were the search-only half of the experiment
+
+`gen.py` has linked a verified ASIN since 08-30, but `link_articles.py` was still hard-coded
+to a keyword search — its docstring carried the pre-amendment rule, "search URLs, not ASINs."
+So the two link shapes were split by PAGE TYPE: `/watches/` pages ran `/dp/`, articles and
+brand guides ran `/s?k=`. That is also why the dp-vs-search result was confounded — the
+comparison was measuring page type as much as link shape.
+
+**20 article/guide links upgraded**, across 6 articles and 5 brand guides. Every ASIN was
+re-verified live on 2026-09-04 before use: listing title carries the model designator, page
+has a buy box. Three needed the documented Pagani/San Martin formatting allowance — Amazon
+titles drop the `PD-` prefix ("Pagani Design 1728") and the `-G1` suffix ("San Martin SN0134").
+
+Link surface after: **51 `/dp/` + 84 `/s?k=`**, both shapes now present on both page types,
+each carrying its own tag per rule 1.6. Audits at time of change: affiliate-audit clean across
+11 sites, click-tracking 135 tagged links / 0 untracked / 0 double, site-audit 0 orphans,
+no-JS 47/47.
+
+What this is for: the first dp-vs-search read (2026-09-03) put exact-ASIN at 16.2% conversion
+and $0.19/click against search at 4.8% and $0.046, on only 37 dp clicks. **This does not
+reverse the keep-search-links rule** — it grows the sample on the pages that carry the clicks
+so the question can be answered instead of argued. Re-read when dp clicks pass ~150.
+
+## Pass 5 — 2026-09-04: the three "almost certainly on Amazon" rows are not buyable there
+
+Pass 3 set three of the unresolved 24 aside as worth a second look by hand — Invicta
+8926OB, Seiko SRPE53 and Seiko SSK023 — on the grounds that they are mainstream
+references a top-8 keyword window would miss. Checked properly against live US Amazon,
+signed in, scanning every result rather than the first page. **All three fail**, and the
+reasons differ, so they are recorded here to stop a fourth pass repeating the work.
+
+Standard applied, unchanged from pass 4: the listing title carries the model designator,
+and the page has a buy box. Plus the header's rule (b), within ~15% of the quoted price.
+
+- **Invicta 8926OB** — not on Amazon as a watch at all. Two queries, 116 results scanned;
+  every occurrence of "8926" is an ACCESSORY for it — bands (B08BZRNLKJ, B07D6PVSC6),
+  friction pins (B08MWMBKK2), a bezel insert (B0GVDPJ9KG), a replacement hand (B0HH9YYQ3J).
+  The nearest watches are other references: B014MN9RCM is **8932OB** (quartz, not this
+  watch) and B000JQFX1G is **5053** — checked its product page directly, title reads
+  "Invicta Men's 5053 Pro Diver Collection Automatic Watch" with no model-number field.
+  Linking either would be the digit-transposition failure this file already documents.
+- **Seiko SRPE53** — listed, but not buyable. B08BZBBTCC and B08C3ZYNKL both carry
+  SRPE53K1 in the title (the K1 regional suffix is the same formatting allowance pass 4
+  granted San Martin), and **neither has a buy box**: no add-to-cart, "See All Buying
+  Options" only, third-party offers whose price moved between the search card and the
+  product page ($345 vs $207 on one; $103.50 on the other, against a $315 quoted price).
+- **Seiko SSK023** — same shape. B0CRZ685T2 carries SSK023K1 in the title, no buy box,
+  "See All Buying Options", and the visible new offer is $568.47 against the $450 this
+  site quotes from seikowatches.com — **+26%**, which fails rule (b) even if a buy box
+  appeared tomorrow.
+
+**Conclusion.** These three stay as honest searches. The pass-3 note that they are
+"almost certainly on Amazon" was a reasonable guess and it was wrong; a mainstream
+reference can be absent, or present only as marketplace offers with no buy box, which
+is not the same thing as buyable. Unresolved count is unchanged at 24 rows, but three of
+them are now closed questions rather than open ones.

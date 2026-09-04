@@ -13,8 +13,21 @@ Rules this obeys:
     but is not a vouched row. That is the funnel rule the score sites are built on.
   * Only rows flagged `amazon: true`. A row we have not confirmed is sold on Amazon does
     not get an Amazon link.
-  * Search URLs, not ASINs — the site's existing mechanism (see any /watches/ page), and
-    it cannot point at the wrong product the way a stale ASIN can.
+  * ASIN when the row has a verified one, search only as the fallback — and the two
+    carry DIFFERENT tags (see TAG/TAG_DP below), because the tag must match the link
+    shape (AGENTS.md 1.6).
+
+    This reverses the original rule here, which read "search URLs, not ASINs ... it
+    cannot point at the wrong product the way a stale ASIN can." The 2026-08-30 SN013-G
+    case showed the opposite: the search is the WEAKER instrument. SN013-G is listed, in
+    stock, exact reference in the title, under B09PYXWYDZ — and the keyword search cannot
+    surface it. AFFILIATE_LINK_AUDIT.md measured 36 of 46 checked clicks (78%) landing on
+    a search that does not return the product it names. A stale ASIN is a visible failure;
+    a search that quietly returns the wrong watch is not.
+
+    Every ASIN used here was re-verified live on 2026-09-04: the listing title carries the
+    model designator and the page has a buy box. Pagani's listings drop the `PD-` prefix
+    ("Pagani Design 1728"), which is the documented formatting, not a mismatch.
   * Idempotent: skips a heading that already carries a link.
 
 Usage:  link_articles.py [--check]
@@ -22,7 +35,8 @@ Usage:  link_articles.py [--check]
 import json, os, re, subprocess, sys, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TAG = "wristhomage-20"
+TAG = "wristhomage-20"        # keyword search
+TAG_DP = "wristhomagedp-20"  # exact /dp/<ASIN>
 
 
 def load():
@@ -34,19 +48,26 @@ def load():
 
 
 def products(data):
-    """(house, model) -> search query, for rows we can honestly link."""
+    """(house, model) -> (search query, asin or None), for rows we can honestly link."""
     out = {}
     for o in data["originals"]:
         for h in o.get("homages", []):
             if not h.get("amazon"):
                 continue
-            out[(h["house"], h["name"])] = f"{h['house']} {h['name']} watch"
+            out[(h["house"], h["name"])] = (f"{h['house']} {h['name']} watch", h.get("asin"))
     return out
 
 
-def link_html(house, model, q):
-    return (f' <a class="buy" href="https://www.amazon.com/s?k={html.escape(q).replace(" ", "%20")}'
-            f'&amp;tag={TAG}" rel="nofollow sponsored" target="_blank" '
+def href_for(q, asin):
+    """The exact product when we have a verified ASIN, the search when we do not."""
+    if asin:
+        return f"https://www.amazon.com/dp/{html.escape(asin)}?tag={TAG_DP}"
+    return (f'https://www.amazon.com/s?k={html.escape(q).replace(" ", "%20")}'
+            f'&amp;tag={TAG}')
+
+
+def link_html(house, model, q, asin=None):
+    return (f' <a class="buy" href="{href_for(q, asin)}" rel="nofollow sponsored" target="_blank" '
             f'data-out="amazon/{html.escape((house + "-" + model).lower().replace(" ", "-"))}"'
             f'>Amazon&nbsp;↗</a>')
 
@@ -55,7 +76,7 @@ def process(path, prods, check):
     src = open(path, encoding="utf-8").read()
     s = src
     added = []
-    for (house, model), q in prods.items():
+    for (house, model), (q, asin) in prods.items():
         # Anchor on a heading that names the product. Headings are the page's own
         # editorial pick — linking there, not on every prose mention, keeps one
         # link per product and puts it where the recommendation is made.
@@ -69,7 +90,7 @@ def process(path, prods, check):
         if 'class="buy"' in head:
             continue
         # Insert inside the heading, before its closing tag.
-        new_head = re.sub(r"</h([23])>$", link_html(house, model, q) + r"</h\1>", head)
+        new_head = re.sub(r"</h([23])>$", link_html(house, model, q, asin) + r"</h\1>", head)
         s = s[:m.start()] + new_head + s[m.end():]
         added.append(f"{house} {model}")
     if not added:

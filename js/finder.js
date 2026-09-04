@@ -84,7 +84,40 @@
       : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
   }
 
+  // A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
+  // against that merchant's live product page. Watchdives pays 6% on its own collection
+  // against the ~3.1% wristhomage actually realises on Amazon, and the merchant link is an
+  // exact product page where the Amazon fallback for these rows is a keyword search that
+  // the 08-29 audit found does not surface the watch (WD16570 returns WD16760).
+  // Mirrors merchant_link() in scripts/gen.py.
+  // Both sellers where both pass — see the long note on shop_link() in scripts/gen.py.
+  // Returns null unless the row has a verified asin AND a checked merchant page AND
+  // Amazon is inside the header's 15% rule; callers fall through to the single link.
+  function bothLinks(h) {
+    if (!h.merchantUrl || !h.asin || !h.amazonPriceUSD) return null;
+    if (h.availability === "sold-out") return null;
+    var ours = h.priceUSD || 0;
+    if (!ours || Math.abs(h.amazonPriceUSD - ours) / ours > 0.15 + 1e-9) return null;
+    var m = h.merchant || "merchant";
+    var pair = [
+      { p: ours, html: '<a class="shop" data-shop="' + esc(m) + '" data-slug="' +
+          esc(slug(h.house + "-" + h.name)) + '" href="' + esc(h.merchantUrl) +
+          '" rel="sponsored nofollow noopener" target="_blank">' +
+          esc(m.charAt(0).toUpperCase() + m.slice(1)) + " $" + Math.round(ours) + ' &rsaquo;</a>' },
+      { p: h.amazonPriceUSD, html: '<a class="shop secondary" data-shop="amazon" data-slug="' +
+          esc(slug(h.house + "-" + h.name)) + '" href="' + esc(amazonHref(h, "")) +
+          '" rel="sponsored nofollow noopener" target="_blank">Amazon $' +
+          Math.round(h.amazonPriceUSD) + ' &rsaquo;</a>' }
+    ].sort(function (a, b) { return a.p - b.p; });
+    return '<span class="shopset">' + pair[0].html + pair[1].html + '</span>';
+  }
+
   function destination(h, q) {
+    if (h.merchantUrl) {
+      return { kind: h.merchant || "merchant", href: h.merchantUrl,
+        rel: "sponsored nofollow noopener",
+        title: ' title="Affiliate link to the maker\'s own product page — the price shown is read from it"' };
+    }
     if (onAmazon(h)) {
       return { kind: "amazon", href: amazonHref(h, q), rel: "sponsored nofollow noopener", title: "" };
     }
@@ -98,6 +131,8 @@
   }
 
   function shopLink(h) {
+    var both = bothLinks(h);
+    if (both) return both;
     var q = h.house + " " + h.name + " watch";
     var dest = destination(h, q);
     var label = h.availability === "sold-out" ? "Check availability" : (dest.kind === "direct" ? "View product" : "Shop");

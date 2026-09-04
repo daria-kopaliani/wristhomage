@@ -68,6 +68,7 @@ ARTICLES = [
     "/articles/best-speedmaster-homage",
     "/articles/best-gmt-homage",
     "/articles/best-datejust-homage",
+    "/articles/best-day-date-homage",
     "/articles/best-daytona-homage",
     "/articles/best-royal-oak-homage",
     "/articles/best-seamaster-homage",
@@ -117,6 +118,13 @@ def git_lastmod(u):
         return d or LASTMOD_FALLBACK
     except Exception:
         return LASTMOD_FALLBACK
+
+
+def click_slug(house, name):
+    """Mirrors slug() in js/finder.js so a row's click event has the same id on the
+    generated pages as on the homepage finder. If these two drift, one watch reports as
+    two different products and neither number is usable."""
+    return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", f"{house}-{name}".lower()))
 
 
 def esc(s):
@@ -183,7 +191,7 @@ FOOT = """  </main>
     <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
   </div></footer>
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pre="out/amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
+<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{if(a.dataset.merchant){{goatcounter.count({{path:"shop/"+a.dataset.merchant+"/"+a.dataset.slug,title:(a.textContent||"").trim().slice(0,80),event:true}});return;}}var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pre="out/amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
 </body>
 </html>
 """
@@ -237,6 +245,53 @@ def shop_link(homage):
     non-affiliate search otherwise. Never a fake tag."""
     house, name = homage.get("house", ""), homage.get("name", "")
     q = search_query(house, name)
+    # A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
+    # against that merchant's live product page. The comment under "the buying moment"
+    # below said this would come first if there were one and that nothing was approved;
+    # Watchdives was joined 2026-09-04 and pays 6% on its own collection against the ~3.1%
+    # this site actually realises on Amazon. Mirrors destination() in js/finder.js.
+    #
+    # merchantUrl is NEVER filled from a search or a guessed handle. Both rows carrying it
+    # were read off the live product JSON on 2026-09-04, which is also how WD16570 V2 was
+    # caught with all five variants out of stock — it keeps its link so the reader can see
+    # that for themselves, but it is marked sold-out and does not claim to be a buy.
+    if homage.get("merchantUrl"):
+        sold_out = homage.get("availability") == "sold-out"
+        label = "Check availability" if sold_out else "Shop"
+        # BOTH SELLERS, WHERE BOTH PASS. A row with a verified ASIN *and* a checked
+        # merchant page has two honest destinations, and the reader is the one who should
+        # pick. Rendered cheapest FIRST, never highest-commission first: on EXD-40 those
+        # happen to agree (Watchdives is both cheaper and the 6% one), and the day they
+        # disagree, ordering by commission would tilt the page in a way no audit here
+        # would catch. Each link carries its price, because two identical buttons add a
+        # decision without adding information — that is where multi-CTA conversion loss
+        # comes from, and the price is the whole reason to show two.
+        # Amazon only joins if it passes the header's rule (b) as well as having an asin.
+        amz_price = homage.get("amazonPriceUSD")
+        asin = (homage.get("asin") or "").strip()
+        if asin and amz_price and not sold_out:
+            ours = homage.get("priceUSD") or 0
+            within = ours and abs(amz_price - ours) / ours <= 0.15 + 1e-9
+            if within:
+                a_href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP
+                pair = sorted([
+                    (ours, f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
+                           f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
+                           f' data-slug="{esc(click_slug(house, name))}"'
+                           f' rel="sponsored nofollow noopener" target="_blank">'
+                           f'{esc(homage.get("merchant", "Direct")).title()}'
+                           f' ${ours:,.0f}&nbsp;&rsaquo;</a>'),
+                    (amz_price, f'<a class="shop secondary" href="{esc(a_href)}"'
+                                f' rel="sponsored nofollow noopener" target="_blank">'
+                                f'Amazon ${amz_price:,.0f}&nbsp;&rsaquo;</a>')])
+                return ('<span class="shopset">' + pair[0][1] + pair[1][1] + '</span>')
+        title = (' title="Affiliate link to the maker\'s own product page'
+                 ' — the price shown is read from it"')
+        return (f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
+                f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
+                f' data-slug="{esc(click_slug(house, name))}"'
+                f' rel="sponsored nofollow noopener" target="_blank"{title}>'
+                f'{label}&nbsp;&rsaquo;</a>')
     on_amazon = homage.get("amazon") or house in AMAZON_HOUSES
     if homage.get("amazon") is False:
         on_amazon = False
@@ -339,10 +394,24 @@ def top_cta(homage, siblings=()):
     if alt:
         aq = search_query(alt.get("house", ""), alt.get("name", ""))
         asin = (alt.get("asin") or "").strip()
-        ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
-            else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
-        out += (f'<p class="cta-alt muted">Closest one you can buy on Amazon: '
-                f'<a href="{esc(ahref)}" rel="sponsored nofollow noopener" target="_blank">'
+        # THIS MUST AGREE WITH THE TABLE ROW. shop_link()'s contract is that this CTA uses
+        # exactly the link the row would use, and adding merchantUrl to EXD-40 broke it:
+        # the row moved to Watchdives while this paragraph still said "on Amazon" and
+        # pointed at the ASIN, so one page offered the same watch from two sellers in two
+        # places without saying so. A sold-out merchant row is not "one you can buy", so
+        # it falls back to Amazon rather than advertising a dead product.
+        merch = alt.get("merchantUrl") if alt.get("availability") != "sold-out" else None
+        if merch:
+            seller = (alt.get("merchant") or "the maker").title()
+            ahref, lead, track = merch, f"Closest one you can buy, at {esc(seller)}", (
+                f' data-merchant="{esc(alt.get("merchant", "merchant"))}"'
+                f' data-slug="{esc(click_slug(alt.get("house", ""), alt.get("name", "")))}"')
+        else:
+            ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
+                else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
+            lead, track = "Closest one you can buy on Amazon", ""
+        out += (f'<p class="cta-alt muted">{lead}: '
+                f'<a href="{esc(ahref)}"{track} rel="sponsored nofollow noopener" target="_blank">'
                 f'{esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
                 f'&mdash; fidelity {esc(alt.get("fidelity"))}/100 at about {money(alt.get("priceUSD"))}.</p>')
     return out
@@ -478,6 +547,8 @@ def original_page(o):
         further.append('<a href="/articles/best-speedmaster-homage">The best Speedmaster homage</a>')
     if o["id"] == "rolex-datejust":
         further.append('<a href="/articles/best-datejust-homage">The best Datejust homage, ranked</a>')
+    if o["id"] == "rolex-day-date":
+        further.append('<a href="/articles/best-day-date-homage">The best Day-Date homage, ranked</a>')
     if o["id"] == "rolex-daytona":
         further.append('<a href="/articles/best-daytona-homage">The best Daytona homage, ranked</a>')
     if o["id"] == "ap-royal-oak":
@@ -648,6 +719,7 @@ def hub_page(originals):
              '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
              '<a href="/articles/best-speedmaster-homage">Speedmaster</a>, '
              '<a href="/articles/best-datejust-homage">Datejust</a>, '
+             '<a href="/articles/best-day-date-homage">Day-Date</a>, '
              '<a href="/articles/best-daytona-homage">Daytona</a>, '
              '<a href="/articles/best-royal-oak-homage">Royal Oak</a>, '
              '<a href="/articles/best-nautilus-homage">Nautilus</a>, '
@@ -723,6 +795,7 @@ def llms(originals):
         "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
         "/articles/best-santos-homage": "the square-bezel field, verified and ranked",
         "/articles/best-datejust-homage": "why 36mm decides it, and the three worth knowing",
+        "/articles/best-day-date-homage": "the only 36mm one is the mid-priced one; gold, meteorite and why they are all automatics",
         "/articles/best-daytona-homage": "meca-quartz explained, and the three worth knowing",
         "/articles/best-royal-oak-homage": "stamped vs machined tapisserie, and the two worth knowing",
         "/articles/best-seamaster-homage": "the budget pick that keeps the original's 300m rating",
