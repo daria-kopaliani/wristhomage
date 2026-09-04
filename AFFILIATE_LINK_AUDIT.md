@@ -132,3 +132,27 @@ catalogue and now opens its exact first-party product page:
 `directUrl` is now a first-class destination in both the generator and homepage finder.
 It is tracked as `shop/direct/<slug>`, separately from honest searches and Amazon, so a
 future merchant programme can be evaluated without corrupting the search cohort.
+
+
+## Pass 4 — 2026-09-04: the articles were the search-only half of the experiment
+
+`gen.py` has linked a verified ASIN since 08-30, but `link_articles.py` was still hard-coded
+to a keyword search — its docstring carried the pre-amendment rule, "search URLs, not ASINs."
+So the two link shapes were split by PAGE TYPE: `/watches/` pages ran `/dp/`, articles and
+brand guides ran `/s?k=`. That is also why the dp-vs-search result was confounded — the
+comparison was measuring page type as much as link shape.
+
+**20 article/guide links upgraded**, across 6 articles and 5 brand guides. Every ASIN was
+re-verified live on 2026-09-04 before use: listing title carries the model designator, page
+has a buy box. Three needed the documented Pagani/San Martin formatting allowance — Amazon
+titles drop the `PD-` prefix ("Pagani Design 1728") and the `-G1` suffix ("San Martin SN0134").
+
+Link surface after: **51 `/dp/` + 84 `/s?k=`**, both shapes now present on both page types,
+each carrying its own tag per rule 1.6. Audits at time of change: affiliate-audit clean across
+11 sites, click-tracking 135 tagged links / 0 untracked / 0 double, site-audit 0 orphans,
+no-JS 47/47.
+
+What this is for: the first dp-vs-search read (2026-09-03) put exact-ASIN at 16.2% conversion
+and $0.19/click against search at 4.8% and $0.046, on only 37 dp clicks. **This does not
+reverse the keep-search-links rule** — it grows the sample on the pages that carry the clicks
+so the question can be answered instead of argued. Re-read when dp clicks pass ~150.
