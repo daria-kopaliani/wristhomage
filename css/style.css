@@ -295,3 +295,15 @@ a.shop:hover { filter: brightness(1.08); border: none !important; }
 .cta a.buy:hover { filter: brightness(1.08); border: none !important; }
 .cta .muted { display: inline-block; margin-left: 10px; font-size: 13px; }
 .cta-alt { margin: 6px 0 14px; font-size: 13px; }
+
+/* two sellers on one row -------------------------------------------------
+   A row with a verified ASIN and a checked merchant page shows both, cheapest
+   first, each carrying its price. Stacked rather than side by side so the pair
+   still fits a narrow table cell on mobile. */
+.shopset { display: inline-flex; flex-direction: column; gap: 3px; align-items: stretch; }
+a.shop.secondary {
+  background: transparent;
+  color: var(--ink, inherit) !important;
+  border: 1px solid var(--line, rgba(0,0,0,0.18)) !important;
+  font-weight: 600;
+}

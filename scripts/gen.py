@@ -258,6 +258,33 @@ def shop_link(homage):
     if homage.get("merchantUrl"):
         sold_out = homage.get("availability") == "sold-out"
         label = "Check availability" if sold_out else "Shop"
+        # BOTH SELLERS, WHERE BOTH PASS. A row with a verified ASIN *and* a checked
+        # merchant page has two honest destinations, and the reader is the one who should
+        # pick. Rendered cheapest FIRST, never highest-commission first: on EXD-40 those
+        # happen to agree (Watchdives is both cheaper and the 6% one), and the day they
+        # disagree, ordering by commission would tilt the page in a way no audit here
+        # would catch. Each link carries its price, because two identical buttons add a
+        # decision without adding information — that is where multi-CTA conversion loss
+        # comes from, and the price is the whole reason to show two.
+        # Amazon only joins if it passes the header's rule (b) as well as having an asin.
+        amz_price = homage.get("amazonPriceUSD")
+        asin = (homage.get("asin") or "").strip()
+        if asin and amz_price and not sold_out:
+            ours = homage.get("priceUSD") or 0
+            within = ours and abs(amz_price - ours) / ours <= 0.15 + 1e-9
+            if within:
+                a_href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP
+                pair = sorted([
+                    (ours, f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
+                           f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
+                           f' data-slug="{esc(click_slug(house, name))}"'
+                           f' rel="sponsored nofollow noopener" target="_blank">'
+                           f'{esc(homage.get("merchant", "Direct")).title()}'
+                           f' ${ours:,.0f}&nbsp;&rsaquo;</a>'),
+                    (amz_price, f'<a class="shop secondary" href="{esc(a_href)}"'
+                                f' rel="sponsored nofollow noopener" target="_blank">'
+                                f'Amazon ${amz_price:,.0f}&nbsp;&rsaquo;</a>')])
+                return ('<span class="shopset">' + pair[0][1] + pair[1][1] + '</span>')
         title = (' title="Affiliate link to the maker\'s own product page'
                  ' — the price shown is read from it"')
         return (f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
