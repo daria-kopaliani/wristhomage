@@ -120,6 +120,13 @@ def git_lastmod(u):
         return LASTMOD_FALLBACK
 
 
+def click_slug(house, name):
+    """Mirrors slug() in js/finder.js so a row's click event has the same id on the
+    generated pages as on the homepage finder. If these two drift, one watch reports as
+    two different products and neither number is usable."""
+    return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", f"{house}-{name}".lower()))
+
+
 def esc(s):
     return html.escape(str(s), quote=True)
 
@@ -184,7 +191,7 @@ FOOT = """  </main>
     <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
   </div></footer>
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pre="out/amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
+<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{if(a.dataset.merchant){{goatcounter.count({{path:"shop/"+a.dataset.merchant+"/"+a.dataset.slug,title:(a.textContent||"").trim().slice(0,80),event:true}});return;}}var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pre="out/amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
 </body>
 </html>
 """
@@ -238,6 +245,26 @@ def shop_link(homage):
     non-affiliate search otherwise. Never a fake tag."""
     house, name = homage.get("house", ""), homage.get("name", "")
     q = search_query(house, name)
+    # A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
+    # against that merchant's live product page. The comment under "the buying moment"
+    # below said this would come first if there were one and that nothing was approved;
+    # Watchdives was joined 2026-09-04 and pays 6% on its own collection against the ~3.1%
+    # this site actually realises on Amazon. Mirrors destination() in js/finder.js.
+    #
+    # merchantUrl is NEVER filled from a search or a guessed handle. Both rows carrying it
+    # were read off the live product JSON on 2026-09-04, which is also how WD16570 V2 was
+    # caught with all five variants out of stock — it keeps its link so the reader can see
+    # that for themselves, but it is marked sold-out and does not claim to be a buy.
+    if homage.get("merchantUrl"):
+        sold_out = homage.get("availability") == "sold-out"
+        label = "Check availability" if sold_out else "Shop"
+        title = (' title="Affiliate link to the maker\'s own product page'
+                 ' — the price shown is read from it"')
+        return (f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
+                f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
+                f' data-slug="{esc(click_slug(house, name))}"'
+                f' rel="sponsored nofollow noopener" target="_blank"{title}>'
+                f'{label}&nbsp;&rsaquo;</a>')
     on_amazon = homage.get("amazon") or house in AMAZON_HOUSES
     if homage.get("amazon") is False:
         on_amazon = False

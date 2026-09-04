@@ -156,3 +156,37 @@ What this is for: the first dp-vs-search read (2026-09-03) put exact-ASIN at 16.
 and $0.19/click against search at 4.8% and $0.046, on only 37 dp clicks. **This does not
 reverse the keep-search-links rule** — it grows the sample on the pages that carry the clicks
 so the question can be answered instead of argued. Re-read when dp clicks pass ~150.
+
+## Pass 5 — 2026-09-04: the three "almost certainly on Amazon" rows are not buyable there
+
+Pass 3 set three of the unresolved 24 aside as worth a second look by hand — Invicta
+8926OB, Seiko SRPE53 and Seiko SSK023 — on the grounds that they are mainstream
+references a top-8 keyword window would miss. Checked properly against live US Amazon,
+signed in, scanning every result rather than the first page. **All three fail**, and the
+reasons differ, so they are recorded here to stop a fourth pass repeating the work.
+
+Standard applied, unchanged from pass 4: the listing title carries the model designator,
+and the page has a buy box. Plus the header's rule (b), within ~15% of the quoted price.
+
+- **Invicta 8926OB** — not on Amazon as a watch at all. Two queries, 116 results scanned;
+  every occurrence of "8926" is an ACCESSORY for it — bands (B08BZRNLKJ, B07D6PVSC6),
+  friction pins (B08MWMBKK2), a bezel insert (B0GVDPJ9KG), a replacement hand (B0HH9YYQ3J).
+  The nearest watches are other references: B014MN9RCM is **8932OB** (quartz, not this
+  watch) and B000JQFX1G is **5053** — checked its product page directly, title reads
+  "Invicta Men's 5053 Pro Diver Collection Automatic Watch" with no model-number field.
+  Linking either would be the digit-transposition failure this file already documents.
+- **Seiko SRPE53** — listed, but not buyable. B08BZBBTCC and B08C3ZYNKL both carry
+  SRPE53K1 in the title (the K1 regional suffix is the same formatting allowance pass 4
+  granted San Martin), and **neither has a buy box**: no add-to-cart, "See All Buying
+  Options" only, third-party offers whose price moved between the search card and the
+  product page ($345 vs $207 on one; $103.50 on the other, against a $315 quoted price).
+- **Seiko SSK023** — same shape. B0CRZ685T2 carries SSK023K1 in the title, no buy box,
+  "See All Buying Options", and the visible new offer is $568.47 against the $450 this
+  site quotes from seikowatches.com — **+26%**, which fails rule (b) even if a buy box
+  appeared tomorrow.
+
+**Conclusion.** These three stay as honest searches. The pass-3 note that they are
+"almost certainly on Amazon" was a reasonable guess and it was wrong; a mainstream
+reference can be absent, or present only as marketplace offers with no buy box, which
+is not the same thing as buyable. Unresolved count is unchanged at 24 rows, but three of
+them are now closed questions rather than open ones.

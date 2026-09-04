@@ -84,7 +84,18 @@
       : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
   }
 
+  // A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
+  // against that merchant's live product page. Watchdives pays 6% on its own collection
+  // against the ~3.1% wristhomage actually realises on Amazon, and the merchant link is an
+  // exact product page where the Amazon fallback for these rows is a keyword search that
+  // the 08-29 audit found does not surface the watch (WD16570 returns WD16760).
+  // Mirrors merchant_link() in scripts/gen.py.
   function destination(h, q) {
+    if (h.merchantUrl) {
+      return { kind: h.merchant || "merchant", href: h.merchantUrl,
+        rel: "sponsored nofollow noopener",
+        title: ' title="Affiliate link to the maker\'s own product page — the price shown is read from it"' };
+    }
     if (onAmazon(h)) {
       return { kind: "amazon", href: amazonHref(h, q), rel: "sponsored nofollow noopener", title: "" };
     }
