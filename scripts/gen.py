@@ -394,10 +394,24 @@ def top_cta(homage, siblings=()):
     if alt:
         aq = search_query(alt.get("house", ""), alt.get("name", ""))
         asin = (alt.get("asin") or "").strip()
-        ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
-            else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
-        out += (f'<p class="cta-alt muted">Closest one you can buy on Amazon: '
-                f'<a href="{esc(ahref)}" rel="sponsored nofollow noopener" target="_blank">'
+        # THIS MUST AGREE WITH THE TABLE ROW. shop_link()'s contract is that this CTA uses
+        # exactly the link the row would use, and adding merchantUrl to EXD-40 broke it:
+        # the row moved to Watchdives while this paragraph still said "on Amazon" and
+        # pointed at the ASIN, so one page offered the same watch from two sellers in two
+        # places without saying so. A sold-out merchant row is not "one you can buy", so
+        # it falls back to Amazon rather than advertising a dead product.
+        merch = alt.get("merchantUrl") if alt.get("availability") != "sold-out" else None
+        if merch:
+            seller = (alt.get("merchant") or "the maker").title()
+            ahref, lead, track = merch, f"Closest one you can buy, at {esc(seller)}", (
+                f' data-merchant="{esc(alt.get("merchant", "merchant"))}"'
+                f' data-slug="{esc(click_slug(alt.get("house", ""), alt.get("name", "")))}"')
+        else:
+            ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
+                else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
+            lead, track = "Closest one you can buy on Amazon", ""
+        out += (f'<p class="cta-alt muted">{lead}: '
+                f'<a href="{esc(ahref)}"{track} rel="sponsored nofollow noopener" target="_blank">'
                 f'{esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
                 f'&mdash; fidelity {esc(alt.get("fidelity"))}/100 at about {money(alt.get("priceUSD"))}.</p>')
     return out
