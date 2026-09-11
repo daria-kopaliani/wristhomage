@@ -16,7 +16,11 @@
 # 1957 retro and a Baltany Datejust homage. Nothing verifiable was left to list.
 /watches/panerai-luminor              /watches/                          301
 /watches/iwc-portugieser              /watches/                          301
-/watches/rolex-milgauss               /watches/                          301
+# 2026-09-11: the Milgauss page is back. The rule above is met again — the Pagani Design
+# PD-1733 row was checked against paganidesign.com's own product sheet (40mm, 100m, Miyota
+# 8215, sapphire; $172.95 there, $114.99 on the Amazon listing that names the reference).
+# One verified row is the floor the rule sets, not the ceiling; Panerai, Portugieser and
+# Legend Diver stay retired because a fresh Amazon sweep found nothing verifiable for them.
 /watches/longines-legend-diver        /watches/                          301
 # Nearest genuine fields for the two that have one:
 /watches/omega-seamaster-300-heritage /watches/omega-seamaster-300m      301
