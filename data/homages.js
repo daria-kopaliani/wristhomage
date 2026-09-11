@@ -307,6 +307,15 @@ window.HOMAGE_DATA = {
         { name: "SN0113W V2", house: "San Martin", priceUSD: 289, size_mm: 38, wr_m: 100, movement: "Automatic (Seiko NH35)", fidelity: 86, priceSource: "watchdives.com", priceDate: "2026-08-17", amazon: false, direct: true, verified: "2026-08-27", note: "the closest thing to an Aqua Terra under three hundred — vertical teak-striped dial, applied indices, date at 3, sapphire with AR, at 38mm against Omega's own 38mm variant. Two honest caveats: it is 100m where the original is 150m, and despite being sold as a \"Chronometer\" it runs a Seiko NH35, which carries no chronometer certification — the word here describes the model line, not a COSC or METAS rating. Sold out in every variant on San Martin's own store at our 2026-08-27 check." },
         { name: "PD-1688", house: "Pagani Design", priceUSD: 130, size_mm: 40, wr_m: 100, movement: "Automatic (Seiko NH35A)", fidelity: 78, priceSource: "paganidesignwatch.com", priceDate: "2026-08-17", amazon: true, verified: "2026-08-17", note: "the cheap way into the look and the closest here to the original's 41mm case, with sapphire, 100m and a Seiko auto for about a third of the San Martin. The dial texture and bracelet finishing are where the money was saved — this reads as an Aqua Terra at arm's length rather than up close" }
       ]
+    },
+    {
+      id: "rolex-milgauss", name: "Milgauss", house: "Rolex", ref: "116400GV",
+      priceUSD: 9600, type: "everyday", size_mm: 40, wr_m: 100,
+      movement: "Automatic (Rolex 3131)",
+      cues: ["green-tinted crystal", "lightning-bolt seconds hand", "smooth bezel", "anti-magnetic", "everyday sports"],
+      homages: [
+        { name: "PD-1733", house: "Pagani Design", priceUSD: 115, size_mm: 40, wr_m: 100, movement: "Automatic (Miyota 8215)", fidelity: 78, priceSource: "amazon.com", priceDate: "2026-09-11", asin: "B0B5G36R1R", amazon: true, verified: "2026-09-11", note: "the one widely sold Milgauss homage with the green-tinted sapphire — the cue that says Milgauss before anything else — on a 40mm 316L case with a screw-down crown and 100m, per Pagani's own spec sheet (read 2026-09-11). The Miyota 8215 is a step below the NH35 the brand uses elsewhere and hacks only on some examples. Pagani's own store lists it at $172.95; the Amazon listing that carries the reference in its title is $114.99, so that is where the link lands and the price comes from. Scored on the crystal, the smooth bezel and the case; the seconds hand is not described on either page, so it is not scored." }
+      ]
     }
   ]
 };
