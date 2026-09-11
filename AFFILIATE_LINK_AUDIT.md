@@ -190,3 +190,30 @@ and the page has a buy box. Plus the header's rule (b), within ~15% of the quote
 reference can be absent, or present only as marketplace offers with no buy box, which
 is not the same thing as buyable. Unresolved count is unchanged at 24 rows, but three of
 them are now closed questions rather than open ones.
+
+## 2026-09-11 — exact-ASIN pass on the search rows that take the clicks
+
+Method: the 22 `amazon: true` rows without an `asin` were resolved through a logged-in
+amazon.com session, reading each candidate's product page — title, **"Item model number"** in
+the product details, price, availability. Amazon's watch titles now routinely omit the
+reference ("Pagani Design Automatic Watch for Men, 40mm…"), so the listing's own model field
+was accepted as the identifier where the title was silent; a reseller code (YS023, PD1753,
+c8193mwwu-2) is a rejection, not a near miss. Rule (b) unchanged: within ~15% of the quoted
+price, or Amazon cheaper — in which case priceUSD/priceSource move to amazon.com, as SN0134-G1 did.
+
+| row | result |
+|---|---|
+| PD-1701 | ✅ B0DZBVM35F — "Pagani Design 1701 … VK63", model PD-1701, $124.99 (quoted $136) |
+| PD-1752 | ✅ B0DKNQFGFS — "Pagani Design 1752 DD36", model PD-1752, $134.99 (quoted $148) |
+| PD-1751 | ✅ B0BZXN3D26 — model PD1751, $139.99 (quoted $180 → repriced to Amazon) |
+| SSK023 | ✅ B0D3WBXVP9 — model SSK023, $360 (quoted $450 → repriced) |
+| AD2078 | ✅ B0DX73XKQD — model AD2078, $152.99 (quoted $139) |
+| AD2106 | ✅ B0F7Y14PJT — model AD2106, $129.99; the "+Mesh Band" bundle B0D4VCFRLH avoided |
+| PD-1688 | ✗ B0B6HRVKJP is the watch, but $165.69 against $130 quoted (+27%) — rule (b) |
+| WD16570 V2 | ✗ held: Amazon lists "WD16570**B** V2 … 38mm" (B0GMJ7FKFL $189.98); watchdives.com SKU is WD16570-V2 at 37mm, all variants sold out. Probably the same watch; needs an eye, not a rule |
+| AD2515 | ✗ two listings claim model AD2515 with different watches ($195 diver, $84 dress) |
+| PD-1673, PD-1685, C8180, C8210, AD2556, AD2043 | ✗ no listing carries the reference — resellers' own codes only |
+| MTP-B190D-1BV, TW2W53000, TW2Y88200, S6073AB | ✗ not on US Amazon |
+| 8926OB, SRPE53 | unchanged from the 08-30 finding (not buyable) |
+
+Net: 19 → 25 exact links. The search rows above stay searches; they are the honest link.
