@@ -295,6 +295,9 @@ a.shop:hover { filter: brightness(1.08); border: none !important; }
 .cta a.buy:hover { filter: brightness(1.08); border: none !important; }
 .cta .muted { display: inline-block; margin-left: 10px; font-size: 13px; }
 .cta-alt { margin: 6px 0 14px; font-size: 13px; }
+.cta.cta-alt { margin-top: 8px; }
+.cta.cta-alt a.buy { background: transparent; color: var(--accent) !important; border: 1.5px solid var(--accent) !important; }
+.cta.cta-alt a.buy:hover { background: var(--accent); color: var(--accent-text) !important; }
 
 /* two sellers on one row -------------------------------------------------
    A row with a verified ASIN and a checked merchant page shows both, cheapest

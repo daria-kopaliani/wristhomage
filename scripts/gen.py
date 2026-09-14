@@ -410,10 +410,18 @@ def top_cta(homage, siblings=()):
             ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
                 else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
             lead, track = "Closest one you can buy on Amazon", ""
-        out += (f'<p class="cta-alt muted">{lead}: '
-                f'<a href="{esc(ahref)}"{track} rel="sponsored nofollow noopener" target="_blank">'
-                f'{esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
-                f'&mdash; fidelity {esc(alt.get("fidelity"))}/100 at about {money(alt.get("priceUSD"))}.</p>')
+        # A second button, not a muted footnote. This block only runs when the winner
+        # has no affiliate programme, so the paragraph above earns nothing and this
+        # line is the page's only paid link. As a 13px muted sentence it took a
+        # fraction of the clicks: in the 30 days to 2026-09-14, 261 of 642 outbound
+        # clicks on the site were shop/search (San Martin 126, Steinhart 90) and the
+        # Amazon alternative beneath them barely registered. Same link, same honesty
+        # about what it is — just given the weight of the button next to it.
+        out += (f'<p class="cta cta-alt"><a class="buy" href="{esc(ahref)}"{track} '
+                f'rel="sponsored nofollow noopener" target="_blank">'
+                f'{lead}: {esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
+                f'<span class="muted">fidelity {esc(alt.get("fidelity"))}/100 at about '
+                f'{money(alt.get("priceUSD"))}.</span></p>')
     return out
 
 
