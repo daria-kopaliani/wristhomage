@@ -19,10 +19,34 @@ consequences that drive most of the rules:
 - **A page that cannot be verified earns nothing.** Named entities, real
   numbers, cited sources, dated checks.
 
-Money facts, so priorities are legible: across all tags to date, 312 clicks →
-28 items → ~$27 commission. The highest earner per click is `ledmaskscore`
-($0.33) because its AOV is $192, *despite* a 1.26% commission rate. Volume is
-not the constraint; verifiability and average order value are.
+Money facts, so priorities are legible. Read from the Amazon Associates
+dashboard 2026-09-17, window Aug 18 – Sep 16: **970 clicks → 93 items →
+$72.11 commission**. Earnings per click by property:
+
+| property | clicks | items | commission | $/click |
+|---|---|---|---|---|
+| fishoilscore | 115 | 11 | $18.17 | **$0.158** |
+| dupenote | 105 | 17 | $12.74 | $0.121 |
+| wristhomage | 440 | 21 | $14.93 | $0.034 |
+| ledmaskscore | 58 | 0 | $0.00 | $0.00 |
+| *untagged* | 225 | 44 | $26.27 | $0.117 |
+
+Three things this table overturns, each verified per-tag on 2026-09-17:
+
+- **`ledmaskscore` is no longer the best earner per click — it is zero.** The old
+  $0.33/click figure came from 4 orders in the all-time window; over the last 30
+  days it took 58 clicks and returned no orders at all, on Amazon *and* on
+  Hyperice via Awin. Do not cite it as the AOV proof case without re-reading it.
+- **23% of clicks (225) carry no tracking ID**, and they hold 36% of the
+  commission. All 16 tracking IDs were isolated and checked, so this is not a
+  missing tag; the most likely mechanism is cookie carry-over from a tagged
+  click. It means per-property attribution is systematically incomplete —
+  a property's true earnings are its row *plus* an unknown share of that 225.
+- **91 of 93 items ordered were indirect** — not the product linked. The
+  portfolio earns off what the visitor buys next, which is why blended
+  commission is 2.2% while the named tags sit at 3–4%.
+
+Volume is not the constraint; verifiability and average order value are.
 
 ---
 
