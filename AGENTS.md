@@ -124,6 +124,44 @@ that file. Minify at build time if ever needed, never in source.
 
 ---
 
+## 1.8 The shape the AI channel cites is "best <named entity>"
+
+Measured 2026-08-20..09-19 across the four sites with traffic. **chatgpt.com is 3,722 of ~4,500
+referrals (~88%)**; bing 183, duckduckgo 239, Google 86. So this is the only ranking that matters,
+and it is not Google's.
+
+What actually gets read:
+
+| page | views |
+|---|---|
+| wristhomage `/articles/best-datejust-homage` | 330 |
+| wristhomage `/watches/patek-nautilus` | 291 |
+| wristhomage `/watches/ap-royal-oak` | 230 |
+| wristhomage `/articles/best-santos-homage` | 189 |
+| dupenote `/articles/best-fragrance-dupes` | 104 |
+| dupenote `/articles/birkenstock-dupes` | 101 |
+| fishoilscore `/guides/best-third-party-tested-fish-oil` | 57 |
+
+Every one is **a named entity plus a comparison verb** — "best X", "X dupes", or the entity alone.
+Descriptive, clever and internal-codename titles do not appear anywhere in that list.
+
+**The diagnostic that follows from it: a page with impressions and a good Google position but no
+pageviews is a NAMING problem, not a content problem.** fishoilscore's protein ranking sat at
+position 4.6 with 31 impressions and **4 pageviews / 0 clicks** while titled "Third-party-tested
+protein: which SKUs the certificate actually covers" at `/protein-pilot`, under an h1 scoped to a
+merchant that is not an approved programme. It was never orphaned, never blocked, present in
+sitemap.xml and llms.txt, rendering without JS. It was renamed to
+`/guides/best-third-party-tested-protein-powder` on 2026-09-19 (301 from the old path) with no
+change to its content. Judge the result by GoatCounter AI referrals from late October, against a
+baseline of 4 views.
+
+Run the scan before writing anything new — GSC page impressions against GoatCounter pageviews.
+As of 2026-09-19 the biggest outstanding case is **dehydratorscore: 274 impressions across six
+guides at positions 8-12, with 0-4 pageviews each and no measurable AI referrals at all.** Those
+slugs are already query-shaped (`how-long-to-dehydrate-jalapenos`), so the protein diagnosis does
+NOT explain it and a second failure mode is undiagnosed there. It had also never been announced to
+Bing until the 2026-09-19 IndexNow backfill, which is a candidate but is not established.
+
 ## 2. Before opening a PR
 
 Run these from the `moondogapps` repo (they read the local site repos):
