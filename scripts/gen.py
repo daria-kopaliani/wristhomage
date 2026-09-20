@@ -83,6 +83,7 @@ ARTICLES = [
     "/guides/baltany",
     "/guides/cadisen",
     "/guides/addiesdive",
+    "/guides/watchdives",
 ]
 
 # Pages the homepage Reading section is not expected to carry: /rubric is linked from the
@@ -724,8 +725,9 @@ def hub_page(originals):
              '<a href="/guides/pagani-design">Pagani Design</a>, '
              '<a href="/guides/steeldive">Steeldive</a>, '
              '<a href="/guides/baltany">Baltany</a>, '
-             '<a href="/guides/cadisen">Cadisen</a> and '
-             '<a href="/guides/addiesdive">Addiesdive</a>, each reviewed model by model.</p>')
+             '<a href="/guides/cadisen">Cadisen</a>, '
+             '<a href="/guides/addiesdive">Addiesdive</a> and '
+             '<a href="/guides/watchdives">Watchdives</a>, each reviewed model by model.</p>')
     b.append('<p>Ranked by icon: <a href="/articles/best-submariner-homage-under-200">Submariner '
              'under $200</a>, <a href="/articles/best-gmt-homage">Rolex GMT</a>, '
              '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
@@ -804,6 +806,7 @@ def llms(originals):
         "/guides/baltany": "honest brand review of the vintage-proportions homage maker, model by model",
         "/guides/cadisen": "honest brand review of the spec-per-dollar budget brand, model by model",
         "/guides/addiesdive": "honest brand review of the $79-$150 brand: which models are quartz, and what the codes mean",
+        "/guides/watchdives": "honest brand review of the titanium-and-vintage-diver house: which listings are actually its own watches, and what is in stock",
         "/articles/best-gmt-homage": "affordable GMT-Master II homages, ranked",
         "/articles/best-explorer-2-homage": "polar dials and freccione hands, ranked",
         "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
