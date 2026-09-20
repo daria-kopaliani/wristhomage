@@ -85,6 +85,10 @@ ARTICLES = [
     "/guides/addiesdive",
 ]
 
+# Pages the homepage Reading section is not expected to carry: /rubric is linked from the
+# footer and every watch page, not from Reading.
+ABOUT_HOME = {"/rubric"}
+
 # Sitemap lastmod. Derived from git: the last commit that touched the HTML file a URL
 # serves IS when that page's content last changed, so lastmod stays honest without
 # anyone remembering to bump a hand-maintained table. (It used to be a dict with a
@@ -730,6 +734,8 @@ def hub_page(originals):
              '<a href="/articles/best-day-date-homage">Day-Date</a>, '
              '<a href="/articles/best-daytona-homage">Daytona</a>, '
              '<a href="/articles/best-royal-oak-homage">Royal Oak</a>, '
+             '<a href="/articles/best-explorer-homage">Explorer</a>, '
+             '<a href="/articles/best-black-bay-homage">Black Bay</a>, '
              '<a href="/articles/best-nautilus-homage">Nautilus</a>, '
              '<a href="/articles/best-santos-homage">Santos</a> and '
              '<a href="/articles/best-seamaster-homage">Seamaster</a>. If you are still deciding '
@@ -937,6 +943,19 @@ def homepage_ssr(originals):
     s = re.sub(r'<script type="application/ld\+json">(?:(?!</script>).)*?"@type":\s*"ItemList".*?</script>\s*',
                "", s, flags=re.S)
     s = s.replace("</head>", item_list + "\n</head>", 1)
+    # The homepage is the only INDEXED page that links the hand-written guides, so a page
+    # missing from the Reading section has no crawl path from anything Google has already
+    # fetched — it sits at "Discovered - currently not indexed / Referring page: None
+    # detected" however many times it is submitted. Measured 2026-09-20: all five brand
+    # guides listed here were indexed and /guides/addiesdive, which was not listed, was
+    # unknown to Google; same split for best-datejust-homage (listed, crawled) against
+    # best-explorer / best-day-date / best-black-bay (not listed, not discovered).
+    # llms.txt and the sitemap already refuse to omit a live page; so does this.
+    missing = sorted(a for a in ARTICLES if a not in ABOUT_HOME
+                     and f'href="{a}"' not in s)
+    if missing:
+        raise SystemExit("homepage_ssr: index.html Reading section omits live pages:\n  "
+                         + "\n  ".join(missing))
     open(path, "w", encoding="utf-8").write(s)
     return len(ranked), len(icons)
 
