@@ -86,6 +86,19 @@ ARTICLES = [
     "/guides/watchdives",
 ]
 
+# Brand guides, keyed by the `house` value the rows use. Drives the "Further reading"
+# block on every watch page carrying that house — the inbound links that keep a guide
+# out of the crawl-island state.
+HOUSE_GUIDES = {
+    "San Martin":    ("/guides/san-martin",    "Are San Martin watches any good?"),
+    "Pagani Design": ("/guides/pagani-design", "Pagani Design, model by model"),
+    "Steeldive":     ("/guides/steeldive",     "Are Steeldive watches any good?"),
+    "Baltany":       ("/guides/baltany",       "Baltany watches review"),
+    "Cadisen":       ("/guides/cadisen",       "Cadisen watches review"),
+    "Addiesdive":    ("/guides/addiesdive",    "Addiesdive watches review"),
+    "Watchdives":    ("/guides/watchdives",    "Are Watchdives watches any good?"),
+}
+
 # Pages the homepage Reading section is not expected to carry: /rubric is linked from the
 # footer and every watch page, not from Reading.
 ABOUT_HOME = {"/rubric"}
@@ -568,18 +581,14 @@ def original_page(o):
         further.append('<a href="/articles/best-royal-oak-homage">The best Royal Oak homage, ranked</a>')
     if o["id"] == "omega-seamaster-300m":
         further.append('<a href="/articles/best-seamaster-homage">The best Seamaster homage, ranked</a>')
-    if "San Martin" in houses:
-        further.append('<a href="/guides/san-martin">Are San Martin watches any good?</a>')
-    if "Pagani Design" in houses:
-        further.append('<a href="/guides/pagani-design">Pagani Design, model by model</a>')
-    if "Steeldive" in houses:
-        further.append('<a href="/guides/steeldive">Are Steeldive watches any good?</a>')
-    if "Baltany" in houses:
-        further.append('<a href="/guides/baltany">Baltany watches review</a>')
-    if "Cadisen" in houses:
-        further.append('<a href="/guides/cadisen">Cadisen watches review</a>')
-    if "Addiesdive" in houses:
-        further.append('<a href="/guides/addiesdive">Addiesdive watches review</a>')
+    # One entry per brand guide. This was seven identical ifs and the Watchdives guide
+    # was written without an eighth — which is exactly how /guides/addiesdive ended up
+    # reachable only from pages Google had not indexed (see the homepage guard in
+    # homepage_ssr). HOUSE_GUIDES is asserted against ARTICLES below so a new guide
+    # cannot ship without its inbound links.
+    for house_name, (slug, label) in HOUSE_GUIDES.items():
+        if house_name in houses:
+            further.append(f'<a href="{slug}">{label}</a>')
     if further:
         b.append('<p><strong>Further reading:</strong> ' + ' · '.join(further) + '</p>')
 
@@ -964,6 +973,13 @@ def homepage_ssr(originals):
 
 
 def main():
+    # A guide in the sitemap with no HOUSE_GUIDES entry gets no inbound links from the
+    # watch pages that carry its house — the crawl-island failure, shipped again.
+    wired = {slug for slug, _ in HOUSE_GUIDES.values()}
+    unwired = sorted(a for a in ARTICLES if a.startswith("/guides/") and a not in wired)
+    if unwired:
+        raise SystemExit("gen.py: brand guides with no HOUSE_GUIDES entry:\n  "
+                         + "\n  ".join(unwired))
     data = load_data()
     originals = data["originals"]
     # Snapshot lastmod BEFORE writing anything: the writes below would otherwise dirty
