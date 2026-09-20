@@ -47,6 +47,17 @@
  * What must never happen is the state this row was actually in: quoting a dead direct
  * price while sending 10 clicks a week to a search showing the wrong watch.
  *
+ * CHECKED AND DEAD END 2026-09-20: watchdives.com is NOT a way round the San Martin
+ * bot-block. sanmartinwatches.com 403s the freshness watcher, which has frozen seven
+ * San Martin rows for weeks, and watchdives.com retails San Martin with an open
+ * products.json — so it looks like the answer. It is not, for two reasons. It carries
+ * only 2 of the 14 references tracked here (SN0116 and SN0054; 30 San Martin watch
+ * listings, 14 distinct SN refs, almost all newer models). And its price is the
+ * RETAILER's, not San Martin's own-store price, so it cannot verify a row whose
+ * priceSource is sanmartinwatches.com without changing what the row means.
+ * Also note SN refs collide on prefix: SN013 is a substring of SN0138 and matching
+ * loosely pairs our SN013-G with a different watch. Match \bSN\d+\b, not a prefix.
+ *
  * SEPARATE, UNRESOLVED: sanmartinwatches.com's own widget shows SN017, SN007, SN004,
  * SN008, SN030 and SN019 as "Out of stock" while its current shop (12 products, none
  * out of stock) has moved to newer references (SN0126, SN0138, SN0144). SN004-G and
