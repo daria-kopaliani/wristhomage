@@ -12,41 +12,42 @@ Every rule below was written after something broke. None is stylistic.
 
 They are static, faceless buying guides that earn affiliate commission. The
 traffic that matters is **not Google** — it is assistants citing the pages.
-Google is roughly 1% of referrals; ChatGPT and friends are the majority. Two
+Google is a small minority of referrals; ChatGPT and friends are the rest. Two
 consequences that drive most of the rules:
 
 - **A page an assistant cannot read earns nothing.** No JS-rendered content.
 - **A page that cannot be verified earns nothing.** Named entities, real
   numbers, cited sources, dated checks.
 
-Money facts, so priorities are legible. Read from the Amazon Associates
-dashboard 2026-09-17, window Aug 18 – Sep 16: **970 clicks → 93 items →
-$72.11 commission**. Earnings per click by property:
+What decides earnings: **average order value and commission rate, not click
+volume.** A property with a high AOV out-earns a higher-traffic one on a better
+rate, so verifiability beats reach when the two compete for effort. Ask the
+owner for current figures — they are never written down here (see §0.1).
 
-| property | clicks | items | commission | $/click |
-|---|---|---|---|---|
-| fishoilscore | 115 | 11 | $18.17 | **$0.158** |
-| dupenote | 105 | 17 | $12.74 | $0.121 |
-| wristhomage | 440 | 21 | $14.93 | $0.034 |
-| ledmaskscore | 58 | 0 | $0.00 | $0.00 |
-| *untagged* | 225 | 44 | $26.27 | $0.117 |
+Three things the per-tag read of 2026-09-17 overturned. They are kept as shape,
+without the numbers, because several rules below depend on them:
 
-Three things this table overturns, each verified per-tag on 2026-09-17:
+- **Do not cite `ledmaskscore` as the high-AOV proof case without re-reading
+  current figures.** That claim rested on a small, old sample and did not survive
+  a later re-read across both of its programmes. Ask the owner before repeating it.
+- **Per-property attribution is systematically incomplete.** A sizeable minority
+  of clicks arrive carrying no tracking ID, and they hold a disproportionate
+  share of the commission. Every tracking ID was isolated and checked, so this is
+  not a missing tag; the likeliest mechanism is cookie carry-over from a tagged
+  click. A property's true earnings are its own row *plus* an unknown share of
+  that untagged pool.
+- **Nearly every item ordered is indirect** — not the product that was linked.
+  The portfolio earns off what the visitor buys next, which is why the blended
+  commission rate sits below the rate the named tags themselves carry.
 
-- **`ledmaskscore` is no longer the best earner per click — it is zero.** The old
-  $0.33/click figure came from 4 orders in the all-time window; over the last 30
-  days it took 58 clicks and returned no orders at all, on Amazon *and* on
-  Hyperice via Awin. Do not cite it as the AOV proof case without re-reading it.
-- **23% of clicks (225) carry no tracking ID**, and they hold 36% of the
-  commission. All 16 tracking IDs were isolated and checked, so this is not a
-  missing tag; the most likely mechanism is cookie carry-over from a tagged
-  click. It means per-property attribution is systematically incomplete —
-  a property's true earnings are its row *plus* an unknown share of that 225.
-- **91 of 93 items ordered were indirect** — not the product linked. The
-  portfolio earns off what the visitor buys next, which is why blended
-  commission is 2.2% while the named tags sit at 3–4%.
-
-Volume is not the constraint; verifiability and average order value are.
+### 0.1 This file is served publicly — never put business data in it
+Cloudflare Pages deploys the repo root as the artifact, so every root-level
+`.md` is a live URL on the site's own domain. `functions/_middleware.js` now
+404s any `.md` path — note that `_redirects` cannot do this, because Pages
+serves a matching static asset before it evaluates redirect rules. Treat the
+block as defence in depth, not permission: **no revenue, commission, traffic
+or account figures in this file, ever.** Reference the shape of a number,
+never the number.
 
 ---
 
@@ -84,7 +85,7 @@ enough.
 **Check:** `moondog-affiliate-audit.py`
 
 ### 1.6 The tag must match the link shape
-Three sites run a deliberate split so link types can be compared:
+Five sites run a deliberate split so link types can be compared:
 
 | link shape | tag |
 |---|---|
@@ -93,7 +94,9 @@ Three sites run a deliberate split so link types can be compared:
 
 A `/dp/` link wearing the search tag still earns, still passes a naive tag
 check, and quietly destroys the comparison. Currently split:
-`waterfilterscore`, `dupenote`, `wristhomage`.
+`waterfilterscore`, `dupenote`, `wristhomage`, `ledmaskscore` (joined 2026-09-07 — until
+then every one of its links was a search, with no row carrying a verified ASIN), `fishoilscore`
+(joined 2026-09-11 — its verified ASINs had all worn the search tag).
 
 ### 1.7 `lastmod` and "last reviewed" are different dates. Never conflate them.
 
@@ -124,43 +127,33 @@ that file. Minify at build time if ever needed, never in source.
 
 ---
 
-## 1.8 The shape the AI channel cites is "best <named entity>"
+## 1.10 The shape the AI channel cites is "best <named entity>"
 
-Measured 2026-08-20..09-19 across the four sites with traffic. **chatgpt.com is 3,722 of ~4,500
-referrals (~88%)**; bing 183, duckduckgo 239, Google 86. So this is the only ranking that matters,
-and it is not Google's.
+Measured 2026-08-20..09-19 across the four sites with traffic. Assistant referrals — chatgpt.com
+above all — are the overwhelming majority; Bing, DuckDuckGo and Google together are a small
+remainder. So this is the only ranking that matters, and it is not Google's.
 
-What actually gets read:
-
-| page | views |
-|---|---|
-| wristhomage `/articles/best-datejust-homage` | 330 |
-| wristhomage `/watches/patek-nautilus` | 291 |
-| wristhomage `/watches/ap-royal-oak` | 230 |
-| wristhomage `/articles/best-santos-homage` | 189 |
-| dupenote `/articles/best-fragrance-dupes` | 104 |
-| dupenote `/articles/birkenstock-dupes` | 101 |
-| fishoilscore `/guides/best-third-party-tested-fish-oil` | 57 |
-
-Every one is **a named entity plus a comparison verb** — "best X", "X dupes", or the entity alone.
-Descriptive, clever and internal-codename titles do not appear anywhere in that list.
+Every page in the most-read list is **a named entity plus a comparison verb** — "best X", "X
+dupes", or the entity alone. Descriptive, clever and internal-codename titles do not appear
+anywhere in that list.
 
 **The diagnostic that follows from it: a page with impressions and a good Google position but no
-pageviews is a NAMING problem, not a content problem.** fishoilscore's protein ranking sat at
-position 4.6 with 31 impressions and **4 pageviews / 0 clicks** while titled "Third-party-tested
+pageviews is a NAMING problem, not a content problem.** fishoilscore's protein ranking held a
+top-five position with real impressions and almost no pageviews while titled "Third-party-tested
 protein: which SKUs the certificate actually covers" at `/protein-pilot`, under an h1 scoped to a
 merchant that is not an approved programme. It was never orphaned, never blocked, present in
 sitemap.xml and llms.txt, rendering without JS. It was renamed to
 `/guides/best-third-party-tested-protein-powder` on 2026-09-19 (301 from the old path) with no
-change to its content. Judge the result by GoatCounter AI referrals from late October, against a
-baseline of 4 views.
+change to its content. Judge the result by GoatCounter AI referrals from late October, against its
+own pre-rename baseline.
 
 Run the scan before writing anything new — GSC page impressions against GoatCounter pageviews.
-As of 2026-09-19 the biggest outstanding case is **dehydratorscore: 274 impressions across six
-guides at positions 8-12, with 0-4 pageviews each and no measurable AI referrals at all.** Those
-slugs are already query-shaped (`how-long-to-dehydrate-jalapenos`), so the protein diagnosis does
-NOT explain it and a second failure mode is undiagnosed there. It had also never been announced to
-Bing until the 2026-09-19 IndexNow backfill, which is a candidate but is not established.
+As of 2026-09-19 the biggest outstanding case is **dehydratorscore: six guides with meaningful
+impressions at mid-page positions, near-zero pageviews each, and no measurable AI referrals at
+all.** Those slugs are already query-shaped (`how-long-to-dehydrate-jalapenos`), so the protein
+diagnosis does NOT explain it and a second failure mode is undiagnosed there. It had also never
+been announced to Bing until the 2026-09-19 IndexNow backfill, which is a candidate but is not
+established.
 
 ## 2. Before opening a PR
 
@@ -209,7 +202,8 @@ and specific. Generic and definitional pages died in the July collapse and did
 not come back.
 
 **Demand-check before writing.** Do not add per-entity permutations on a hunch;
-~130 such pages produced 1,316 impressions and 9 clicks over 28 days. Use
+a batch of ~130 such pages produced near-zero clicks against meaningful
+impressions — demand, not coverage, is the constraint. Use
 `scripts/demand-check.py` first.
 
 ---
@@ -235,8 +229,10 @@ Freight all do it), not breakage — verify those in a real browser before
 - **Cache keys:** when an asset version changes (`?v=...`), verify the HTML
   first and the versioned asset once afterwards. Polling the versioned URL first
   caches the old asset against the new markup at the edge.
-- **Do not push or deploy without the owner's approval.** Commit freely —
-  committing is not publishing. Then stop and say what changed.
+- **Push freely; never merge to `main` without the owner's say-so.** Committing
+  and pushing a branch are not publishing — `main` is what Cloudflare Pages
+  deploys, so the merge is the publish. Push the branch, open the PR, say what
+  changed, and leave the merge to the owner.
 - Check the branch before you commit. A `git add -A` on the wrong branch put a
   site fix inside an unrelated feature PR, where it stayed unshipped.
 
