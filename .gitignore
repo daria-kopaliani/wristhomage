@@ -1,0 +1,5 @@
+
+# Build output. A .pyc was committed here by a broad `git add`; the repo root is
+# the deploy artifact, so compiled bytecode has no business being tracked.
+__pycache__/
+*.pyc

@@ -19,7 +19,7 @@ on non-shop pages).
 
 Run from repo root:  python3 scripts/gen.py
 """
-import json, os, re, subprocess, html, urllib.parse
+import datetime, json, os, re, subprocess, html, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://wristhomage.com"
@@ -33,7 +33,43 @@ AMAZON_TAG = "wristhomage-20"
 # exact links from 4 to 27 against 107 searches; before that there was no exact bucket.
 # This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
 AMAZON_TAG_DP = "wristhomagedp-20"
-REVIEWED_HUMAN = "August 2026"   # bump when the field is re-checked
+REVIEWED_HUMAN = "August 2026"   # fallback only, for a page with no dated rows
+
+_VERIFIED_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+
+
+def review_month(original):
+    """"Last reviewed" for one watch page, from the rows that page actually shows.
+
+    This used to be a single module constant stamped onto all 22 pages, so a page
+    whose claims were re-verified today and a page untouched since August both
+    printed the same month — and bumping the constant to fix the first would have
+    advanced the second without anyone checking it. AGENTS.md §1.7: the date is
+    only honest if a check happened on THIS page's content.
+
+    The page's date is the newest `verified` among its rows, because that is the
+    last time anything a reader sees here was confirmed against a source.
+
+    Refuses rather than guesses. A malformed date is a bug worth stopping for: the
+    shape is checked before the calendar because date.fromisoformat() also accepts
+    "20260920" and "2026-W38-7".
+    """
+    dates = []
+    for h in original.get("homages", []):
+        raw_date = h.get("verified")
+        if raw_date in (None, ""):
+            continue
+        if not _VERIFIED_RE.match(str(raw_date)):
+            raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
+                             f"verified={raw_date!r}; the required shape is YYYY-MM-DD.")
+        try:
+            dates.append(datetime.date.fromisoformat(str(raw_date)))
+        except ValueError as e:
+            raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
+                             f"verified={raw_date!r}, which is not a real date ({e}).")
+    if not dates:
+        return REVIEWED_HUMAN
+    return max(dates).strftime("%B %Y")
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
@@ -476,10 +512,20 @@ def original_page(o):
     top = max((h for h in (o.get("homages") or []) if h.get("fidelity") is not None),
               key=lambda h: h["fidelity"], default=None)
     if top:
+        # Fidelity ranks design closeness, not availability — rubric.html says so
+        # outright — so a sold-out watch can still be the closest homage. What the
+        # lede must not do is quote its price as though a reader could go and buy
+        # it. The page was naming a $218 automatic whose only buyable
+        # configuration is a different movement.
+        unavailable = ("" if top.get("availability") != "sold-out" else
+                       f' It is <strong>sold out on {esc(top.get("house",""))}\u2019s own store</strong> '
+                       f'at our last check, so that is a fidelity ranking rather than a buying '
+                       f'recommendation \u2014 the table below marks what can actually be bought.')
         b.append(f'<p class="lede"><strong>The closest {esc(full)} homage we rank is the '
                  f'{esc(top.get("house",""))} {esc(top.get("name",""))}</strong> — it scores '
                  f'{top["fidelity"]}/100 on our <a href="/rubric">published fidelity rubric</a> at about '
-                 f'{money(top.get("priceUSD"))}, against {money(o.get("priceUSD"))} for the original. '
+                 f'{money(top.get("priceUSD"))}, against {money(o.get("priceUSD"))} for the original.'
+                 f'{unavailable} '
                  f'Below: all {n} spec-checked homages ({esc(cues)}), closest first, with prices, '
                  f'movements and honest notes.</p>')
     else:
@@ -488,7 +534,7 @@ def original_page(o):
                  f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
     # A visible review date. Models and search indexes both weight currency, and the
     # item pages carried none while the guides did.
-    b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {REVIEWED_HUMAN}.</p>')
+    b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {review_month(o)}.</p>')
     b.append('</div></div>')
     b.append(DISC)
     b.append(top_cta(top, homages))
