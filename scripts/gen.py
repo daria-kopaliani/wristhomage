@@ -47,8 +47,13 @@ def review_month(original):
     advanced the second without anyone checking it. AGENTS.md §1.7: the date is
     only honest if a check happened on THIS page's content.
 
-    The page's date is the newest `verified` among its rows, because that is the
-    last time anything a reader sees here was confirmed against a source.
+    The page's date is the OLDEST `verified` among its rows. "Last reviewed" is a
+    claim about everything above it, so a page is only as reviewed as its
+    stalest row. Taking the newest instead let one re-checked row speak for the
+    whole page: patek-nautilus said September because SN076-G was re-verified,
+    while its other four rows had not been looked at since August. That is the
+    §1.7 failure wearing the fix's clothes — a partial check presented as a page
+    review.
 
     Refuses rather than guesses. A malformed date is a bug worth stopping for: the
     shape is checked before the calendar because date.fromisoformat() also accepts
@@ -69,7 +74,7 @@ def review_month(original):
                              f"verified={raw_date!r}, which is not a real date ({e}).")
     if not dates:
         return REVIEWED_HUMAN
-    return max(dates).strftime("%B %Y")
+    return min(dates).strftime("%B %Y")
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
