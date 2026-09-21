@@ -252,8 +252,10 @@ FOOT = """  </main>
 
 DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are affiliate links: '
         '<strong>as an Amazon Associate we earn from qualifying purchases</strong>, at no extra cost '
-        'to you. Other brands link to a plain, non-affiliate search, and many '
-        'are cheaper bought direct. Affiliate status never affects a fidelity score. Scores follow the '
+        'to you. Some brands link to the maker\u2019s own product page and some to a plain search; '
+        'either way those are not affiliate links unless the link itself says so, and many watches '
+        'are cheaper bought direct. Watchdives links carry a referral; San Martin has no affiliate '
+        'programme at all. Affiliate status never affects a fidelity score. Scores follow the '
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
 
