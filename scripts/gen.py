@@ -259,8 +259,8 @@ DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are af
         '<strong>as an Amazon Associate we earn from qualifying purchases</strong>, at no extra cost '
         'to you. Some brands link to the maker\u2019s own product page and some to a plain search; '
         'either way those are not affiliate links unless the link itself says so, and many watches '
-        'are cheaper bought direct. Watchdives links carry a referral; San Martin has no affiliate '
-        'programme at all. Affiliate status never affects a fidelity score. Scores follow the '
+        'are cheaper bought direct. The Watchdives links here carry a referral; the San Martin '
+        'links here do not. Affiliate status never affects a fidelity score. Scores follow the '
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
 
@@ -451,15 +451,29 @@ def top_cta(homage, siblings=()):
                 f'target="_blank">{label} &rsaquo;</a></p>')
     # No affiliate programme for this house. Say so; the click is still worth having,
     # and pretending otherwise is how a verdict starts looking bought.
-    if homage.get("directUrl"):
-        href = homage["directUrl"]
+    # merchantUrl counts here too. Checking only directUrl sent the page's most
+    # prominent button to a Google search while the row two paragraphs down
+    # linked the verified product page — breaking this function's own contract
+    # that the CTA uses exactly the link the row would use, and pointing a reader
+    # at an unrelated result when an exact one was already on file.
+    first_party = homage.get("directUrl") or homage.get("merchantUrl")
+    if first_party:
+        href = first_party
         sold_out = homage.get("availability") == "sold-out"
         label = (f"Check official availability for the {esc(name)}" if sold_out
                  else f"View the exact {esc(name)} at {esc(house)}")
-        detail = ("Official page currently shows every variant sold out. " if sold_out else "")
-        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+        # Not "every variant": SN095-G-DA still has a buyable ST3621 while the
+        # YN55A this row ranks is gone. The claim is about the configuration we
+        # rank, which is the only one this row can speak for.
+        detail = (f"The {esc(homage.get('movement') or 'configuration')} we rank was sold out "
+                  f"at our last check. " if sold_out else "")
+        paid = is_affiliate_link(href)
+        rel = "sponsored nofollow noopener" if paid else "nofollow noopener"
+        note = ("Exact first-party link; carries our referral." if paid
+                else "Exact first-party link; not affiliated.")
+        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="{rel}" '
                f'target="_blank">{label} &rsaquo;</a> '
-               f'<span class="muted">{detail}Exact first-party link; not affiliated.</span></p>')
+               f'<span class="muted">{detail}{note}</span></p>')
     else:
         href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
         out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
