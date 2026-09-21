@@ -24,21 +24,20 @@ volume.** A property with a high AOV out-earns a higher-traffic one on a better
 rate, so verifiability beats reach when the two compete for effort. Ask the
 owner for current figures — they are never written down here (see §0.1).
 
-Three things the per-tag read of 2026-09-17 overturned. They are kept as shape,
-without the numbers, because several rules below depend on them:
+Three operating rules that follow from how these programmes actually pay. The
+evidence behind each lives in the private moondogapps repo and in the owner's
+dashboards; none of it belongs in this file.
 
-- **Do not cite `ledmaskscore` as the high-AOV proof case without re-reading
-  current figures.** That claim rested on a small, old sample and did not survive
-  a later re-read across both of its programmes. Ask the owner before repeating it.
-- **Per-property attribution is systematically incomplete.** A sizeable minority
-  of clicks arrive carrying no tracking ID, and they hold a disproportionate
-  share of the commission. Every tracking ID was isolated and checked, so this is
-  not a missing tag; the likeliest mechanism is cookie carry-over from a tagged
-  click. A property's true earnings are its own row *plus* an unknown share of
-  that untagged pool.
-- **Nearly every item ordered is indirect** — not the product that was linked.
-  The portfolio earns off what the visitor buys next, which is why the blended
-  commission rate sits below the rate the named tags themselves carry.
+- **Never cite one property as the high-AOV proof case from memory.** That claim
+  has been wrong before. Ask the owner for current figures first.
+- **Per-property attribution is incomplete by construction.** Some clicks arrive
+  with no tracking ID, so a property's true earnings are its own row plus an
+  unknown share of an untagged pool. This is not a missing tag — every tracking
+  ID has been checked — and the likeliest mechanism is cookie carry-over from a
+  tagged click. Treat any per-property number as a floor.
+- **Most orders are indirect** — not the product that was linked. The portfolio
+  earns off what the visitor buys next, so blended commission behaves differently
+  from the rate any single tag carries. Do not reason from a tag's headline rate.
 
 ### 0.1 This file is served publicly — never put business data in it
 Cloudflare Pages deploys the repo root as the artifact, so every root-level
@@ -129,31 +128,27 @@ that file. Minify at build time if ever needed, never in source.
 
 ## 1.10 The shape the AI channel cites is "best <named entity>"
 
-Measured 2026-08-20..09-19 across the four sites with traffic. Assistant referrals — chatgpt.com
-above all — are the overwhelming majority; Bing, DuckDuckGo and Google together are a small
+Assistant referrals — chatgpt.com above all — are the overwhelming majority of
+traffic to the sites that have any; search engines together are a small
 remainder. So this is the only ranking that matters, and it is not Google's.
 
-Every page in the most-read list is **a named entity plus a comparison verb** — "best X", "X
-dupes", or the entity alone. Descriptive, clever and internal-codename titles do not appear
-anywhere in that list.
+Every page in the most-read list is **a named entity plus a comparison verb** —
+"best X", "X dupes", or the entity alone. Descriptive, clever and
+internal-codename titles do not appear in it at all.
 
-**The diagnostic that follows from it: a page with impressions and a good Google position but no
-pageviews is a NAMING problem, not a content problem.** fishoilscore's protein ranking held a
-top-five position with real impressions and almost no pageviews while titled "Third-party-tested
-protein: which SKUs the certificate actually covers" at `/protein-pilot`, under an h1 scoped to a
-merchant that is not an approved programme. It was never orphaned, never blocked, present in
-sitemap.xml and llms.txt, rendering without JS. It was renamed to
-`/guides/best-third-party-tested-protein-powder` on 2026-09-19 (301 from the old path) with no
-change to its content. Judge the result by GoatCounter AI referrals from late October, against its
-own pre-rename baseline.
+**The diagnostic that follows: a page with impressions and a good search position
+but no pageviews is a NAMING problem, not a content problem.** The case that
+established this was a ranking page titled after an internal framing, under an h1
+scoped to a merchant that was not an approved programme. It was never orphaned,
+never blocked, present in sitemap.xml and llms.txt, rendering without JS. Renaming
+it to a "best <named entity>" slug, with a 301 from the old path and no change to
+its content, is the intervention to copy.
 
-Run the scan before writing anything new — GSC page impressions against GoatCounter pageviews.
-As of 2026-09-19 the biggest outstanding case is **dehydratorscore: six guides with meaningful
-impressions at mid-page positions, near-zero pageviews each, and no measurable AI referrals at
-all.** Those slugs are already query-shaped (`how-long-to-dehydrate-jalapenos`), so the protein
-diagnosis does NOT explain it and a second failure mode is undiagnosed there. It had also never
-been announced to Bing until the 2026-09-19 IndexNow backfill, which is a candidate but is not
-established.
+Run the scan before writing anything new — search-console impressions against
+GoatCounter pageviews, both in the private repo. Where a set of pages has
+impressions and no pageviews despite already being query-shaped, the naming
+diagnosis does NOT explain it and a second failure mode is undiagnosed; say so
+rather than renaming on a hunch.
 
 ## 2. Before opening a PR
 
@@ -202,8 +197,8 @@ and specific. Generic and definitional pages died in the July collapse and did
 not come back.
 
 **Demand-check before writing.** Do not add per-entity permutations on a hunch;
-a batch of ~130 such pages produced near-zero clicks against meaningful
-impressions — demand, not coverage, is the constraint. Use
+a large batch of them has been measured and demand, not coverage, was the
+constraint. Use
 `scripts/demand-check.py` first.
 
 ---
