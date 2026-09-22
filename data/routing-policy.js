@@ -205,6 +205,49 @@
     });
   }
 
+  /* THE CTA THAT NAMES ONE WATCH.
+   *
+   * scripts/gen.py::top_cta() promises, in its own comments, that the CTA uses exactly
+   * the link the table row would use. It used to keep its own precedence and test Amazon
+   * eligibility FIRST, which broke that promise for any row whose destination is a
+   * merchant page: the sold-out Watchdives WD16570 V2 Pioneer shipped a CTA pointing at
+   * an Amazon search while its own table row pointed at the exact Watchdives product
+   * page — one page offering the same watch from two sellers without saying so.
+   *
+   * So the destination is simply the row's decision. What the caller still chooses is
+   * WORDING, which is editorial, not routing. */
+  function cta(h) {
+    var d = resolve(h);
+    var firstParty = d.kind !== "amazon" && d.kind !== "search";
+    return {
+      kind: d.kind, href: d.href, rel: d.rel, soldOut: d.soldOut,
+      onAmazon: d.onAmazon, firstParty: firstParty,
+      paid: d.rel === SPONSORED,
+      hasAsin: Boolean(String(h.asin || "").trim())
+    };
+  }
+
+  /* Whether a row may be offered as "the closest one you can actually buy" beneath a
+   * winner that earns nothing. Deliberately the same test the CTA block has always
+   * used — this names the rule, it does not widen it. */
+  function canBeAlternative(h) {
+    return resolve(h).onAmazon;
+  }
+
+  /* Where that alternative points. A SOLD-OUT merchant page is not a buy, so it falls
+   * back to Amazon rather than advertising a dead product; anything else uses the row's
+   * own destination, so the alternative and the row's table entry agree. */
+  function alternative(h) {
+    var d = resolve(h);
+    var firstParty = d.kind !== "amazon" && d.kind !== "search";
+    if (firstParty && !d.soldOut) {
+      return { kind: d.kind, href: d.href, rel: d.rel, viaMerchant: true,
+               seller: h.merchant || "the maker" };
+    }
+    return { kind: "amazon", href: d.amazonHref, rel: SPONSORED, viaMerchant: false,
+             seller: null };
+  }
+
   function assign(a, b) {
     var out = {}, k;
     for (k in a) if (Object.prototype.hasOwnProperty.call(a, k)) out[k] = a[k];
@@ -218,7 +261,8 @@
     SPONSORED: SPONSORED, PLAIN: PLAIN, TITLES: TITLES,
     isAffiliateLink: isAffiliateLink, onAmazon: onAmazon,
     searchQuery: searchQuery, amazonHref: amazonHref, clickSlug: clickSlug,
-    sellerPair: sellerPair, resolve: resolve
+    sellerPair: sellerPair, resolve: resolve,
+    cta: cta, canBeAlternative: canBeAlternative, alternative: alternative
   };
 
   if (typeof window !== "undefined" && window) window.WH_ROUTING = api;

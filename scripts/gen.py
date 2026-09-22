@@ -247,7 +247,7 @@ def load_data():
         f"require({json.dumps(js)});"
         "var d=window.HOMAGE_DATA;"
         "(d.originals||[]).forEach(function(o){(o.homages||[]).forEach(function(h){"
-        "h._routing=R.resolve(h);})});"
+        "var d=R.resolve(h);""d.cta=R.cta(h);d.alternative=R.alternative(h);""d.canBeAlternative=R.canBeAlternative(h);""h._routing=d;})});"
         "process.stdout.write(JSON.stringify(d));")])
     data = json.loads(out)
     rows = [h for o in data.get("originals", []) for h in (o.get("homages") or [])]
@@ -406,76 +406,65 @@ def top_cta(homage, siblings=()):
     most prominent link on the page earns nothing. The fix is NOT to point the CTA at a
     lower-scoring watch that happens to pay — affiliate status not moving a fidelity score
     is the promise this site is built on, and the lede has already named the winner. It is
-    to add a SECOND, plainly labelled line for the closest homage you can actually buy on
-    Amazon, which is a question a reader in front of an unbuyable recommendation is
-    already asking."""
+    to add a SECOND, plainly labelled line for the closest homage you can actually buy,
+    which is a question a reader in front of an unbuyable recommendation is already asking.
+
+    DESTINATIONS COME FROM THE POLICY, NOT FROM HERE. This function used to keep its own
+    precedence and test Amazon eligibility first, which broke its own contract: the
+    sold-out Watchdives WD16570 V2 Pioneer shipped a CTA pointing at an Amazon search
+    while its table row two paragraphs down pointed at the exact Watchdives product page.
+    What is chosen here is wording; where a link goes is data/routing-policy.js's answer.
+    """
     if not homage:
         return ""
     house, name = homage.get("house", ""), homage.get("name", "")
-    d = routing(homage)
-    q = d["query"]
-    if d["onAmazon"]:
-        asin = (homage.get("asin") or "").strip()
-        href = d["amazonHref"]
-        label = (f"Check the exact {esc(name)} on Amazon" if asin
-                 else f"See current {esc(name)} prices on Amazon")
-        return (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="sponsored nofollow noopener" '
-                f'target="_blank">{label} &rsaquo;</a></p>')
-    # No affiliate programme for this house. Say so; the click is still worth having,
-    # and pretending otherwise is how a verdict starts looking bought.
-    # merchantUrl counts here too. Checking only directUrl sent the page's most
-    # prominent button to a Google search while the row two paragraphs down
-    # linked the verified product page — breaking this function's own contract
-    # that the CTA uses exactly the link the row would use, and pointing a reader
-    # at an unrelated result when an exact one was already on file.
-    first_party = homage.get("directUrl") or homage.get("merchantUrl")
-    if first_party:
-        href = first_party
-        sold_out = homage.get("availability") == "sold-out"
-        label = (f"Check official availability for the {esc(name)}" if sold_out
+    c = routing(homage)["cta"]
+
+    if c["firstParty"]:
+        label = (f"Check official availability for the {esc(name)}" if c["soldOut"]
                  else f"View the exact {esc(name)} at {esc(house)}")
         # Not "every variant": SN095-G-DA still has a buyable ST3621 while the
         # YN55A this row ranks is gone. The claim is about the configuration we
         # rank, which is the only one this row can speak for.
         detail = (f"The {esc(homage.get('movement') or 'configuration')} we rank was sold out "
-                  f"at our last check. " if sold_out else "")
-        # The policy already decided whether this row's first-party page carries our
-        # referral; re-deriving it here is exactly the second implementation this
-        # refactor removes.
-        rel = d["firstPartyRel"]
-        paid = rel == "sponsored nofollow noopener"
-        note = ("Exact first-party link; carries our referral." if paid
+                  f"at our last check. " if c["soldOut"] else "")
+        note = ("Exact first-party link; carries our referral." if c["paid"]
                 else "Exact first-party link; not affiliated.")
-        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="{rel}" '
+        out = (f'<p class="cta"><a class="buy" href="{esc(c["href"])}" rel="{c["rel"]}" '
                f'target="_blank">{label} &rsaquo;</a> '
                f'<span class="muted">{detail}{note}</span></p>')
+    elif c["kind"] == "amazon":
+        label = (f"Check the exact {esc(name)} on Amazon" if c["hasAsin"]
+                 else f"See current {esc(name)} prices on Amazon")
+        return (f'<p class="cta"><a class="buy" href="{esc(c["href"])}" rel="{c["rel"]}" '
+                f'target="_blank">{label} &rsaquo;</a></p>')
     else:
-        href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
-        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+        # No affiliate programme for this house. Say so; the click is still worth having,
+        # and pretending otherwise is how a verdict starts looking bought.
+        out = (f'<p class="cta"><a class="buy" href="{esc(c["href"])}" rel="{c["rel"]}" '
                f'target="_blank">Find the {esc(name)} &rsaquo;</a> '
                f'<span class="muted">No affiliate programme for {esc(house)} — plain search, '
                f'and often cheaper bought direct.</span></p>')
-    alt = max((h for h in siblings
-               if h is not homage and routing(h)["onAmazon"] and h.get("fidelity") is not None),
-              key=lambda h: h["fidelity"], default=None)
+
+    # WHEN THE ALTERNATIVE LINE APPEARS. Its reason for existing is that the named
+    # winner earns nothing, so this is the page's only paid link. The old test for that
+    # was "the winner is not on Amazon", which stopped being the right question once the
+    # destination stopped being chosen here: a row can be on Amazon and still route to a
+    # merchant page. The honest test is whether the winner is a paid link you can
+    # actually buy today — a sold-out winner is not one, however well it pays.
+    earns_already = c["paid"] and not c["soldOut"]
+    alt = None if earns_already else max(
+        (h for h in siblings
+         if h is not homage and routing(h)["canBeAlternative"]
+         and h.get("fidelity") is not None),
+        key=lambda h: h["fidelity"], default=None)
     if alt:
-        alt_d = routing(alt)
-        aq = alt_d["query"]
-        asin = (alt.get("asin") or "").strip()
-        # THIS MUST AGREE WITH THE TABLE ROW. shop_link()'s contract is that this CTA uses
-        # exactly the link the row would use, and adding merchantUrl to EXD-40 broke it:
-        # the row moved to Watchdives while this paragraph still said "on Amazon" and
-        # pointed at the ASIN, so one page offered the same watch from two sellers in two
-        # places without saying so. A sold-out merchant row is not "one you can buy", so
-        # it falls back to Amazon rather than advertising a dead product.
-        merch = alt.get("merchantUrl") if alt.get("availability") != "sold-out" else None
-        if merch:
-            seller = (alt.get("merchant") or "the maker").title()
-            ahref, lead, track = merch, f"Closest one you can buy, at {esc(seller)}", (
-                f' data-merchant="{esc(alt.get("merchant", "merchant"))}"'
-                f' data-slug="{esc(alt_d["slug"])}"')
+        a = routing(alt)["alternative"]
+        if a["viaMerchant"]:
+            lead = f'Closest one you can buy, at {esc(str(a["seller"]).title())}'
+            track = (f' data-merchant="{esc(alt.get("merchant", "merchant"))}"'
+                     f' data-slug="{esc(routing(alt)["slug"])}"')
         else:
-            ahref = alt_d["amazonHref"]
             lead, track = "Closest one you can buy on Amazon", ""
         # A second button, not a muted footnote. This block only runs when the winner
         # has no affiliate programme, so the paragraph above earns nothing and this
@@ -484,15 +473,13 @@ def top_cta(homage, siblings=()):
         # clicks on the site were shop/search (San Martin 126, Steinhart 90) and the
         # Amazon alternative beneath them barely registered. Same link, same honesty
         # about what it is — just given the weight of the button next to it.
-        # merch is the alt row's own merchant page, whose rel the policy decided;
-        # otherwise this is the Amazon link, which is always sponsored.
-        arel = alt_d["firstPartyRel"] if merch else "sponsored nofollow noopener"
-        out += (f'<p class="cta cta-alt"><a class="buy" href="{esc(ahref)}"{track} '
-                f'rel="{arel}" target="_blank">'
+        out += (f'<p class="cta cta-alt"><a class="buy" href="{esc(a["href"])}"{track} '
+                f'rel="{a["rel"]}" target="_blank">'
                 f'{lead}: {esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
                 f'<span class="muted">fidelity {esc(alt.get("fidelity"))}/100 at about '
                 f'{money(alt.get("priceUSD"))}.</span></p>')
     return out
+
 
 
 def money(n):

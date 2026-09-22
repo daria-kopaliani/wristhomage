@@ -143,6 +143,38 @@ FIXTURES.forEach(function (f) {
   });
 });
 
+/* ------------------------------------------------------------ the CTA surface -- */
+/* top_cta() promises it uses exactly the link the table row would use. It used to test
+ * Amazon eligibility first and break that promise for merchant rows — the sold-out
+ * Watchdives WD16570 V2 Pioneer shipped a CTA to an Amazon search while its own table
+ * row pointed at the exact Watchdives page. These pin the contract. */
+
+var wdSoldOut = {
+  house: "Watchdives", name: "WD16570 V2 Pioneer", merchant: "watchdives",
+  merchantUrl: "https://watchdives.com/products/wd16570?ref=yupgbgih",
+  amazon: true, availability: "sold-out", priceUSD: 229
+};
+eq("CTA for a sold-out merchant row points at the merchant page, not Amazon",
+   R.cta(wdSoldOut).href, "https://watchdives.com/products/wd16570?ref=yupgbgih");
+ok("that row is still flagged sold-out to the caller", R.cta(wdSoldOut).soldOut === true);
+ok("and still counts as first-party, so the CTA discloses the referral",
+   R.cta(wdSoldOut).firstParty === true && R.cta(wdSoldOut).paid === true);
+ok("as an ALTERNATIVE, a sold-out merchant row falls back to Amazon rather than " +
+   "advertising a dead product", R.alternative(wdSoldOut).viaMerchant === false);
+ok("and that fallback is an Amazon link", R.alternative(wdSoldOut).href.indexOf("amazon.com") !== -1);
+
+var wdLive = Object.assign({}, wdSoldOut, { availability: undefined });
+ok("a LIVE merchant row is offered as itself, not as Amazon",
+   R.alternative(wdLive).viaMerchant === true);
+eq("and at its own merchant URL", R.alternative(wdLive).href, wdLive.merchantUrl);
+
+eq("CTA for an Amazon row with an ASIN is the exact product",
+   R.cta({ house: "Pagani Design", name: "PD-1651", asin: "B0B3TFV9T9" }).href,
+   "https://www.amazon.com/dp/B0B3TFV9T9?tag=wristhomagedp-20");
+ok("a no-programme row may not be offered as the buyable alternative",
+   R.canBeAlternative({ house: "Steinhart", name: "Ocean One 39" }) === false);
+ok("an Amazon row may", R.canBeAlternative({ house: "Casio", name: "MTP-B190D-1BV" }) === true);
+
 /* ------------------------------------------------------- the both-sellers rule -- */
 
 var pairRow = {
@@ -203,6 +235,9 @@ rows.forEach(function (h) {
        d.rel, paid ? R.SPONSORED : R.PLAIN);
   }
 
+  // THE CONTRACT THAT BROKE. The CTA must be the same link as the table row.
+  eq(who + ": CTA destination is the row's own destination", R.cta(h).href, d.href);
+
   ok(who + ": every row resolves to a destination", Boolean(d.href));
   ok(who + ": every row gets a button label", Boolean(d.label));
   ok(who + ": sold-out rows say so", !d.soldOut || d.label === "Check availability");
@@ -250,6 +285,38 @@ seen.forEach(function (tag) {
 });
 checks += seen.length;
 ok("no hand-built shop links in generated output (" + seen.length + " checked)", stray === 0);
+
+// 3. the CTA surface, same treatment. Every class="buy" link in the generated pages must
+//    be a destination the policy produced — as a row's own CTA, or as the alternative
+//    offered beneath an unbuyable winner. This is the check whose absence let top_cta()
+//    keep its own routing while the suite still reported clean.
+var ctaExpected = {};
+rows.forEach(function (h) {
+  ctaExpected[R.cta(h).href] = true;
+  ctaExpected[R.alternative(h).href] = true;
+});
+var buys = html.match(/<a class="buy"[^>]*href="([^"]+)"/g) || [];
+ok("generated pages contain CTA links at all", buys.length > 0);
+var strayCta = 0;
+buys.forEach(function (tag) {
+  var u = tag.match(/href="([^"]+)"/)[1].replace(/&amp;/g, "&").replace(/&#x27;/g, "'");
+  if (!ctaExpected[u]) { strayCta++; failures.push("CTA the policy never produced: " + u); }
+});
+checks += buys.length;
+ok("no hand-built CTA destinations in generated output (" + buys.length + " checked)",
+   strayCta === 0);
+
+// 4. and the specific regression: no page may offer the same watch from two sellers by
+//    having a CTA on Amazon while that row's shop link goes to a merchant page.
+var merchantRows = rows.filter(function (h) {
+  var k = R.resolve(h).kind;
+  return k !== "amazon" && k !== "search" && k !== "direct";
+});
+merchantRows.forEach(function (h) {
+  var amzn = R.resolve(h).amazonHref.replace(/&/g, "&amp;");
+  ok(h.house + " " + h.name + ": no CTA sends this merchant row to Amazon",
+     html.indexOf('class="buy" href="' + amzn + '"') === -1);
+});
 
 /* ------------------------------------------------------------------- report --- */
 
