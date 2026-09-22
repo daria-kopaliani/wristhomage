@@ -102,7 +102,9 @@
     var pair = [
       { p: ours, html: '<a class="shop" data-shop="' + esc(m) + '" data-slug="' +
           esc(slug(h.house + "-" + h.name)) + '" href="' + esc(h.merchantUrl) +
-          '" rel="sponsored nofollow noopener" target="_blank">' +
+          '" rel="' + (isAffiliateLink(h.merchantUrl)
+            ? "sponsored nofollow noopener" : "nofollow noopener") +
+          '" target="_blank">' +
           esc(m.charAt(0).toUpperCase() + m.slice(1)) + " $" + Math.round(ours) + ' &rsaquo;</a>' },
       { p: h.amazonPriceUSD, html: '<a class="shop secondary" data-shop="amazon" data-slug="' +
           esc(slug(h.house + "-" + h.name)) + '" href="' + esc(amazonHref(h, "")) +
@@ -112,11 +114,22 @@
     return '<span class="shopset">' + pair[0].html + pair[1].html + '</span>';
   }
 
+  // Mirrors is_affiliate_link() in scripts/gen.py. A merchant URL is only an
+  // affiliate link if it carries a referral: Watchdives rows do (?ref=), the San
+  // Martin product links do not, and San Martin has no affiliate programme. The
+  // server side was fixed first and this path was missed, so the homepage kept
+  // claiming sponsorship the generated pages and the disclosure both deny.
+  var REFERRAL_PARAM = /[?&](ref|aff|affiliate|tag|awc|aw_affid)=/i;
+  function isAffiliateLink(url) { return REFERRAL_PARAM.test(url || ""); }
+
   function destination(h, q) {
     if (h.merchantUrl) {
+      var paid = isAffiliateLink(h.merchantUrl);
       return { kind: h.merchant || "merchant", href: h.merchantUrl,
-        rel: "sponsored nofollow noopener",
-        title: ' title="Affiliate link to the maker\'s own product page — the price shown is read from it"' };
+        rel: paid ? "sponsored nofollow noopener" : "nofollow noopener",
+        title: paid
+          ? ' title="Affiliate link to the maker\'s own product page — the price shown is read from it"'
+          : ' title="The maker\'s own product page. Not an affiliate link — the price shown is read from it"' };
     }
     if (onAmazon(h)) {
       return { kind: "amazon", href: amazonHref(h, q), rel: "sponsored nofollow noopener", title: "" };

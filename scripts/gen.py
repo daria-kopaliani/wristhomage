@@ -19,7 +19,7 @@ on non-shop pages).
 
 Run from repo root:  python3 scripts/gen.py
 """
-import json, os, re, subprocess, html, urllib.parse
+import datetime, json, os, re, subprocess, html, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://wristhomage.com"
@@ -33,7 +33,48 @@ AMAZON_TAG = "wristhomage-20"
 # exact links from 4 to 27 against 107 searches; before that there was no exact bucket.
 # This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
 AMAZON_TAG_DP = "wristhomagedp-20"
-REVIEWED_HUMAN = "August 2026"   # bump when the field is re-checked
+REVIEWED_HUMAN = "August 2026"   # fallback only, for a page with no dated rows
+
+_VERIFIED_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+
+
+def review_month(original):
+    """"Last reviewed" for one watch page, from the rows that page actually shows.
+
+    This used to be a single module constant stamped onto all 22 pages, so a page
+    whose claims were re-verified today and a page untouched since August both
+    printed the same month — and bumping the constant to fix the first would have
+    advanced the second without anyone checking it. AGENTS.md §1.7: the date is
+    only honest if a check happened on THIS page's content.
+
+    The page's date is the OLDEST `verified` among its rows. "Last reviewed" is a
+    claim about everything above it, so a page is only as reviewed as its
+    stalest row. Taking the newest instead let one re-checked row speak for the
+    whole page: patek-nautilus said September because SN076-G was re-verified,
+    while its other four rows had not been looked at since August. That is the
+    §1.7 failure wearing the fix's clothes — a partial check presented as a page
+    review.
+
+    Refuses rather than guesses. A malformed date is a bug worth stopping for: the
+    shape is checked before the calendar because date.fromisoformat() also accepts
+    "20260920" and "2026-W38-7".
+    """
+    dates = []
+    for h in original.get("homages", []):
+        raw_date = h.get("verified")
+        if raw_date in (None, ""):
+            continue
+        if not _VERIFIED_RE.match(str(raw_date)):
+            raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
+                             f"verified={raw_date!r}; the required shape is YYYY-MM-DD.")
+        try:
+            dates.append(datetime.date.fromisoformat(str(raw_date)))
+        except ValueError as e:
+            raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
+                             f"verified={raw_date!r}, which is not a real date ({e}).")
+    if not dates:
+        return REVIEWED_HUMAN
+    return min(dates).strftime("%B %Y")
 # Houses genuinely sold on Amazon get tagged links. Everything else stays an honest
 # non-affiliate search. `amazon:true` in the data is the source of truth per-homage;
 # this set is the fallback / cross-check.
@@ -216,8 +257,10 @@ FOOT = """  </main>
 
 DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are affiliate links: '
         '<strong>as an Amazon Associate we earn from qualifying purchases</strong>, at no extra cost '
-        'to you. Other brands link to a plain, non-affiliate search, and many '
-        'are cheaper bought direct. Affiliate status never affects a fidelity score. Scores follow the '
+        'to you. Some brands link to the maker\u2019s own product page and some to a plain search; '
+        'either way those are not affiliate links unless the link itself says so, and many watches '
+        'are cheaper bought direct. The Watchdives links here carry a referral; the San Martin '
+        'links here do not. Affiliate status never affects a fidelity score. Scores follow the '
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
 
@@ -258,6 +301,20 @@ def price_cell(c):
             f'{esc(c.get("priceDate",""))}</span>')
 
 
+# A merchant URL is only an affiliate link when it actually carries a referral.
+# The Watchdives rows do (?ref=); the San Martin product links added for the
+# sold-out rows do not, and San Martin has no affiliate programme — which these
+# pages say themselves. Marking those rel="sponsored" and titling them
+# "Affiliate link" put a false disclosure on the page. Claiming payment where
+# there is none is still a false statement about the page's own incentives, and
+# it is the kind a reader has no way to check.
+_REFERRAL_PARAM = re.compile(r"[?&](ref|aff|affiliate|tag|awc|aw_affid)=", re.I)
+
+
+def is_affiliate_link(url):
+    return bool(_REFERRAL_PARAM.search(url or ""))
+
+
 def shop_link(homage):
     """Buy link for one homage row. Tagged Amazon search for Amazon houses; honest
     non-affiliate search otherwise. Never a fake tag."""
@@ -273,6 +330,7 @@ def shop_link(homage):
     # were read off the live product JSON on 2026-09-04, which is also how WD16570 V2 was
     # caught with all five variants out of stock — it keeps its link so the reader can see
     # that for themselves, but it is marked sold-out and does not claim to be a buy.
+    _murl = homage.get("merchantUrl")
     if homage.get("merchantUrl"):
         sold_out = homage.get("availability") == "sold-out"
         label = "Check availability" if sold_out else "Shop"
@@ -296,7 +354,7 @@ def shop_link(homage):
                     (ours, f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
                            f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
                            f' data-slug="{esc(click_slug(house, name))}"'
-                           f' rel="sponsored nofollow noopener" target="_blank">'
+                           f' rel="{"sponsored nofollow noopener" if is_affiliate_link(_murl) else "nofollow noopener"}" target="_blank">'
                            f'{esc(homage.get("merchant", "Direct")).title()}'
                            f' ${ours:,.0f}&nbsp;&rsaquo;</a>'),
                     (amz_price, f'<a class="shop secondary" href="{esc(a_href)}"'
@@ -304,11 +362,13 @@ def shop_link(homage):
                                 f'Amazon ${amz_price:,.0f}&nbsp;&rsaquo;</a>')])
                 return ('<span class="shopset">' + pair[0][1] + pair[1][1] + '</span>')
         title = (' title="Affiliate link to the maker\'s own product page'
+                 ' — the price shown is read from it"' if is_affiliate_link(_murl) else
+                 ' title="The maker\'s own product page. Not an affiliate link'
                  ' — the price shown is read from it"')
         return (f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
                 f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
                 f' data-slug="{esc(click_slug(house, name))}"'
-                f' rel="sponsored nofollow noopener" target="_blank"{title}>'
+                f' rel="{"sponsored nofollow noopener" if is_affiliate_link(_murl) else "nofollow noopener"}" target="_blank"{title}>'
                 f'{label}&nbsp;&rsaquo;</a>')
     on_amazon = homage.get("amazon") or house in AMAZON_HOUSES
     if homage.get("amazon") is False:
@@ -391,15 +451,29 @@ def top_cta(homage, siblings=()):
                 f'target="_blank">{label} &rsaquo;</a></p>')
     # No affiliate programme for this house. Say so; the click is still worth having,
     # and pretending otherwise is how a verdict starts looking bought.
-    if homage.get("directUrl"):
-        href = homage["directUrl"]
+    # merchantUrl counts here too. Checking only directUrl sent the page's most
+    # prominent button to a Google search while the row two paragraphs down
+    # linked the verified product page — breaking this function's own contract
+    # that the CTA uses exactly the link the row would use, and pointing a reader
+    # at an unrelated result when an exact one was already on file.
+    first_party = homage.get("directUrl") or homage.get("merchantUrl")
+    if first_party:
+        href = first_party
         sold_out = homage.get("availability") == "sold-out"
         label = (f"Check official availability for the {esc(name)}" if sold_out
                  else f"View the exact {esc(name)} at {esc(house)}")
-        detail = ("Official page currently shows every variant sold out. " if sold_out else "")
-        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
+        # Not "every variant": SN095-G-DA still has a buyable ST3621 while the
+        # YN55A this row ranks is gone. The claim is about the configuration we
+        # rank, which is the only one this row can speak for.
+        detail = (f"The {esc(homage.get('movement') or 'configuration')} we rank was sold out "
+                  f"at our last check. " if sold_out else "")
+        paid = is_affiliate_link(href)
+        rel = "sponsored nofollow noopener" if paid else "nofollow noopener"
+        note = ("Exact first-party link; carries our referral." if paid
+                else "Exact first-party link; not affiliated.")
+        out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="{rel}" '
                f'target="_blank">{label} &rsaquo;</a> '
-               f'<span class="muted">{detail}Exact first-party link; not affiliated.</span></p>')
+               f'<span class="muted">{detail}{note}</span></p>')
     else:
         href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
         out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="nofollow noopener" '
@@ -435,8 +509,10 @@ def top_cta(homage, siblings=()):
         # clicks on the site were shop/search (San Martin 126, Steinhart 90) and the
         # Amazon alternative beneath them barely registered. Same link, same honesty
         # about what it is — just given the weight of the button next to it.
+        arel = ("sponsored nofollow noopener" if is_affiliate_link(ahref)
+                else "nofollow noopener")
         out += (f'<p class="cta cta-alt"><a class="buy" href="{esc(ahref)}"{track} '
-                f'rel="sponsored nofollow noopener" target="_blank">'
+                f'rel="{arel}" target="_blank">'
                 f'{lead}: {esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
                 f'<span class="muted">fidelity {esc(alt.get("fidelity"))}/100 at about '
                 f'{money(alt.get("priceUSD"))}.</span></p>')
@@ -476,10 +552,27 @@ def original_page(o):
     top = max((h for h in (o.get("homages") or []) if h.get("fidelity") is not None),
               key=lambda h: h["fidelity"], default=None)
     if top:
+        # Fidelity ranks design closeness, not availability — rubric.html says so
+        # outright — so a sold-out watch can still be the closest homage. What the
+        # lede must not do is quote its price as though a reader could go and buy
+        # it. The page was naming a $218 automatic whose only buyable
+        # configuration is a different movement.
+        # What is sold out is the CONFIGURATION this row tracks, which is not the
+        # same as the reference being gone: the SN095-G-DA still has a buyable
+        # ST3621 hand-wind while both YN55 automatics are out. Saying "sold out"
+        # flat contradicts the row's own note two paragraphs down, and would send
+        # a reader who checks away thinking we were wrong about everything.
+        sold_out_what = esc(top.get("movement") or "the configuration we track")
+        unavailable = ("" if top.get("availability") != "sold-out" else
+                       f' The <strong>{sold_out_what}</strong> it is ranked on was sold out on '
+                       f'{esc(top.get("house",""))}\u2019s own store at our last check, so that is a '
+                       f'fidelity ranking rather than a buying recommendation \u2014 the row below '
+                       f'says what, if anything, is still available.')
         b.append(f'<p class="lede"><strong>The closest {esc(full)} homage we rank is the '
                  f'{esc(top.get("house",""))} {esc(top.get("name",""))}</strong> — it scores '
                  f'{top["fidelity"]}/100 on our <a href="/rubric">published fidelity rubric</a> at about '
-                 f'{money(top.get("priceUSD"))}, against {money(o.get("priceUSD"))} for the original. '
+                 f'{money(top.get("priceUSD"))}, against {money(o.get("priceUSD"))} for the original.'
+                 f'{unavailable} '
                  f'Below: all {n} spec-checked homages ({esc(cues)}), closest first, with prices, '
                  f'movements and honest notes.</p>')
     else:
@@ -488,7 +581,7 @@ def original_page(o):
                  f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
     # A visible review date. Models and search indexes both weight currency, and the
     # item pages carried none while the guides did.
-    b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {REVIEWED_HUMAN}.</p>')
+    b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {review_month(o)}.</p>')
     b.append('</div></div>')
     b.append(DISC)
     b.append(top_cta(top, homages))
