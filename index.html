@@ -281,6 +281,9 @@
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href*=amazon]");if(!a||!window.goatcounter||!goatcounter.count)return;try{var u=new URL(a.href),m=u.pathname.match(/\/dp\/([A-Z0-9]{10})/),pre="out/amazon/",k;if(m){pre+="dp/";k=m[1];}else if(u.searchParams.get("k")){pre+="k/";k=u.searchParams.get("k");}else{k="link";}goatcounter.count({path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true});}catch(_){}},true);</script>
 <script src="/data/homages.js?v=3"></script>
-<script src="/js/finder.js?v=7"></script>
+<!-- The routing policy scripts/gen.py also consumes. Must load before finder.js,
+     which refuses to touch the server-rendered markup without it. -->
+<script src="/data/routing-policy.js?v=1"></script>
+<script src="/js/finder.js?v=8"></script>
 </body>
 </html>

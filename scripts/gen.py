@@ -25,14 +25,19 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://wristhomage.com"
 YEAR = "2026"
 
-AMAZON_TAG = "wristhomage-20"
+# AFFILIATE ROUTING IS NOT DECIDED IN THIS FILE. Where a row's link points, what rel
+# it carries, whether it is disclosed as paid and what the button says all come from
+# data/routing-policy.js, which js/finder.js also consumes in the browser. load_data()
+# resolves every row through it once per run and hangs the decision off the row as
+# _routing. This file renders decisions; it does not make them.
+#
 # SPLIT BY LINK KIND (2026-08-30). Amazon reports orders per tracking ID and nothing
 # finer, so with one ID on every link this site could not answer whether pointing at the
 # exact product beats pointing at a search — the question its own link audit has been
 # circling since 08-12. It is answerable here now only because the 08-30 ASIN pass took
 # exact links from 4 to 27 against 107 searches; before that there was no exact bucket.
 # This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
-AMAZON_TAG_DP = "wristhomagedp-20"
+# The two tracking IDs themselves now live in data/routing-policy.js.
 REVIEWED_HUMAN = "August 2026"   # fallback only, for a page with no dated rows
 
 _VERIFIED_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
@@ -95,9 +100,11 @@ def review_month(original):
 # so a model-level search is not a valid test of presence — it returns junk even for
 # houses that are stocked. Test at brand level, and beware "PAGRNE DESIGN", a
 # typosquat that outranks genuine Pagani Design on its own model queries.
-AMAZON_HOUSES = {"Pagani Design", "Invicta", "Casio", "Timex", "Bulova", "Seiko",
-                 "Orient", "Citizen", "Cadisen", "Berny", "Addiesdive",
-                 "Baltany", "Sugess", "Watchdives"}
+# (The house list moved to data/routing-policy.js. The copy that used to sit here was
+# missing Steeldive and San Martin, which js/finder.js had carried since the 2026-08-01
+# verification pass — a latent split that changed no row's destination, because every
+# Steeldive and San Martin row sets `amazon` explicitly, but would have bitten the first
+# row added without it. The policy keeps the verified 16.)
 
 # Only BUILT pages go in the sitemap (unbuilt URLs → GSC 404s). Add each article
 # to this list as it ships.
@@ -179,15 +186,26 @@ def git_lastmod(u):
         return LASTMOD_FALLBACK
 
 
-def click_slug(house, name):
-    """Mirrors slug() in js/finder.js so a row's click event has the same id on the
-    generated pages as on the homepage finder. If these two drift, one watch reports as
-    two different products and neither number is usable."""
-    return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", f"{house}-{name}".lower()))
+# click_slug() and search_query() were here. Both are routing questions and both now
+# live in data/routing-policy.js; every row carries the answers as _routing["slug"] and
+# _routing["query"]. search_query in particular is why this refactor exists: it was added
+# here on 2026-08-12 to keep editorial parentheticals out of retailer searches, and the
+# finder never got the same fix, so two Timex rows sent the homepage and the generated
+# pages to different Amazon searches for the same watch.
 
 
 def esc(s):
     return html.escape(str(s), quote=True)
+
+
+def attr_text(s):
+    """Escape text going into a DOUBLE-quoted attribute, leaving apostrophes alone.
+
+    esc() escapes ' to &#x27;, which is correct but noisy here: the routing policy's
+    tooltip strings contain "maker's", and escaping it rewrote five generated pages
+    without changing a single rendered character. Keeping this distinct lets the
+    policy extraction prove itself — it changed no output at all."""
+    return html.escape(str(s), quote=False).replace('"', "&quot;")
 
 
 def ld(obj):
@@ -214,10 +232,41 @@ def art_svg(t):
 
 
 def load_data():
+    """Row data, with every row's routing decision already attached as _routing.
+
+    Both come out of one node call: the policy in data/routing-policy.js is the same
+    module js/finder.js loads in the browser, so resolving here rather than
+    reimplementing the rules in Python is the point — there is one implementation and
+    both surfaces read it. A row without a decision is a broken run, not an empty one.
+    """
     js = os.path.join(ROOT, "data", "homages.js")
-    out = subprocess.check_output(
-        ["node", "-e", f"global.window={{}};require({json.dumps(js)});process.stdout.write(JSON.stringify(window.HOMAGE_DATA))"])
-    return json.loads(out)
+    pol = os.path.join(ROOT, "data", "routing-policy.js")
+    out = subprocess.check_output(["node", "-e", (
+        f"global.window={{}};"
+        f"var R=require({json.dumps(pol)});"
+        f"require({json.dumps(js)});"
+        "var d=window.HOMAGE_DATA;"
+        "(d.originals||[]).forEach(function(o){(o.homages||[]).forEach(function(h){"
+        "h._routing=R.resolve(h);})});"
+        "process.stdout.write(JSON.stringify(d));")])
+    data = json.loads(out)
+    rows = [h for o in data.get("originals", []) for h in (o.get("homages") or [])]
+    if not rows:
+        raise SystemExit("gen.py: no homage rows loaded — refusing to generate")
+    missing = [h for h in rows if not h.get("_routing")]
+    if missing:
+        raise SystemExit(f"gen.py: routing policy returned no decision for {len(missing)} row(s)")
+    return data
+
+
+def routing(h):
+    """The decision for one row, or a hard failure. Never fall back to a guess: a wrong
+    shop link is worse than a missing page, and silently guessing is how the two
+    implementations this replaced drifted apart without anyone noticing."""
+    d = h.get("_routing")
+    if not d:
+        raise SystemExit(f"gen.py: no routing decision for {h.get('house')} {h.get('name')}")
+    return d
 
 
 HEAD = """<!doctype html>
@@ -264,24 +313,6 @@ DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are af
         '<a href="/rubric">published rubric</a>, not opinion. These are homages, not replicas.</div>')
 
 
-def search_query(house, name):
-    """Build the retailer search string from a row.
-
-    The naive f"{house} {name} watch" leaked editorial text straight into the
-    query (found 2026-08-12): parentheticals meant for readers — "PD-1664 (Chrono)",
-    "SRPE control (Seiko 5 dive)" — and rows whose name repeats the brand, giving
-    "Baltany Baltany Field 36". "control" is our own word for a reference watch
-    that is not a homage; no shopper ever types it. Each of those makes the search
-    worse than the bare model number would be.
-    """
-    name = re.sub(r"\s*\([^)]*\)", "", name).strip()          # drop reader-facing asides
-    if house and name.lower().startswith(house.lower()):        # "Baltany Baltany Field 36"
-        name = name[len(house):].strip()
-    name = re.sub(r"\bcontrol\b", "", name, flags=re.I).strip()
-    q = " ".join(part for part in (house, name, "watch") if part)
-    return re.sub(r"\s{2,}", " ", q)
-
-
 def price_cell(c):
     """Price with its provenance, where we have it.
 
@@ -301,109 +332,54 @@ def price_cell(c):
             f'{esc(c.get("priceDate",""))}</span>')
 
 
-# A merchant URL is only an affiliate link when it actually carries a referral.
-# The Watchdives rows do (?ref=); the San Martin product links added for the
-# sold-out rows do not, and San Martin has no affiliate programme — which these
-# pages say themselves. Marking those rel="sponsored" and titling them
-# "Affiliate link" put a false disclosure on the page. Claiming payment where
-# there is none is still a false statement about the page's own incentives, and
-# it is the kind a reader has no way to check.
-_REFERRAL_PARAM = re.compile(r"[?&](ref|aff|affiliate|tag|awc|aw_affid)=", re.I)
-
-
-def is_affiliate_link(url):
-    return bool(_REFERRAL_PARAM.search(url or ""))
+# is_affiliate_link() and its referral regex were here. Whether a merchant URL carries
+# our referral decides the rel and the tooltip, so it is a routing question: it lives in
+# data/routing-policy.js and reaches this file as _routing["rel"] / _routing["title"].
+# The Watchdives rows carry ?ref=; the San Martin product links do not, and San Martin
+# has no affiliate programme — which these pages say themselves. Marking those
+# rel="sponsored" put a false disclosure on the page, and a false statement about the
+# page's own incentives is one a reader has no way to check.
 
 
 def shop_link(homage):
-    """Buy link for one homage row. Tagged Amazon search for Amazon houses; honest
-    non-affiliate search otherwise. Never a fake tag."""
-    house, name = homage.get("house", ""), homage.get("name", "")
-    q = search_query(house, name)
-    # A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
-    # against that merchant's live product page. The comment under "the buying moment"
-    # below said this would come first if there were one and that nothing was approved;
-    # Watchdives was joined 2026-09-04 and pays 6% on its own collection against the ~3.1%
-    # this site actually realises on Amazon. Mirrors destination() in js/finder.js.
-    #
-    # merchantUrl is NEVER filled from a search or a guessed handle. Both rows carrying it
-    # were read off the live product JSON on 2026-09-04, which is also how WD16570 V2 was
-    # caught with all five variants out of stock — it keeps its link so the reader can see
-    # that for themselves, but it is marked sold-out and does not claim to be a buy.
-    _murl = homage.get("merchantUrl")
-    if homage.get("merchantUrl"):
-        sold_out = homage.get("availability") == "sold-out"
-        label = "Check availability" if sold_out else "Shop"
-        # BOTH SELLERS, WHERE BOTH PASS. A row with a verified ASIN *and* a checked
-        # merchant page has two honest destinations, and the reader is the one who should
-        # pick. Rendered cheapest FIRST, never highest-commission first: on EXD-40 those
-        # happen to agree (Watchdives is both cheaper and the 6% one), and the day they
-        # disagree, ordering by commission would tilt the page in a way no audit here
-        # would catch. Each link carries its price, because two identical buttons add a
-        # decision without adding information — that is where multi-CTA conversion loss
-        # comes from, and the price is the whole reason to show two.
-        # Amazon only joins if it passes the header's rule (b) as well as having an asin.
-        amz_price = homage.get("amazonPriceUSD")
-        asin = (homage.get("asin") or "").strip()
-        if asin and amz_price and not sold_out:
-            ours = homage.get("priceUSD") or 0
-            within = ours and abs(amz_price - ours) / ours <= 0.15 + 1e-9
-            if within:
-                a_href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP
-                pair = sorted([
-                    (ours, f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
-                           f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
-                           f' data-slug="{esc(click_slug(house, name))}"'
-                           f' rel="{"sponsored nofollow noopener" if is_affiliate_link(_murl) else "nofollow noopener"}" target="_blank">'
-                           f'{esc(homage.get("merchant", "Direct")).title()}'
-                           f' ${ours:,.0f}&nbsp;&rsaquo;</a>'),
-                    (amz_price, f'<a class="shop secondary" href="{esc(a_href)}"'
-                                f' rel="sponsored nofollow noopener" target="_blank">'
-                                f'Amazon ${amz_price:,.0f}&nbsp;&rsaquo;</a>')])
-                return ('<span class="shopset">' + pair[0][1] + pair[1][1] + '</span>')
-        title = (' title="Affiliate link to the maker\'s own product page'
-                 ' — the price shown is read from it"' if is_affiliate_link(_murl) else
-                 ' title="The maker\'s own product page. Not an affiliate link'
-                 ' — the price shown is read from it"')
-        return (f'<a class="shop" href="{esc(homage["merchantUrl"])}"'
-                f' data-merchant="{esc(homage.get("merchant", "merchant"))}"'
-                f' data-slug="{esc(click_slug(house, name))}"'
-                f' rel="{"sponsored nofollow noopener" if is_affiliate_link(_murl) else "nofollow noopener"}" target="_blank"{title}>'
-                f'{label}&nbsp;&rsaquo;</a>')
-    on_amazon = homage.get("amazon") or house in AMAZON_HOUSES
-    if homage.get("amazon") is False:
-        on_amazon = False
-    if on_amazon:
-        # A VERIFIED asin beats a keyword search, and on this site that gap is the
-        # single largest known revenue defect. Audited 2026-08-29/30 against live US
-        # Amazon, ordered by actual clicks: 10 of the 13 most-clicked searches do not
-        # surface the watch they name — 80% of the clicks. Some are wrong identifiers
-        # (SN0058-G-X returns SN058G; WD16570 returns WD16760, a digit transposition),
-        # but others name a real watch the SEARCH simply cannot find: SN013-G exists
-        # and has ASIN B09PYXWYDZ, and the keyword query still misses it.
-        # So: where an asin has been verified by hand, link the product directly and
-        # skip the search entirely. Everything else keeps the search, unchanged.
-        # See AFFILIATE_LINK_AUDIT.md. Do NOT fill this field from an Amazon search
-        # title — an unverified asin is how one wrong identifier becomes another.
-        asin = (homage.get("asin") or "").strip()
-        if asin:
-            href = f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP
-        else:
-            href = "https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG
-        rel, title = "sponsored nofollow noopener", ""
-    elif homage.get("directUrl"):
-        href = homage["directUrl"]
-        rel = "nofollow noopener"
-        sold_out = homage.get("availability") == "sold-out"
-        label = "Check availability" if sold_out else "View product"
-        title = ' title="Exact first-party product page — not an affiliate link"'
-        return (f'<a class="shop" href="{esc(href)}" rel="{rel}" target="_blank"{title}>'
-                f'{label}&nbsp;&rsaquo;</a>')
-    else:
-        href = "https://www.google.com/search?q=" + urllib.parse.quote(q)
-        rel = "nofollow noopener"
-        title = ' title="No affiliate program for this brand — plain search, and often cheaper bought direct"'
-    return f'<a class="shop" href="{esc(href)}" rel="{rel}" target="_blank"{title}>Shop&nbsp;&rsaquo;</a>'
+    """Draw the routing decision for one row. The decision is made in
+    data/routing-policy.js and attached by load_data(); this only renders it.
+
+    Markup differs from the finder's on purpose — the generated pages track merchant
+    clicks with data-merchant, the finder with data-shop — and that is fine. What must
+    not differ is where the link goes and what it claims about itself, and neither
+    surface decides that any more.
+    """
+    d = routing(homage)
+
+    # BOTH SELLERS, WHERE BOTH PASS. A row with a verified ASIN *and* a checked merchant
+    # page has two honest destinations and the reader should pick. The policy orders them
+    # cheapest FIRST, never highest-commission first: today those agree, and the day they
+    # disagree, ordering by commission would tilt the page in a way no audit here would
+    # catch. Amazon keeps the secondary style wherever it lands, so the emphasis follows
+    # the seller and not the sort.
+    if d["pair"]:
+        out = []
+        for x in d["pair"]:
+            amazon = x["kind"] == "amazon"
+            track = "" if amazon else (f' data-merchant="{esc(x["seller"])}"'
+                                       f' data-slug="{esc(d["slug"])}"')
+            out.append(f'<a class="shop{"" if not amazon else " secondary"}"'
+                       f' href="{esc(x["href"])}"{track}'
+                       f' rel="{x["rel"]}" target="_blank">'
+                       f'{esc(x["label"])} ${x["price"]:,.0f}&nbsp;&rsaquo;</a>')
+        return '<span class="shopset">' + "".join(out) + '</span>'
+
+    title = f' title="{attr_text(d["title"])}"' if d["title"] else ""
+    # Only merchant links carry click tracking here; Amazon clicks are counted by the
+    # a[href*=amazon] handler on the page, and double-counting them was a real bug.
+    merchant = d["kind"] not in ("amazon", "direct", "search")
+    track = (f' data-merchant="{esc(d["kind"])}" data-slug="{esc(d["slug"])}"'
+             if merchant else "")
+    return (f'<a class="shop" href="{esc(d["href"])}"{track}'
+            f' rel="{d["rel"]}" target="_blank"{title}>'
+            f'{esc(d["label"])}&nbsp;&rsaquo;</a>')
+
 
 
 # --- the buying moment ----------------------------------------------------------------
@@ -420,10 +396,7 @@ def shop_link(homage):
 # outbound clicks on this site are the argument for applying, and the four Awin
 # applications filed 2026-08-30 are all still pending. Promoting an untagged direct link
 # above the tagged Amazon one today would move clicks off the only link that earns.
-def _on_amazon(h):
-    if h.get("amazon") is False:
-        return False
-    return bool(h.get("amazon") or h.get("house", "") in AMAZON_HOUSES)
+# _on_amazon() was here; every row carries _routing["onAmazon"] instead.
 
 
 def top_cta(homage, siblings=()):
@@ -439,12 +412,11 @@ def top_cta(homage, siblings=()):
     if not homage:
         return ""
     house, name = homage.get("house", ""), homage.get("name", "")
-    on_amazon = _on_amazon(homage)
-    q = search_query(house, name)
-    if on_amazon:
+    d = routing(homage)
+    q = d["query"]
+    if d["onAmazon"]:
         asin = (homage.get("asin") or "").strip()
-        href = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
-            else ("https://www.amazon.com/s?k=" + urllib.parse.quote(q) + "&tag=" + AMAZON_TAG)
+        href = d["amazonHref"]
         label = (f"Check the exact {esc(name)} on Amazon" if asin
                  else f"See current {esc(name)} prices on Amazon")
         return (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="sponsored nofollow noopener" '
@@ -467,8 +439,11 @@ def top_cta(homage, siblings=()):
         # rank, which is the only one this row can speak for.
         detail = (f"The {esc(homage.get('movement') or 'configuration')} we rank was sold out "
                   f"at our last check. " if sold_out else "")
-        paid = is_affiliate_link(href)
-        rel = "sponsored nofollow noopener" if paid else "nofollow noopener"
+        # The policy already decided whether this row's first-party page carries our
+        # referral; re-deriving it here is exactly the second implementation this
+        # refactor removes.
+        rel = d["firstPartyRel"]
+        paid = rel == "sponsored nofollow noopener"
         note = ("Exact first-party link; carries our referral." if paid
                 else "Exact first-party link; not affiliated.")
         out = (f'<p class="cta"><a class="buy" href="{esc(href)}" rel="{rel}" '
@@ -481,10 +456,11 @@ def top_cta(homage, siblings=()):
                f'<span class="muted">No affiliate programme for {esc(house)} — plain search, '
                f'and often cheaper bought direct.</span></p>')
     alt = max((h for h in siblings
-               if h is not homage and _on_amazon(h) and h.get("fidelity") is not None),
+               if h is not homage and routing(h)["onAmazon"] and h.get("fidelity") is not None),
               key=lambda h: h["fidelity"], default=None)
     if alt:
-        aq = search_query(alt.get("house", ""), alt.get("name", ""))
+        alt_d = routing(alt)
+        aq = alt_d["query"]
         asin = (alt.get("asin") or "").strip()
         # THIS MUST AGREE WITH THE TABLE ROW. shop_link()'s contract is that this CTA uses
         # exactly the link the row would use, and adding merchantUrl to EXD-40 broke it:
@@ -497,10 +473,9 @@ def top_cta(homage, siblings=()):
             seller = (alt.get("merchant") or "the maker").title()
             ahref, lead, track = merch, f"Closest one you can buy, at {esc(seller)}", (
                 f' data-merchant="{esc(alt.get("merchant", "merchant"))}"'
-                f' data-slug="{esc(click_slug(alt.get("house", ""), alt.get("name", "")))}"')
+                f' data-slug="{esc(alt_d["slug"])}"')
         else:
-            ahref = (f"https://www.amazon.com/dp/{urllib.parse.quote(asin)}?tag=" + AMAZON_TAG_DP) if asin \
-                else ("https://www.amazon.com/s?k=" + urllib.parse.quote(aq) + "&tag=" + AMAZON_TAG)
+            ahref = alt_d["amazonHref"]
             lead, track = "Closest one you can buy on Amazon", ""
         # A second button, not a muted footnote. This block only runs when the winner
         # has no affiliate programme, so the paragraph above earns nothing and this
@@ -509,8 +484,9 @@ def top_cta(homage, siblings=()):
         # clicks on the site were shop/search (San Martin 126, Steinhart 90) and the
         # Amazon alternative beneath them barely registered. Same link, same honesty
         # about what it is — just given the weight of the button next to it.
-        arel = ("sponsored nofollow noopener" if is_affiliate_link(ahref)
-                else "nofollow noopener")
+        # merch is the alt row's own merchant page, whose rel the policy decided;
+        # otherwise this is the Amazon link, which is always sponsored.
+        arel = alt_d["firstPartyRel"] if merch else "sponsored nofollow noopener"
         out += (f'<p class="cta cta-alt"><a class="buy" href="{esc(ahref)}"{track} '
                 f'rel="{arel}" target="_blank">'
                 f'{lead}: {esc(alt.get("house",""))} {esc(alt.get("name",""))} &rsaquo;</a> '
