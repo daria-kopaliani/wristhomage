@@ -234,6 +234,77 @@
     return resolve(h).onAmazon;
   }
 
+  /* WHAT WE KNOW ABOUT WHETHER YOU CAN BUY IT, AND WHEN WE LOOKED.
+   *
+   * Three states, because two would force a lie. A row we have never stock-checked is
+   * NOT available and it is not sold out either — it is unknown, and a page that prints
+   * "available" for it is inventing the check. Only "sold-out" existed before this, and
+   * it worked precisely because its absence meant "no claim", not "in stock".
+   *
+   * `availability` is the state, `availabilityDate` the day someone looked, and
+   * `availabilitySource` where. A state without a date is not a check: it degrades to
+   * unknown rather than being taken on trust, which is the same rule AGENTS.md 1.7 sets
+   * for review dates.
+   *
+   * AND A CHECK GOES STALE. Stock is the fastest-rotting fact on these pages — faster
+   * than price, far faster than specification — so an in-stock reading older than
+   * STOCK_MAX_AGE_DAYS stops being an availability claim and becomes unknown again.
+   * `sold-out` does NOT expire the same way: withdrawing a "you can buy this" claim as
+   * it ages is cautious, while withdrawing a "you cannot" would put the page back to
+   * recommending something it last saw gone.
+   *
+   * Nothing here touches resolve(). Where a link goes is not a question about stock,
+   * and a row whose check has aged out must keep pointing exactly where it pointed.
+   */
+  var STOCK_MAX_AGE_DAYS = 30;
+
+  function _days(fromISO, today) {
+    var a = Date.parse(fromISO + "T00:00:00Z"), b = Date.parse(today + "T00:00:00Z");
+    if (isNaN(a) || isNaN(b)) return null;
+    return Math.round((b - a) / 86400000);
+  }
+
+  function stock(h, today) {
+    var raw = h.availability, date = h.availabilityDate || null;
+    var out = { state: "unknown", date: date, source: h.availabilitySource || null,
+                stale: false, ageDays: null };
+    if (raw !== "in-stock" && raw !== "sold-out") return out;
+    // Shape before calendar: "20260922" and "2026-W38-7" both parse as dates and neither
+    // is the format this file writes.
+    var dated = Boolean(date) && /^\d{4}-\d{2}-\d{2}$/.test(date);
+    if (!dated) out.date = null;
+    if (raw === "sold-out") {
+      // An undated sold-out row keeps its state. Five rows carried `availability:
+      // "sold-out"` before this function existed, with no date beside it, and demanding
+      // one retroactively would quietly turn "we saw this gone" back into "no idea" —
+      // and put a Shop button on a watch nobody can buy. The date is printed when it is
+      // there and omitted when it is not.
+      out.state = "sold-out";
+      out.ageDays = dated && today ? _days(date, today) : null;
+      return out;
+    }
+    if (!dated) return out;             // "in-stock" with no date is not a check
+    var age = today ? _days(date, today) : null;
+    out.ageDays = age;
+    if (age !== null && age > STOCK_MAX_AGE_DAYS) {
+      out.stale = true;
+      return out;                       // state stays "unknown" — an aged check is not a claim
+    }
+    out.state = raw;
+    return out;
+  }
+
+  /* A row that may be offered as the alternative AND has been checked to be buyable.
+   *
+   * Separate from canBeAlternative() on purpose. That one gates the long-standing CTA
+   * line on every page and answers "is there a paid destination for this row"; tightening
+   * it to demand a stock check would silently delete that line everywhere, since almost no
+   * row carries one yet. This is the stricter test the compared-alternative block uses,
+   * where the page says the word "available" out loud and has to mean it. */
+  function availableAlternative(h, today) {
+    return canBeAlternative(h) && stock(h, today).state === "in-stock";
+  }
+
   /* Where that alternative points. A SOLD-OUT merchant page is not a buy, so it falls
    * back to Amazon rather than advertising a dead product; anything else uses the row's
    * own destination, so the alternative and the row's table entry agree. */
@@ -262,7 +333,9 @@
     isAffiliateLink: isAffiliateLink, onAmazon: onAmazon,
     searchQuery: searchQuery, amazonHref: amazonHref, clickSlug: clickSlug,
     sellerPair: sellerPair, resolve: resolve,
-    cta: cta, canBeAlternative: canBeAlternative, alternative: alternative
+    cta: cta, canBeAlternative: canBeAlternative, alternative: alternative,
+    STOCK_MAX_AGE_DAYS: STOCK_MAX_AGE_DAYS, stock: stock,
+    availableAlternative: availableAlternative
   };
 
   if (typeof window !== "undefined" && window) window.WH_ROUTING = api;

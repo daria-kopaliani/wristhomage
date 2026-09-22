@@ -247,6 +247,70 @@ rows.forEach(function (h) {
   ok(who + ": query carries no internal 'control' marker", !/\bcontrol\b/i.test(d.query));
 });
 
+/* --------------------------------------------------- stock, and what it gates --- */
+/* Three states, and the rules that keep "available" from being asserted. These are
+ * fixtures, not live rows: the live rows carry whatever was last checked, and a test
+ * that reads them would go green the day someone deletes a date. */
+var TODAY_FIX = "2026-09-22";
+
+[
+  { why: "a dated check today is available",
+    row: { availability: "in-stock", availabilityDate: "2026-09-22",
+           availabilitySource: "amazon.com" },
+    expect: { state: "in-stock", stale: false } },
+  { why: "an in-stock check older than the window is NOT available any more — stock is " +
+         "the fastest-rotting fact on these pages",
+    row: { availability: "in-stock", availabilityDate: "2026-08-01" },
+    expect: { state: "unknown", stale: true } },
+  { why: "in-stock with no date is not a check, it is a claim",
+    row: { availability: "in-stock" },
+    expect: { state: "unknown", stale: false } },
+  { why: "the five rows that carried availability before dates existed keep their state — " +
+         "withdrawing 'you cannot buy this' would put a Shop button back on a dead product",
+    row: { availability: "sold-out" },
+    expect: { state: "sold-out", stale: false } },
+  { why: "an old sold-out check does not expire into 'unknown' the way in-stock does",
+    row: { availability: "sold-out", availabilityDate: "2026-01-01" },
+    expect: { state: "sold-out", stale: false } },
+  { why: "a row nobody has checked is unknown, which is not the same as sold out",
+    row: {},
+    expect: { state: "unknown", stale: false } },
+  { why: "shape before calendar: Date.parse accepts 20260922, this must not",
+    row: { availability: "in-stock", availabilityDate: "20260922" },
+    expect: { state: "unknown", stale: false } }
+].forEach(function (f) {
+  var st = R.stock(f.row, TODAY_FIX);
+  eq("stock: " + f.why + " [state]", st.state, f.expect.state);
+  eq("stock: " + f.why + " [stale]", st.stale, f.expect.stale);
+});
+
+/* availableAlternative() is the STRICTER gate, and it must stay stricter. canBeAlternative()
+ * still answers the old question — is there a paid destination — for the CTA line on every
+ * untreated page; if these two ever collapse into each other, that line disappears sitewide
+ * on rows nobody has stock-checked yet. */
+var amazonNoCheck = { house: "Pagani Design", name: "PD-1651", asin: "B0B3TFV9T9", priceUSD: 122 };
+var amazonChecked = Object.assign({}, amazonNoCheck,
+  { availability: "in-stock", availabilityDate: TODAY_FIX, availabilitySource: "amazon.com" });
+var amazonSoldOut = Object.assign({}, amazonNoCheck,
+  { availability: "sold-out", availabilityDate: TODAY_FIX });
+var offAmazonChecked = { house: "Steinhart", name: "Ocean One 39", priceUSD: 430,
+  availability: "in-stock", availabilityDate: TODAY_FIX, availabilitySource: "steinhartwatches.de" };
+
+ok("alternative: an unchecked Amazon row may still carry the old CTA line",
+   R.canBeAlternative(amazonNoCheck));
+ok("alternative: but it may NOT be offered as verified available",
+   !R.availableAlternative(amazonNoCheck, TODAY_FIX));
+ok("alternative: a checked in-stock Amazon row may", R.availableAlternative(amazonChecked, TODAY_FIX));
+ok("alternative: a sold-out row may not", !R.availableAlternative(amazonSoldOut, TODAY_FIX));
+ok("alternative: in stock but nothing to link is not an alternative",
+   !R.availableAlternative(offAmazonChecked, TODAY_FIX));
+
+/* Stock must not move a destination. The block reads stock; routing does not. */
+[amazonNoCheck, amazonChecked, amazonSoldOut].forEach(function (row, i) {
+  eq("stock does not change where a row points [" + i + "]",
+     R.resolve(row).href, R.resolve(amazonNoCheck).href);
+});
+
 /* ------------------------------------------- the generated pages, both ways --- */
 /* The fixtures above prove the policy answers each branch correctly. This proves the
  * server-rendered pages actually carry those answers — closing the loop between the
@@ -316,6 +380,51 @@ merchantRows.forEach(function (h) {
   var amzn = R.resolve(h).amazonHref.replace(/&/g, "&amp;");
   ok(h.house + " " + h.name + ": no CTA sends this merchant row to Amazon",
      html.indexOf('class="buy" href="' + amzn + '"') === -1);
+});
+
+// 5. the compared-alternative block, on every page that carries it. Three properties,
+//    each of which has a way of going quietly wrong:
+//      * it says "in stock" only with a date beside it — the whole point of the block;
+//      * its Amazon links declare the placement, or their clicks land in the same bucket
+//        as the table's and the experiment measures nothing;
+//      * nothing outside the block declares that placement, or the bucket stops meaning
+//        "clicks from the compared pair".
+var treated = ["watches/patek-nautilus.html", "watches/ap-royal-oak.html",
+               "articles/best-datejust-homage.html"];
+var root = path.join(__dirname, "..");
+treated.forEach(function (rel) {
+  var page = fs.readFileSync(path.join(root, rel), "utf8");
+  var m = page.match(/<div class="altcompare">[\s\S]*?<p class="ac-foot[\s\S]*?<\/div>/);
+  ok(rel + ": carries the compared-alternative block", Boolean(m));
+  if (!m) return;
+  var blk = m[0];
+
+  // Per facts line, not per phrase: the price clause sits between the state and its
+  // date on an Amazon row ("in stock at amazon.com, $116.99, checked 2026-09-22"), so a
+  // phrase-level regex reads the date as missing when it is right there.
+  var facts = blk.match(/<p class="ac-facts">[\s\S]*?<\/p>/g) || [];
+  ok(rel + ": the block states the facts for at least one pick", facts.length > 0);
+  var claimed = 0;
+  facts.forEach(function (f) {
+    if (f.indexOf(">in stock<") === -1) return;
+    claimed++;
+    ok(rel + ": every in-stock claim carries the day it was checked",
+       /checked \d{4}-\d{2}-\d{2}/.test(f));
+    ok(rel + ": every in-stock claim names where it was checked",
+       /in stock<\/strong> at \S/.test(f));
+  });
+  ok(rel + ": the block claims availability at all", claimed > 0);
+
+  var anchors = blk.match(/<a class="buy"[^>]*>/g) || [];
+  ok(rel + ": the block has buttons", anchors.length > 0);
+  anchors.forEach(function (a) {
+    ok(rel + ": every button in the block declares the placement",
+       a.indexOf('data-placement="alt-compare"') !== -1);
+  });
+
+  var outside = page.replace(blk, "");
+  ok(rel + ": nothing outside the block claims that placement",
+     outside.indexOf('data-placement="alt-compare"') === -1);
 });
 
 /* ------------------------------------------------------------------- report --- */

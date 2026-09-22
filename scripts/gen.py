@@ -24,6 +24,10 @@ import datetime, json, os, re, subprocess, html, urllib.parse
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://wristhomage.com"
 YEAR = "2026"
+# Stock is the only claim on these pages that can expire between a generator run and a
+# reader. data/routing-policy.js needs today to decide whether a recorded check still
+# supports the word "available"; see its stock().
+TODAY = datetime.date.today().isoformat()
 
 # AFFILIATE ROUTING IS NOT DECIDED IN THIS FILE. Where a row's link points, what rel
 # it carries, whether it is disclosed as paid and what the button says all come from
@@ -243,11 +247,12 @@ def load_data():
     pol = os.path.join(ROOT, "data", "routing-policy.js")
     out = subprocess.check_output(["node", "-e", (
         f"global.window={{}};"
+        f"var TODAY={json.dumps(TODAY)};"
         f"var R=require({json.dumps(pol)});"
         f"require({json.dumps(js)});"
         "var d=window.HOMAGE_DATA;"
         "(d.originals||[]).forEach(function(o){(o.homages||[]).forEach(function(h){"
-        "var d=R.resolve(h);""d.cta=R.cta(h);d.alternative=R.alternative(h);""d.canBeAlternative=R.canBeAlternative(h);""h._routing=d;})});"
+        "var d=R.resolve(h);""d.cta=R.cta(h);d.alternative=R.alternative(h);""d.canBeAlternative=R.canBeAlternative(h);""d.stock=R.stock(h,TODAY);d.availableAlternative=R.availableAlternative(h,TODAY);""h._routing=d;})});"
         "process.stdout.write(JSON.stringify(d));")])
     data = json.loads(out)
     rows = [h for o in data.get("originals", []) for h in (o.get("homages") or [])]
@@ -299,11 +304,19 @@ FOOT = """  </main>
     <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
   </div></footer>
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{if(a.dataset.merchant){{goatcounter.count({{path:"shop/"+a.dataset.merchant+"/"+a.dataset.slug,title:(a.textContent||"").trim().slice(0,80),event:true}});return;}}var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pre="out/amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
+<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{if(a.dataset.merchant){{goatcounter.count({{path:"shop/"+a.dataset.merchant+"/"+a.dataset.slug,title:(a.textContent||"").trim().slice(0,80),event:true}});return;}}var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pl=(a.dataset.placement||"").replace(/[^a-z0-9-]/g,"");var pre="out/"+(pl?pl+"/":"")+"amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
 </body>
 </html>
 """
 
+# CLICK PATHS CARRY A PLACEMENT WHERE THE ANCHOR DECLARES ONE. data-placement="x" makes a
+# tagged Amazon click land on out/x/amazon/dp/<ASIN> instead of out/amazon/dp/<ASIN>, which
+# is how the compared-alternative block is told apart from the same ASIN's link in the table
+# below it. The portfolio ledger already reads one optional segment there as a placement and
+# counts it as paid (moondog-affiliate-clicks-ledger.py, PAID), which is how dupenote's
+# top-picks block has been counted since 2026-08-30 — this is that mechanism, not a new one.
+# Still ONE listener and one event per click. Adding a second listener for the new block is
+# what would double-count, and a double-count is the error that hides: it looks like traffic.
 DISC = ('<div class="disc-bar">“Shop” links for brands sold on Amazon are affiliate links: '
         '<strong>as an Amazon Associate we earn from qualifying purchases</strong>, at no extra cost '
         'to you. Some brands link to the maker\u2019s own product page and some to a plain search; '
@@ -482,6 +495,197 @@ def top_cta(homage, siblings=()):
 
 
 
+# --- closest match vs what you can actually buy --------------------------------------
+# WHY THIS EXISTS (issue #22). The buying moment above names one watch and, where that
+# watch earns nothing, offers a second one underneath it. What it never said was whether
+# either could be bought today, or what the two prices are prices OF. A reader in front of
+# "closest homage: San Martin SN076-G, about $299" and "closest one you can buy on Amazon:
+# Pagani PD-1728, about $130" cannot tell that the first figure is the maker's own-store
+# price read seventeen days ago and the second is Pagani's store price, not the Amazon
+# price the button actually leads to. Two numbers side by side read as a comparison
+# whether or not they are one.
+#
+# So on the treated pages the CTA pair becomes a compared pair: exact model, case size,
+# movement, the stock state with the day it was checked, the seller, and the price with
+# the source it came from. The fidelity ranking does not move — rubric.html says outright
+# that fidelity is design closeness, not availability or value, and an alternative is
+# labelled as the one you can buy, never as the better watch.
+#
+# WHAT IT REFUSES TO DO. It will not call a row available. data/routing-policy.js's
+# stock() will: a row is available only if someone recorded a dated check and that check
+# is still inside its window, and "sold out" and "we have not looked" stay different
+# answers. A page with no row that passes gets the honest absence instead of a button.
+ALT_COMPARE_WATCHES = {"patek-nautilus", "ap-royal-oak"}
+
+# Placement for the click events this block emits. The portfolio ledger reads
+# out/<placement>/amazon/... as paid (moondog-affiliate-clicks-ledger.py: PAID allows one
+# optional segment before `amazon/`), which is how dupenote's top-picks block is counted,
+# so these clicks stay in the earnings column while being separable from the same ASIN's
+# clicks in the table below. One handler, one event per click — a second listener here
+# would double-count, which is the bug that put a 72% overstatement in the ledger.
+ALT_COMPARE_PLACEMENT = "alt-compare"
+
+# The articles are hand-written; the watch pages are generated. The block still has to be
+# the SAME block on both, so the generator writes it into the article between markers
+# rather than the article growing its own copy of the routing rules. Map is
+# article file -> the original whose field it ranks.
+#
+# /articles/best-santos-homage is deliberately absent. Both Specht & Söhne rows were
+# checked in stock on 2026-09-22 and neither has any paid destination — the brand is not
+# on Amazon under a reference we can match — so there is no "one you can buy" to offer
+# that the page does not already point at, and issue #22 says to record that result
+# rather than fill the module with an unrelated watch.
+ALT_COMPARE_ARTICLES = {"articles/best-datejust-homage.html": "rolex-datejust"}
+AC_START = "<!-- alt-compare:start -->"
+AC_END = "<!-- alt-compare:end -->"
+
+
+def _facts_phrase(h):
+    """Case size, movement, stock state and price — with the day and the source for each.
+
+    Stock and price are merged where they were read in the same place, because printing
+    "in stock at amazon.com, checked 2026-09-22 · $116.99 on Amazon, checked 2026-09-22"
+    says the same thing twice and makes the honest part look like filler. Where they came
+    from different places, both are named: the San Martin rows have a stock check on the
+    maker's store and a price read there on an earlier day, and collapsing those two into
+    one date would invent a check.
+
+    NEVER a bare state. "In stock" with no date is the claim this block exists to stop.
+    """
+    st = routing(h)["stock"]
+    bits = [f'{esc(h.get("size_mm","?"))}mm', esc(h.get("movement",""))]
+
+    where = esc(st["source"]) if st["source"] else "its seller"
+    amz = h.get("amazonPriceUSD")
+    same_seller = bool(amz) and routing(h)["kind"] == "amazon" and st["source"] == "amazon.com"
+    price = f'{"from " if h.get("priceFrom") else ""}{money(h.get("priceUSD"))}'
+
+    if st["state"] == "in-stock" and same_seller:
+        bits.append(f'<strong>in stock</strong> at {where}, <strong>${amz:,.2f}</strong>, '
+                    f'checked {esc(st["date"])}')
+        # Only where the other price is a DIFFERENT SELLER's. A row whose own price was
+        # read on Amazon in the first place would otherwise print "$459.90 ... amazon.com
+        # listed $460 on 2026-08-30", which reads like a discrepancy and is one rounding.
+        if (h.get("priceUSD") and h.get("priceSource") and h["priceSource"] != st["source"]
+                and abs(amz - h["priceUSD"]) >= 0.01):
+            bits.append(f'{esc(h["priceSource"])} listed {price} on {esc(h.get("priceDate",""))}')
+        return " · ".join(b for b in bits if b)
+
+    if st["state"] == "in-stock":
+        bits.append(f'<strong>in stock</strong> at {where}, checked {esc(st["date"])}')
+        if h.get("priceSource") and h.get("priceSource") == st["source"]:
+            bits.append(f'<strong>{price}</strong>, read there on {esc(h.get("priceDate",""))}')
+        elif h.get("priceSource"):
+            bits.append(f'<strong>{price}</strong>, read from {esc(h["priceSource"])} on '
+                        f'{esc(h.get("priceDate",""))}')
+        else:
+            bits.append(f'<strong>{price}</strong>')
+        return " · ".join(b for b in bits if b)
+
+    if st["state"] == "sold-out":
+        when = f', checked {esc(st["date"])}' if st["date"] else ""
+        bits.append(f'<strong>sold out</strong> at {where}{when}')
+    elif st["stale"]:
+        bits.append(f'<strong>stock not confirmed</strong> — last checked {esc(st["date"])}, '
+                    f'too long ago to call it available')
+    else:
+        bits.append("<strong>stock not checked</strong>")
+    if h.get("priceSource"):
+        bits.append(f'{price} · read from {esc(h["priceSource"])} on {esc(h.get("priceDate",""))}')
+    return " · ".join(b for b in bits if b)
+
+
+def _ac_row(h, kind_label, why):
+    """One side of the comparison: model, size, movement, stock, price, and one CTA."""
+    d = routing(h)
+    c = d["cta"] if kind_label.startswith("Closest design") else d["alternative"]
+    href, rel = c["href"], c["rel"]
+    track = ""
+    if d["kind"] not in ("amazon", "direct", "search") and c.get("kind") != "amazon":
+        track = f' data-merchant="{esc(d["kind"])}" data-slug="{esc(d["slug"])}"'
+    first_party = (c.get("kind") or d["kind"]) not in ("amazon", "search")
+    if d["stock"]["state"] == "in-stock":
+        label = (f'View the exact {esc(h.get("name",""))} at {esc(h.get("house",""))}'
+                 if first_party else f'Shop the {esc(h.get("name",""))}')
+    else:
+        label = f'Check availability for the {esc(h.get("name",""))}'
+    # What the link IS, in the reader's words, wherever it is not a paid one. The kinds
+    # come from the policy, so this cannot claim "exact product page" for a search or
+    # "plain search" for a first-party link — the two it got wrong in draft.
+    if "sponsored" in rel:
+        note = ""
+    elif c.get("kind") == "direct" or d["kind"] == "direct":
+        note = (f'The maker\u2019s own product page for this exact reference. Not an affiliate '
+                f'link, and usually cheaper than a reseller.')
+    else:
+        note = (f'No affiliate programme for {esc(h.get("house",""))} \u2014 plain search, and '
+                f'often cheaper bought direct.')
+    unpaid = f' <span class="muted">{note}</span>' if note else ""
+    return (f'<div class="ac-row">'
+            f'<p class="ac-kind">{kind_label}</p>'
+            f'<p class="ac-name"><strong>{esc(h.get("house",""))} {esc(h.get("name",""))}</strong> '
+            f'<span class="muted">fidelity {esc(h.get("fidelity","–"))}/100</span></p>'
+            f'<p class="ac-facts">{_facts_phrase(h)}</p>'
+            f'<p class="ac-why muted">{why}</p>'
+            f'<p class="ac-cta"><a class="buy" href="{esc(href)}"{track} '
+            f'data-placement="{ALT_COMPARE_PLACEMENT}" rel="{rel}" target="_blank">'
+            f'{label} &rsaquo;</a>{unpaid}</p>'
+            f'</div>')
+
+
+def alt_compare(original, top, siblings):
+    """The compared pair for one page, or "" when there is no top row to compare.
+
+    Returns the whole buying moment for a treated page — it REPLACES top_cta() there
+    rather than sitting under it. Two blocks offering the same two watches, one with the
+    facts and one without, would be the page arguing with itself, and would split the
+    click measurement across two buttons for the same destination.
+    """
+    if not top:
+        return ""
+    orig_size = original.get("size_mm")
+    why_top = (f'Ranked closest to the {esc(original.get("name",""))} on our '
+               f'<a href="/rubric">published rubric</a>, which scores design closeness — not value, '
+               f'and not whether it is in stock.')
+    out = [_ac_row(top, "Closest design match", why_top)]
+
+    alt = max((h for h in siblings
+               if h is not top and routing(h)["availableAlternative"]
+               and h.get("fidelity") is not None),
+              key=lambda h: h["fidelity"], default=None)
+    if alt:
+        bits = []
+        if orig_size and alt.get("size_mm"):
+            delta = round(float(alt["size_mm"]) - float(orig_size), 1)
+            if abs(delta) >= 0.1:
+                bits.append(f'{abs(delta):g}mm {"wider" if delta > 0 else "smaller"} than the '
+                            f'original’s {esc(orig_size)}mm')
+        if top.get("fidelity") is not None and alt.get("fidelity") is not None:
+            gap = int(top["fidelity"]) - int(alt["fidelity"])
+            if gap > 0:
+                bits.append(f'{gap} points behind the {esc(top.get("name",""))} on the rubric')
+        trade = ("; ".join(bits) + "." if bits else
+                 "a different watch from the one ranked closest.")
+        why_alt = (f'Checked available, and the reason to consider it is that — not a better '
+                   f'score. It is {trade}')
+        out.append(_ac_row(alt, "Closest one verified in stock", why_alt))
+        note = ("Two sellers, two kinds of price: a maker’s own-store figure and an Amazon "
+                "listing are different offers, and neither includes shipping or tax. Each price "
+                "above says where it was read and when.")
+    else:
+        # THE HONEST ABSENCE. No row on this page has both a paid destination and a stock
+        # check that still stands, so there is nothing to offer as "the one you can buy"
+        # and the block says so instead of promoting the nearest thing with a tag on it.
+        out.append('<p class="ac-none muted">No other homage on this page has both a verified '
+                   'in-stock check and a seller we can link, so there is no second pick to offer '
+                   'here. The table below carries the whole field.</p>')
+        note = ("The price above says where it was read and when, and excludes shipping and tax.")
+    out.append(f'<p class="ac-foot muted">{note}</p>')
+    return ('<div class="altcompare">'
+            '<h2 class="ac-h">The closest one, and whether you can buy it</h2>'
+            + "".join(out) + '</div>')
+
+
 def money(n):
     try:
         return f"${int(round(float(n))):,}"
@@ -547,7 +751,9 @@ def original_page(o):
     b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {review_month(o)}.</p>')
     b.append('</div></div>')
     b.append(DISC)
-    b.append(top_cta(top, homages))
+    # The treated pages swap the CTA pair for the compared pair — see alt_compare().
+    b.append(alt_compare(o, top, homages) if o["id"] in ALT_COMPARE_WATCHES
+             else top_cta(top, homages))
 
     b.append(f'<p>The {esc(full)} (ref {esc(o.get("ref","—"))}) is a {esc(o.get("size_mm","?"))}mm '
              f'{esc(o.get("type",""))} watch, {esc(o.get("wr_m","?"))}m water resistant, running a '
@@ -820,6 +1026,41 @@ def hub_page(originals):
     return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
 
 
+def alt_compare_articles(originals):
+    """Write the compared pair into each hand-written article that carries the markers.
+
+    Refuses rather than guesses. A missing marker pair, a missing original or a block that
+    renders empty is a broken run and stops the generator: silently skipping would leave
+    the article showing whatever it showed last time while the generator reported success,
+    which is the failure mode AGENTS.md §2 is about — a clean-looking run that inspected
+    nothing.
+    """
+    by_id = {o["id"]: o for o in originals}
+    done = []
+    for rel, oid in sorted(ALT_COMPARE_ARTICLES.items()):
+        fp = os.path.join(ROOT, rel)
+        if not os.path.exists(fp):
+            raise SystemExit(f"gen.py: {rel} is in ALT_COMPARE_ARTICLES but does not exist")
+        o = by_id.get(oid)
+        if not o:
+            raise SystemExit(f"gen.py: {rel} points at original {oid!r}, which is not in the data")
+        src = open(fp, encoding="utf-8").read()
+        i, j = src.find(AC_START), src.find(AC_END)
+        if i < 0 or j < 0 or j < i:
+            raise SystemExit(f"gen.py: {rel} has no {AC_START} ... {AC_END} pair to write into")
+        homages = sorted(o.get("homages", []), key=lambda c: c.get("fidelity", 0), reverse=True)
+        top = max((h for h in homages if h.get("fidelity") is not None),
+                  key=lambda h: h["fidelity"], default=None)
+        block = alt_compare(o, top, homages)
+        if not block:
+            raise SystemExit(f"gen.py: {rel}: nothing to compare for {oid} — refusing to empty it")
+        out = src[:i] + AC_START + "\n" + block + "\n" + src[j:]
+        if out != src:
+            open(fp, "w", encoding="utf-8").write(out)
+        done.append(rel)
+    return done
+
+
 def write(path, content):
     full = os.path.join(ROOT, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -1047,7 +1288,11 @@ def main():
     n = sitemap(originals, lastmods)
     llms(originals)
     nh, ni = homepage_ssr(originals)
+    arts = alt_compare_articles(originals)
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
+    print(f"compared-alternative block: {len(ALT_COMPARE_WATCHES)} watch pages "
+          f"({', '.join(sorted(ALT_COMPARE_WATCHES))}) + {len(arts)} article(s) "
+          f"({', '.join(arts)})")
     print(f"homepage SSR: {nh} homage cards + {ni} icon rows + ItemList({nh})")
 
 
