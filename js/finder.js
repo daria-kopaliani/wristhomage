@@ -1,24 +1,23 @@
 /* wristhomage finder — editorial homepage (redesign 2026-07). Flat grid of every
  * homage, ranked by fidelity, filtered by icon / budget / movement.
  *
- * Mirrors gen.py's shop-link policy exactly: Amazon houses get a tagged affiliate
- * search (wristhomage-20); off-Amazon houses get an honest, marked non-affiliate
- * search. Shop clicks fire cookieless GoatCounter events shop/<kind>/<slug> to
- * reveal demand split (drives the add-more-programs decision), same as dupenote. */
+ * Shop-link policy is NOT decided here. Every routing question - Amazon eligibility,
+ * /dp/ versus search, merchant-outranks-Amazon, the price-parity rule, sold-out
+ * handling, whether a link is disclosed as paid - is answered by data/routing-policy.js,
+ * which scripts/gen.py consumes through node for the server-rendered pages. This file
+ * renders the decision; it does not make it. That file used to be two files, and they
+ * drifted - see its header.
+ *
+ * Shop clicks fire cookieless GoatCounter events shop/<kind>/<slug> to reveal demand
+ * split (drives the add-more-programs decision), same as dupenote. */
 (function () {
   "use strict";
   var DATA = (window.HOMAGE_DATA || { originals: [] });
-  var AMAZON_TAG = "wristhomage-20";
-  // Exact /dp/ links carry their own tracking ID so Amazon's own report separates
-  // exact-product conversion from search conversion — it reports per ID and nothing
-  // finer, so this split IS the measurement. Must stay in step with scripts/gen.py,
-  // which builds the same links server-side; moondog-affiliate-audit.py fails if the
-  // tag and the link shape ever disagree.
-  var AMAZON_TAG_DP = "wristhomagedp-20";
-  var AMAZON_HOUSES = { "Pagani Design": 1, "Invicta": 1, "Casio": 1, "Timex": 1, "Bulova": 1,
-    "Seiko": 1, "Orient": 1, "Citizen": 1, "Steeldive": 1, "Cadisen": 1, "Berny": 1, "Addiesdive": 1,
-    // verified on US Amazon 2026-08-01 (data also flipped to amazon:true; keep in sync with gen.py)
-    "San Martin": 1, "Baltany": 1, "Sugess": 1, "Watchdives": 1 };
+  // The single source of truth for every routing decision. Loaded by index.html
+  // immediately before this file. Without it there is no honest link to draw, so
+  // the finder leaves the server-rendered markup alone rather than guessing.
+  var R = window.WH_ROUTING;
+  if (!R) return;
 
   var els = {
     icon: document.getElementById("icon-filters"),
@@ -38,6 +37,8 @@
   }
   function money(n) { n = Number(n); return isFinite(n) ? "$" + n.toLocaleString() : "—"; }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  // Click ids come from the policy so a row reports as one product on both surfaces.
+  function rowSlug(h) { return R.clickSlug(h.house, h.name); }
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
   function roman(n) {
     var M = [[10, "x"], [9, "ix"], [5, "v"], [4, "iv"], [1, "i"]], out = "";
@@ -69,95 +70,38 @@
   });
   var SORTS = [["fidelity", "Fidelity"], ["price", "Price low→high"]];
 
-  function onAmazon(h) { return h.amazon === true || (h.amazon !== false && AMAZON_HOUSES[h.house]); }
-
-  // A verified asin beats a keyword search. Audited 2026-08-29/30 against live US
-  // Amazon by click volume: 10 of the 13 most-clicked searches never surface the
-  // watch they name (80% of clicks) — some are wrong identifiers, others name a
-  // real watch the search simply cannot find. Where an asin has been verified by
-  // hand in homages.js, link the product directly; otherwise keep the search.
-  // Mirrors shop_link() in scripts/gen.py so the homepage and the generated pages
-  // cannot disagree about where a row points.
-  function amazonHref(h, q) {
-    return h.asin
-      ? "https://www.amazon.com/dp/" + encodeURIComponent(h.asin) + "?tag=" + AMAZON_TAG_DP
-      : "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
+  /* Render the two-seller set the policy hands back. Cheapest FIRST - the ordering
+   * is the policy's, not this file's, precisely so that the day cheapest and
+   * highest-commission disagree, no surface can quietly prefer the paid one. */
+  function pairHtml(h, pair) {
+    var html = "";
+    pair.forEach(function (x) {
+      html += '<a class="shop' + (x.kind === "amazon" ? " secondary" : "") +
+        '" data-shop="' + esc(x.kind) +
+        '" data-slug="' + esc(rowSlug(h)) + '" href="' + esc(x.href) +
+        '" rel="' + x.rel + '" target="_blank">' + esc(x.label) + " $" +
+        Math.round(x.price) + ' &rsaquo;</a>';
+    });
+    return '<span class="shopset">' + html + "</span>";
   }
 
-  // A DIRECT MERCHANT PROGRAMME OUTRANKS AMAZON, but only where the row has been checked
-  // against that merchant's live product page. Watchdives pays 6% on its own collection
-  // against the ~3.1% wristhomage actually realises on Amazon, and the merchant link is an
-  // exact product page where the Amazon fallback for these rows is a keyword search that
-  // the 08-29 audit found does not surface the watch (WD16570 returns WD16760).
-  // Mirrors merchant_link() in scripts/gen.py.
-  // Both sellers where both pass — see the long note on shop_link() in scripts/gen.py.
-  // Returns null unless the row has a verified asin AND a checked merchant page AND
-  // Amazon is inside the header's 15% rule; callers fall through to the single link.
-  function bothLinks(h) {
-    if (!h.merchantUrl || !h.asin || !h.amazonPriceUSD) return null;
-    if (h.availability === "sold-out") return null;
-    var ours = h.priceUSD || 0;
-    if (!ours || Math.abs(h.amazonPriceUSD - ours) / ours > 0.15 + 1e-9) return null;
-    var m = h.merchant || "merchant";
-    var pair = [
-      { p: ours, html: '<a class="shop" data-shop="' + esc(m) + '" data-slug="' +
-          esc(slug(h.house + "-" + h.name)) + '" href="' + esc(h.merchantUrl) +
-          '" rel="' + (isAffiliateLink(h.merchantUrl)
-            ? "sponsored nofollow noopener" : "nofollow noopener") +
-          '" target="_blank">' +
-          esc(m.charAt(0).toUpperCase() + m.slice(1)) + " $" + Math.round(ours) + ' &rsaquo;</a>' },
-      { p: h.amazonPriceUSD, html: '<a class="shop secondary" data-shop="amazon" data-slug="' +
-          esc(slug(h.house + "-" + h.name)) + '" href="' + esc(amazonHref(h, "")) +
-          '" rel="sponsored nofollow noopener" target="_blank">Amazon $' +
-          Math.round(h.amazonPriceUSD) + ' &rsaquo;</a>' }
-    ].sort(function (a, b) { return a.p - b.p; });
-    return '<span class="shopset">' + pair[0].html + pair[1].html + '</span>';
-  }
-
-  // Mirrors is_affiliate_link() in scripts/gen.py. A merchant URL is only an
-  // affiliate link if it carries a referral: Watchdives rows do (?ref=), the San
-  // Martin product links do not, and San Martin has no affiliate programme. The
-  // server side was fixed first and this path was missed, so the homepage kept
-  // claiming sponsorship the generated pages and the disclosure both deny.
-  var REFERRAL_PARAM = /[?&](ref|aff|affiliate|tag|awc|aw_affid)=/i;
-  function isAffiliateLink(url) { return REFERRAL_PARAM.test(url || ""); }
-
-  function destination(h, q) {
-    if (h.merchantUrl) {
-      var paid = isAffiliateLink(h.merchantUrl);
-      return { kind: h.merchant || "merchant", href: h.merchantUrl,
-        rel: paid ? "sponsored nofollow noopener" : "nofollow noopener",
-        title: paid
-          ? ' title="Affiliate link to the maker\'s own product page — the price shown is read from it"'
-          : ' title="The maker\'s own product page. Not an affiliate link — the price shown is read from it"' };
-    }
-    if (onAmazon(h)) {
-      return { kind: "amazon", href: amazonHref(h, q), rel: "sponsored nofollow noopener", title: "" };
-    }
-    if (h.directUrl) {
-      return { kind: "direct", href: h.directUrl, rel: "nofollow noopener",
-        title: ' title="Exact first-party product page — not an affiliate link"' };
-    }
-    return { kind: "search", href: "https://www.google.com/search?q=" + encodeURIComponent(q),
-      rel: "nofollow noopener",
-      title: ' title="No affiliate program for this brand — plain search, and often cheaper bought direct"' };
+  function titleAttr(d) {
+    return d.title ? ' title="' + esc(d.title) + '"' : "";
   }
 
   function shopLink(h) {
-    var both = bothLinks(h);
-    if (both) return both;
-    var q = h.house + " " + h.name + " watch";
-    var dest = destination(h, q);
-    var label = h.availability === "sold-out" ? "Check availability" : (dest.kind === "direct" ? "View product" : "Shop");
-    return '<a class="shop" data-shop="' + dest.kind + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
-      '" href="' + esc(dest.href) + '" rel="' + dest.rel + '" target="_blank"' + dest.title + '>' + label + ' &rsaquo;</a>';
+    var d = R.resolve(h);
+    if (d.pair) return pairHtml(h, d.pair);
+    return '<a class="shop" data-shop="' + esc(d.kind) + '" data-slug="' + esc(rowSlug(h)) +
+      '" href="' + esc(d.href) + '" rel="' + d.rel + '" target="_blank"' + titleAttr(d) +
+      '>' + esc(d.label) + ' &rsaquo;</a>';
   }
 
   function titleShop(h, text) {
-    var q = h.house + " " + h.name + " watch";
-    var dest = destination(h, q);
-    return '<a class="shop" data-shop="' + dest.kind + '" data-slug="' + esc(slug(h.house + "-" + h.name)) +
-      '" href="' + esc(dest.href) + '" rel="' + dest.rel + '" target="_blank"' + dest.title + '>' + text + '</a>';
+    var d = R.resolve(h);
+    return '<a class="shop" data-shop="' + esc(d.kind) + '" data-slug="' + esc(rowSlug(h)) +
+      '" href="' + esc(d.href) + '" rel="' + d.rel + '" target="_blank"' + titleAttr(d) +
+      '>' + text + '</a>';
   }
 
   function pass(r) {
