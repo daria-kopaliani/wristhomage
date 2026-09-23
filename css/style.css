@@ -310,3 +310,89 @@ a.shop.secondary {
   border: 1px solid var(--line, rgba(0,0,0,0.18)) !important;
   font-weight: 600;
 }
+
+/* closest match vs what you can actually buy ------------------------------
+   The compared pair on the treated entry pages (scripts/gen.py::alt_compare).
+   Stacked blocks rather than a table: the comparison carries six facts per
+   watch, and six columns in a .tablewrap would be a horizontal scroll on
+   every phone — the pages this block sits on are the four most-read on the
+   site, and most of that reading is mobile. Stacking also keeps the two
+   buttons in the reading order a keyboard user tabs through. */
+.altcompare {
+  margin: 18px 0 20px;
+  border: 1px solid var(--line, rgba(0,0,0,0.18));
+  border-radius: 10px;
+  padding: 4px 16px 12px;
+}
+.altcompare .ac-h {
+  font-size: 16px;
+  margin: 12px 0 2px;
+  border: none;
+  padding: 0;
+}
+.ac-row {
+  padding: 10px 0;
+  border-top: 1px solid var(--line, rgba(0,0,0,0.12));
+}
+.ac-row:first-of-type {
+  border-top: none;
+}
+.ac-kind {
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.ac-name {
+  margin: 0 0 3px;
+  font-size: 15.5px;
+}
+.ac-name .muted {
+  font-size: 13px;
+  margin-left: 6px;
+}
+.ac-facts {
+  margin: 0 0 3px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.altcompare .ac-stock {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.altcompare .ac-why {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.altcompare .ac-cta {
+  margin: 0;
+}
+.altcompare .ac-none {
+  margin: 10px 0 0;
+  font-size: 13px;
+}
+.altcompare .ac-foot {
+  margin: 12px 0 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+@media (max-width: 560px) {
+  .altcompare {
+    padding: 4px 12px 10px;
+  }
+  .altcompare .ac-cta a.buy {
+    display: block;
+    text-align: center;
+    white-space: normal;
+  }
+  .altcompare .ac-cta .muted {
+    margin-left: 0;
+    margin-top: 6px;
+  }
+}
