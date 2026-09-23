@@ -298,13 +298,56 @@ HEAD = """<!doctype html>
   <main class="article">
 """
 
+# ONE CLICK HANDLER, USED BY BOTH SURFACES. It was inlined in FOOT, which meant the
+# hand-written articles carried their own older copy of it — and when the comparison block
+# gained placements, the article's copy silently kept emitting the unplaced path. The
+# generator now owns this string and writes it into the articles it touches too, so there
+# is one listener to reason about and no second one to drift.
+#
+# WHAT IT EMITS, and why each shape matters to the ledger:
+#   shop/<merchant>/<slug>            merchant programme click        (unpaid in the ledger)
+#   out/<placement>/amazon/dp/<ASIN>  tagged Amazon, inside a block   (paid, placement kept)
+#   out/amazon/dp/<ASIN>              tagged Amazon, everywhere else  (paid, unchanged)
+#   shop/<placement>/<kind>/<slug>    UNPAID outbound inside a block  (unpaid, placement kept)
+#
+# The last shape is why the hostname is tested rather than trusted. The selector matches
+# a[href*=amazon], and once it also matches a[data-placement], a San Martin button would
+# have fallen into the Amazon branch and reported itself as a PAID click on a link that
+# earns nothing. An unpaid click counted as paid is the worst of the four possible errors
+# here, because it inflates exactly the number the experiment is trying to read.
+#
+# Still one listener and one event per click: every branch returns.
+CLICK_JS = (
+    '<script>document.addEventListener("click",function(e){'
+    'var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant],a[data-placement]");'
+    'if(!a||!window.goatcounter||!goatcounter.count)return;'
+    'function s(x){return String(x||"").toLowerCase().replace(/[^a-z0-9]+/g,"-")'
+    '.replace(/^-+|-+$/g,"").slice(0,80);}'
+    'function hit(p){goatcounter.count({path:p,title:(a.textContent||"").trim().slice(0,80),'
+    'event:true});}'
+    'try{'
+    'var pl=(a.dataset.placement||"").replace(/[^a-z0-9-]/g,"");'
+    'var pre=pl?pl+"/":"";'
+    'if(a.dataset.merchant){hit("shop/"+pre+a.dataset.merchant+"/"+a.dataset.slug);return;}'
+    'var u=new URL(a.href);'
+    'if(!/(^|\.)amazon\./.test(u.hostname)){'
+    'if(!pl)return;'
+    'hit("shop/"+pre+s(a.dataset.kind||"direct")+"/"+s(a.dataset.slug||u.hostname));return;}'
+    'var dp=u.pathname.match(/\/dp\/([A-Z0-9]{10})/),k;'
+    'var base="out/"+pre+"amazon/";'
+    'if(dp){base+="dp/";k=dp[1];}'
+    'else if(u.searchParams.get("k")){base+="k/";k=u.searchParams.get("k");}'
+    'else{k="link";}'
+    'hit(base+s(k));'
+    '}catch(_){}},true);</script>\n')
+
 FOOT = """  </main>
   <footer class="foot"><div class="wrap">
     <span>&copy; {year} wristhomage &middot; Independent watch-homage database. Not affiliated with any watch brand.</span>
     <span><a href="/disclosure">Affiliate disclosure &amp; about</a> &middot; <a href="/rubric">Scoring rubric</a> &middot; <a href="/sitemap.xml">Sitemap</a></span>
   </div></footer>
 <script data-goatcounter="https://wristhomage.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>document.addEventListener("click",function(e){{var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant]");if(!a||!window.goatcounter||!goatcounter.count)return;try{{if(a.dataset.merchant){{goatcounter.count({{path:"shop/"+a.dataset.merchant+"/"+a.dataset.slug,title:(a.textContent||"").trim().slice(0,80),event:true}});return;}}var u=new URL(a.href);var dp=u.pathname.match(/\/dp\/([A-Z0-9]{{10}})/);var pl=(a.dataset.placement||"").replace(/[^a-z0-9-]/g,"");var pre="out/"+(pl?pl+"/":"")+"amazon/",k;if(dp){{pre+="dp/";k=dp[1];}}else if(u.searchParams.get("k")){{pre+="k/";k=u.searchParams.get("k");}}else{{k="link";}}goatcounter.count({{path:pre+k.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80),title:(a.textContent||"").trim().slice(0,80),event:true}});}}catch(_){{}}}},true);</script>
+{click_js}
 </body>
 </html>
 """
@@ -540,59 +583,70 @@ AC_START = "<!-- alt-compare:start -->"
 AC_END = "<!-- alt-compare:end -->"
 
 
-def _facts_phrase(h):
-    """Case size, movement, stock state and price — with the day and the source for each.
+def _spec_phrase(h):
+    """Case size, movement and price — with the source and day for the price.
 
-    Stock and price are merged where they were read in the same place, because printing
-    "in stock at amazon.com, checked 2026-09-22 · $116.99 on Amazon, checked 2026-09-22"
-    says the same thing twice and makes the honest part look like filler. Where they came
-    from different places, both are named: the San Martin rows have a stock check on the
-    maker's store and a price read there on an earlier day, and collapsing those two into
-    one date would invent a check.
-
-    NEVER a bare state. "In stock" with no date is the claim this block exists to stop.
+    An Amazon-routed row quotes the Amazon price where we have read one, because that is
+    the figure behind the button. The maker's own price stays visible when it is a
+    DIFFERENT seller's and the two differ: the brand's store being cheaper than the
+    listing we earn on is exactly what a reader is entitled to see, and hiding it would
+    make the block an advertisement. Same seller, same figure rounded, and printing both
+    would read as a discrepancy instead of a rounding.
     """
     st = routing(h)["stock"]
     bits = [f'{esc(h.get("size_mm","?"))}mm', esc(h.get("movement",""))]
-
-    where = esc(st["source"]) if st["source"] else "its seller"
-    amz = h.get("amazonPriceUSD")
-    same_seller = bool(amz) and routing(h)["kind"] == "amazon" and st["source"] == "amazon.com"
     price = f'{"from " if h.get("priceFrom") else ""}{money(h.get("priceUSD"))}'
-
-    if st["state"] == "in-stock" and same_seller:
-        bits.append(f'<strong>in stock</strong> at {where}, <strong>${amz:,.2f}</strong>, '
-                    f'checked {esc(st["date"])}')
-        # Only where the other price is a DIFFERENT SELLER's. A row whose own price was
-        # read on Amazon in the first place would otherwise print "$459.90 ... amazon.com
-        # listed $460 on 2026-08-30", which reads like a discrepancy and is one rounding.
+    amz = h.get("amazonPriceUSD")
+    if routing(h)["kind"] == "amazon" and amz:
+        bits.append(f'<strong>${amz:,.2f}</strong> on Amazon, checked '
+                    f'{esc(h.get("amazonPriceDate",""))}')
         if (h.get("priceUSD") and h.get("priceSource") and h["priceSource"] != st["source"]
                 and abs(amz - h["priceUSD"]) >= 0.01):
             bits.append(f'{esc(h["priceSource"])} listed {price} on {esc(h.get("priceDate",""))}')
-        return " · ".join(b for b in bits if b)
+    elif h.get("priceSource"):
+        where = ("read there" if h["priceSource"] == st["source"]
+                 else f'read from {esc(h["priceSource"])}')
+        bits.append(f'<strong>{price}</strong>, {where} on {esc(h.get("priceDate",""))}')
+    else:
+        bits.append(f'<strong>{price}</strong>')
+    return " · ".join(b for b in bits if b)
 
-    if st["state"] == "in-stock":
-        bits.append(f'<strong>in stock</strong> at {where}, checked {esc(st["date"])}')
-        if h.get("priceSource") and h.get("priceSource") == st["source"]:
-            bits.append(f'<strong>{price}</strong>, read there on {esc(h.get("priceDate",""))}')
-        elif h.get("priceSource"):
-            bits.append(f'<strong>{price}</strong>, read from {esc(h["priceSource"])} on '
-                        f'{esc(h.get("priceDate",""))}')
-        else:
-            bits.append(f'<strong>{price}</strong>')
-        return " · ".join(b for b in bits if b)
 
+def _stock_sentence(h):
+    """Whether you can buy it, in its own sentence, and never without the day and place.
+
+    A REFERENCE IS NOT AN OFFER. San Martin lists the SN058 in 24 configurations and sells
+    one of them; "in stock" against the reference promises a reader the SW200 they cannot
+    buy, and the movement column two words earlier names that SW200. So where a row records
+    which configuration was available, this says so, says how many of how many, and says
+    outright that the movement options belong to the reference rather than to the offer.
+    An Amazon ASIN needs none of that — it identifies one offer by construction, which the
+    block's closing line states once instead of on every row.
+    """
+    st = routing(h)["stock"]
+    where = esc(st["source"]) if st["source"] else "its seller"
     if st["state"] == "sold-out":
         when = f', checked {esc(st["date"])}' if st["date"] else ""
-        bits.append(f'<strong>sold out</strong> at {where}{when}')
-    elif st["stale"]:
-        bits.append(f'<strong>stock not confirmed</strong> — last checked {esc(st["date"])}, '
-                    f'too long ago to call it available')
-    else:
-        bits.append("<strong>stock not checked</strong>")
-    if h.get("priceSource"):
-        bits.append(f'{price} · read from {esc(h["priceSource"])} on {esc(h.get("priceDate",""))}')
-    return " · ".join(b for b in bits if b)
+        return f'<strong>Sold out</strong> at {where}{when}.'
+    if st["state"] == "unknown":
+        if st["stale"]:
+            return (f'<strong>Stock not confirmed.</strong> Last checked {esc(st["date"])}, '
+                    f'which is too long ago to call it available.')
+        return "<strong>Stock not checked.</strong>"
+
+    scope = ""
+    if st["configsInStock"] is not None and st["configsTotal"]:
+        scope = f' in {st["configsInStock"]} of {st["configsTotal"]} configurations'
+    out = f'<strong>In stock</strong>{scope} at {where}, checked {esc(st["date"])}'
+    if st["config"]:
+        out += f' — {esc(st["config"])}'
+    out += "."
+    if st["excludes"]:
+        # .capitalize() lowercases the rest of the string and turned "SW200" into "sw200".
+        ex = esc(st["excludes"])
+        out += (f' {ex[:1].upper()}{ex[1:]} was sold out, so the movement options '
+                f'above are the reference’s, not this offer’s.')
+    return out
 
 
 def _ac_row(h, kind_label, why):
@@ -600,9 +654,18 @@ def _ac_row(h, kind_label, why):
     d = routing(h)
     c = d["cta"] if kind_label.startswith("Closest design") else d["alternative"]
     href, rel = c["href"], c["rel"]
-    track = ""
-    if d["kind"] not in ("amazon", "direct", "search") and c.get("kind") != "amazon":
-        track = f' data-merchant="{esc(d["kind"])}" data-slug="{esc(d["slug"])}"'
+    # WHAT THE HANDLER NEEDS TO COUNT THIS CLICK. An Amazon link identifies itself from
+    # its own URL. Everything else does not: the two San Martin buttons are ordinary links
+    # to the maker's site, and without a kind and a slug on the anchor they emitted nothing
+    # at all — one side of each compared pair invisible, which makes a shift toward the
+    # paid link indistinguishable from more clicks overall.
+    kind = c.get("kind") or d["kind"]
+    if kind not in ("amazon", "direct", "search"):
+        track = f' data-merchant="{esc(kind)}" data-slug="{esc(d["slug"])}"'
+    elif kind != "amazon":
+        track = f' data-kind="{esc(kind)}" data-slug="{esc(d["slug"])}"'
+    else:
+        track = ""
     first_party = (c.get("kind") or d["kind"]) not in ("amazon", "search")
     if d["stock"]["state"] == "in-stock":
         label = (f'View the exact {esc(h.get("name",""))} at {esc(h.get("house",""))}'
@@ -625,7 +688,8 @@ def _ac_row(h, kind_label, why):
             f'<p class="ac-kind">{kind_label}</p>'
             f'<p class="ac-name"><strong>{esc(h.get("house",""))} {esc(h.get("name",""))}</strong> '
             f'<span class="muted">fidelity {esc(h.get("fidelity","–"))}/100</span></p>'
-            f'<p class="ac-facts">{_facts_phrase(h)}</p>'
+            f'<p class="ac-facts">{_spec_phrase(h)}</p>'
+            f'<p class="ac-stock">{_stock_sentence(h)}</p>'
             f'<p class="ac-why muted">{why}</p>'
             f'<p class="ac-cta"><a class="buy" href="{esc(href)}"{track} '
             f'data-placement="{ALT_COMPARE_PLACEMENT}" rel="{rel}" target="_blank">'
@@ -670,8 +734,10 @@ def alt_compare(original, top, siblings):
                    f'score. It is {trade}')
         out.append(_ac_row(alt, "Closest one verified in stock", why_alt))
         note = ("Two sellers, two kinds of price: a maker’s own-store figure and an Amazon "
-                "listing are different offers, and neither includes shipping or tax. Each price "
-                "above says where it was read and when.")
+                "listing are different offers, and neither includes shipping or tax. An Amazon "
+                "link points at one ASIN, which is one configuration; a maker’s page offers "
+                "several, and the stock line above says which of them we found. Each price says "
+                "where it was read and when.")
     else:
         # THE HONEST ABSENCE. No row on this page has both a paid destination and a stock
         # check that still stands, so there is nothing to offer as "the one you can buy"
@@ -860,7 +926,7 @@ def original_page(o):
               "mainEntity": [{"@type": "Question", "name": q,
                               "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     schema = ld(faq_ld)
-    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
+    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR, click_js=CLICK_JS)
 
 
 ONES = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
@@ -1023,7 +1089,7 @@ def hub_page(originals):
               "mainEntity": [{"@type": "Question", "name": q,
                               "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, _p in faq]}
     schema = ld(coll) + "\n  " + ld(faq_ld)
-    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR)
+    return HEAD.format(title=esc(title), desc=esc(desc), canon=canon, schema=schema, sprite=SPRITE, logo=LOGO) + "\n".join(b) + "\n" + FOOT.format(year=YEAR, click_js=CLICK_JS)
 
 
 def alt_compare_articles(originals):
@@ -1034,9 +1100,34 @@ def alt_compare_articles(originals):
     the article showing whatever it showed last time while the generator reported success,
     which is the failure mode AGENTS.md §2 is about — a clean-looking run that inspected
     nothing.
+
+    Also empties the markers in any article that still carries them but is no longer
+    configured, so removing a page from the map is a real rollback rather than a page that
+    keeps its block forever.
     """
+    removed = []
     by_id = {o["id"]: o for o in originals}
     done = []
+
+    # ROLLBACK HAS TO ACTUALLY ROLL BACK. Dropping an article from the map used to leave
+    # the block sitting in the file: the generator simply stopped visiting it, so the
+    # documented one-line rollback removed the entry and changed nothing on the page. An
+    # article that still carries the markers but is no longer configured gets emptied.
+    adir = os.path.join(ROOT, "articles")
+    for fn in sorted(os.listdir(adir)) if os.path.isdir(adir) else []:
+        rel = f"articles/{fn}"
+        if not fn.endswith(".html") or rel in ALT_COMPARE_ARTICLES:
+            continue
+        fp = os.path.join(adir, fn)
+        src = open(fp, encoding="utf-8").read()
+        i, j = src.find(AC_START), src.find(AC_END)
+        if i < 0 or j < i:
+            continue
+        out = src[:i] + AC_START + AC_END + src[j + len(AC_END):]
+        if out != src:
+            open(fp, "w", encoding="utf-8").write(out)
+            removed.append(rel)
+
     for rel, oid in sorted(ALT_COMPARE_ARTICLES.items()):
         fp = os.path.join(ROOT, rel)
         if not os.path.exists(fp):
@@ -1055,10 +1146,17 @@ def alt_compare_articles(originals):
         if not block:
             raise SystemExit(f"gen.py: {rel}: nothing to compare for {oid} — refusing to empty it")
         out = src[:i] + AC_START + "\n" + block + "\n" + src[j:]
+        # And the same click handler the generated pages get. The article used to carry its
+        # own older copy, which is how its comparison buttons ended up emitting unplaced
+        # paths while the watch pages emitted placed ones.
+        out = re.sub(r'<script>document\.addEventListener\("click".*?</script>\n?',
+                     CLICK_JS, out, count=1, flags=re.S)
+        if CLICK_JS not in out:
+            raise SystemExit(f"gen.py: {rel} has no click handler to replace")
         if out != src:
             open(fp, "w", encoding="utf-8").write(out)
         done.append(rel)
-    return done
+    return done, removed
 
 
 def write(path, content):
@@ -1288,11 +1386,13 @@ def main():
     n = sitemap(originals, lastmods)
     llms(originals)
     nh, ni = homepage_ssr(originals)
-    arts = alt_compare_articles(originals)
+    arts, cleared = alt_compare_articles(originals)
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
     print(f"compared-alternative block: {len(ALT_COMPARE_WATCHES)} watch pages "
           f"({', '.join(sorted(ALT_COMPARE_WATCHES))}) + {len(arts)} article(s) "
-          f"({', '.join(arts)})")
+          f"({', '.join(arts)})"
+          + (f"; cleared {len(cleared)} rolled-back article(s) ({', '.join(cleared)})"
+             if cleared else ""))
     print(f"homepage SSR: {nh} homage cards + {ni} icon rows + ItemList({nh})")
 
 

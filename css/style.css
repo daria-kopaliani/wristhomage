@@ -334,7 +334,9 @@ a.shop.secondary {
   padding: 10px 0;
   border-top: 1px solid var(--line, rgba(0,0,0,0.12));
 }
-.ac-row:first-of-type { border-top: none; }
+.ac-row:first-of-type {
+  border-top: none;
+}
 .ac-kind {
   margin: 0 0 2px;
   font-family: var(--font-display);
@@ -344,12 +346,36 @@ a.shop.secondary {
   text-transform: uppercase;
   opacity: 0.72;
 }
-.ac-name { margin: 0 0 3px; font-size: 15.5px; }
-.ac-name .muted { font-size: 13px; margin-left: 6px; }
-.ac-facts { margin: 0 0 4px; font-size: 13.5px; line-height: 1.55; }
-.altcompare .ac-why { margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
-.altcompare .ac-cta { margin: 0; }
-.altcompare .ac-none { margin: 10px 0 0; font-size: 13px; }
+.ac-name {
+  margin: 0 0 3px;
+  font-size: 15.5px;
+}
+.ac-name .muted {
+  font-size: 13px;
+  margin-left: 6px;
+}
+.ac-facts {
+  margin: 0 0 3px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.altcompare .ac-stock {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.altcompare .ac-why {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.altcompare .ac-cta {
+  margin: 0;
+}
+.altcompare .ac-none {
+  margin: 10px 0 0;
+  font-size: 13px;
+}
 .altcompare .ac-foot {
   margin: 12px 0 2px;
   font-size: 12.5px;
@@ -357,7 +383,16 @@ a.shop.secondary {
   opacity: 0.85;
 }
 @media (max-width: 560px) {
-  .altcompare { padding: 4px 12px 10px; }
-  .altcompare .ac-cta a.buy { display: block; text-align: center; white-space: normal; }
-  .altcompare .ac-cta .muted { margin-left: 0; margin-top: 6px; }
+  .altcompare {
+    padding: 4px 12px 10px;
+  }
+  .altcompare .ac-cta a.buy {
+    display: block;
+    text-align: center;
+    white-space: normal;
+  }
+  .altcompare .ac-cta .muted {
+    margin-left: 0;
+    margin-top: 6px;
+  }
 }

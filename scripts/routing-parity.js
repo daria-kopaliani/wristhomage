@@ -251,7 +251,7 @@ rows.forEach(function (h) {
 /* Three states, and the rules that keep "available" from being asserted. These are
  * fixtures, not live rows: the live rows carry whatever was last checked, and a test
  * that reads them would go green the day someone deletes a date. */
-var TODAY_FIX = "2026-09-22";
+var TODAY_FIX = "2026-09-23";
 
 [
   { why: "a dated check today is available",
@@ -277,7 +277,26 @@ var TODAY_FIX = "2026-09-22";
     expect: { state: "unknown", stale: false } },
   { why: "shape before calendar: Date.parse accepts 20260922, this must not",
     row: { availability: "in-stock", availabilityDate: "20260922" },
-    expect: { state: "unknown", stale: false } }
+    expect: { state: "unknown", stale: false } },
+  { why: "an impossible month and day passes the shape test and must still fail — this is " +
+         "the one that returned in-stock, because _days gave null and the age check was skipped",
+    row: { availability: "in-stock", availabilityDate: "2026-99-99" },
+    expect: { state: "unknown", stale: false } },
+  { why: "Date.parse normalises February 30 into March 1; round-tripping the parts catches it",
+    row: { availability: "in-stock", availabilityDate: "2026-02-30" },
+    expect: { state: "unknown", stale: false } },
+  { why: "a check dated in the future has not happened yet",
+    row: { availability: "in-stock", availabilityDate: "2027-09-22" },
+    expect: { state: "unknown", stale: false } },
+  { why: "the window boundary is inclusive: exactly STOCK_MAX_AGE_DAYS old still counts",
+    row: { availability: "in-stock", availabilityDate: "2026-08-24" },
+    expect: { state: "in-stock", stale: false } },
+  { why: "one day past the window does not",
+    row: { availability: "in-stock", availabilityDate: "2026-08-23" },
+    expect: { state: "unknown", stale: true } },
+  { why: "an impossible date on a sold-out row keeps the state and drops the date",
+    row: { availability: "sold-out", availabilityDate: "2026-02-30" },
+    expect: { state: "sold-out", stale: false } }
 ].forEach(function (f) {
   var st = R.stock(f.row, TODAY_FIX);
   eq("stock: " + f.why + " [state]", st.state, f.expect.state);
@@ -304,6 +323,11 @@ ok("alternative: a checked in-stock Amazon row may", R.availableAlternative(amaz
 ok("alternative: a sold-out row may not", !R.availableAlternative(amazonSoldOut, TODAY_FIX));
 ok("alternative: in stock but nothing to link is not an alternative",
    !R.availableAlternative(offAmazonChecked, TODAY_FIX));
+["2026-99-99", "2026-02-30", "2027-09-22", "20260923", ""].forEach(function (d) {
+  ok("alternative: " + JSON.stringify(d) + " is not a verified availability date",
+     !R.availableAlternative(Object.assign({}, amazonNoCheck,
+       { availability: "in-stock", availabilityDate: d }), TODAY_FIX));
+});
 
 /* Stock must not move a destination. The block reads stock; routing does not. */
 [amazonNoCheck, amazonChecked, amazonSoldOut].forEach(function (row, i) {
@@ -382,16 +406,61 @@ merchantRows.forEach(function (h) {
      html.indexOf('class="buy" href="' + amzn + '"') === -1);
 });
 
-// 5. the compared-alternative block, on every page that carries it. Three properties,
+// 5. the compared-alternative block, on every page that carries it. Four properties,
 //    each of which has a way of going quietly wrong:
-//      * it says "in stock" only with a date beside it — the whole point of the block;
-//      * its Amazon links declare the placement, or their clicks land in the same bucket
-//        as the table's and the experiment measures nothing;
-//      * nothing outside the block declares that placement, or the bucket stops meaning
+//      * it says "in stock" only with a date, a place and — where the row records one —
+//        the configuration that was actually available. A reference is not an offer;
+//      * every one of its buttons emits exactly ONE click event, the unpaid direct ones
+//        included. data-placement alone installs no listener, and for a while the two
+//        San Martin buttons emitted nothing at all;
+//      * paid stays paid and unpaid stays unpaid in the shapes the portfolio ledger reads;
+//      * nothing outside the block claims the placement, or the bucket stops meaning
 //        "clicks from the compared pair".
 var treated = ["watches/patek-nautilus.html", "watches/ap-royal-oak.html",
                "articles/best-datejust-homage.html"];
 var root = path.join(__dirname, "..");
+
+// The ledger's own classifiers, copied from moondogapps/scripts/
+// moondog-affiliate-clicks-ledger.py. If a path this site emits matches neither, that
+// click is reported as unclassified and silently leaves the earnings column.
+var LEDGER_PAID = /^\/?(out|shop)\/(?:[a-z0-9-]+\/)?amazon\/|(^|\/)aff-/i;
+var LEDGER_UNPAID = /^\/?out\/(iherb-research|brand|search)\/|^\/?shop\/(?!amazon\/)/i;
+
+/* Run the page's OWN handler, not a copy of its logic. Reimplementing it here is how a
+ * suite ends up proving that the reimplementation works. */
+function replay(page, anchorTag) {
+  var script = /<script>(document\.addEventListener\("click"[\s\S]*?)<\/script>/.exec(page);
+  if (!script) return null;
+  var ds = {};
+  (anchorTag.match(/data-([a-z-]+)="([^"]*)"/g) || []).forEach(function (d) {
+    var m = /data-([a-z-]+)="([^"]*)"/.exec(d);
+    ds[m[1].replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); })] = m[2];
+  });
+  var href = /href="([^"]+)"/.exec(anchorTag)[1].replace(/&amp;/g, "&");
+  var hits = [];
+  var anchor = {
+    href: href, dataset: ds, textContent: "button",
+    closest: function (sel) {
+      if (href.indexOf("amazon") !== -1 && sel.indexOf("a[href*=amazon]") !== -1) return this;
+      if (ds.merchant && sel.indexOf("a[data-merchant]") !== -1) return this;
+      if (ds.placement && sel.indexOf("a[data-placement]") !== -1) return this;
+      return null;
+    }
+  };
+  var cb = null;
+  var savedDoc = global.document, savedWin = global.window, savedGc = global.goatcounter;
+  global.document = { addEventListener: function (t, f) { cb = f; } };
+  global.window = { goatcounter: { count: function (o) { hits.push(o.path); } } };
+  global.goatcounter = global.window.goatcounter;
+  try {
+    new Function(script[1])();
+    if (cb) cb({ target: anchor });
+  } finally {
+    global.document = savedDoc; global.window = savedWin; global.goatcounter = savedGc;
+  }
+  return hits;
+}
+
 treated.forEach(function (rel) {
   var page = fs.readFileSync(path.join(root, rel), "utf8");
   var m = page.match(/<div class="altcompare">[\s\S]*?<p class="ac-foot[\s\S]*?<\/div>/);
@@ -399,33 +468,62 @@ treated.forEach(function (rel) {
   if (!m) return;
   var blk = m[0];
 
-  // Per facts line, not per phrase: the price clause sits between the state and its
-  // date on an Amazon row ("in stock at amazon.com, $116.99, checked 2026-09-22"), so a
-  // phrase-level regex reads the date as missing when it is right there.
-  var facts = blk.match(/<p class="ac-facts">[\s\S]*?<\/p>/g) || [];
-  ok(rel + ": the block states the facts for at least one pick", facts.length > 0);
+  var lines = blk.match(/<p class="ac-stock">[\s\S]*?<\/p>/g) || [];
+  ok(rel + ": every pick has its own stock sentence", lines.length > 0);
   var claimed = 0;
-  facts.forEach(function (f) {
-    if (f.indexOf(">in stock<") === -1) return;
+  lines.forEach(function (f) {
+    if (f.indexOf(">In stock<") === -1) return;
     claimed++;
     ok(rel + ": every in-stock claim carries the day it was checked",
        /checked \d{4}-\d{2}-\d{2}/.test(f));
-    ok(rel + ": every in-stock claim names where it was checked",
-       /in stock<\/strong> at \S/.test(f));
+    ok(rel + ": every in-stock claim names where it was checked", / at \S/.test(f));
+    // A configuration-scoped claim must say which configuration, and the other way round.
+    var scoped = /in \d+ of \d+ configurations/.test(f);
+    if (scoped) {
+      ok(rel + ": a 1-of-N availability claim names the configuration it applies to",
+         f.indexOf("\u2014") !== -1);
+    }
   });
   ok(rel + ": the block claims availability at all", claimed > 0);
 
+  // Every button: exactly one event, and the right side of the ledger.
   var anchors = blk.match(/<a class="buy"[^>]*>/g) || [];
   ok(rel + ": the block has buttons", anchors.length > 0);
   anchors.forEach(function (a) {
+    var href = /href="([^"]+)"/.exec(a)[1];
     ok(rel + ": every button in the block declares the placement",
        a.indexOf('data-placement="alt-compare"') !== -1);
+    var hits = replay(page, a);
+    ok(rel + ": the page's own handler fires exactly once for " + href.slice(0, 52) +
+       " (got " + (hits ? hits.length : "no handler") + ")",
+       Boolean(hits) && hits.length === 1);
+    if (!hits || hits.length !== 1) return;
+    var p = hits[0];
+    ok(rel + ": " + p + " carries the placement", p.indexOf("alt-compare/") !== -1);
+    var paid = LEDGER_PAID.test(p), unpaid = LEDGER_UNPAID.test(p);
+    ok(rel + ": " + p + " is classified by the portfolio ledger", paid || unpaid);
+    // A link that earns nothing must not report itself as a paid click: that inflates
+    // exactly the number this block is being measured on.
+    var tagged = href.indexOf("tag=") !== -1;
+    eq(rel + ": " + p + " is paid only if the destination carries our tag", paid, tagged);
   });
 
   var outside = page.replace(blk, "");
   ok(rel + ": nothing outside the block claims that placement",
      outside.indexOf('data-placement="alt-compare"') === -1);
 });
+
+// And the same ASIN's link in the table keeps the path it has always had, so the before
+// and after of the experiment are comparable per ASIN.
+var nautilus = fs.readFileSync(path.join(root, "watches/patek-nautilus.html"), "utf8");
+var tableRow = (nautilus.match(/<a class="shop"[^>]*href="[^"]*\/dp\/[^"]*"[^>]*>/) || [])[0];
+ok("a table row's Amazon link still exists to compare against", Boolean(tableRow));
+if (tableRow) {
+  var hits = replay(nautilus, tableRow.replace('class="shop"', 'class="buy"'));
+  ok("the table's Amazon link emits one unplaced event (" + (hits || []).join(",") + ")",
+     Boolean(hits) && hits.length === 1 && hits[0].indexOf("alt-compare") === -1 &&
+     LEDGER_PAID.test(hits[0]));
+}
 
 /* ------------------------------------------------------------------- report --- */
 

@@ -258,20 +258,49 @@
    */
   var STOCK_MAX_AGE_DAYS = 30;
 
+  /* A REAL CALENDAR DATE, not a plausible-looking string. The shape test alone let
+   * "2026-99-99" through: Date.parse returned NaN, _days returned null, the age
+   * comparison was skipped, and stock() fell through to "in-stock" — a malformed date
+   * qualifying as a verified check, which is the exact opposite of the gate's purpose.
+   * Date.parse also normalises impossible days, so 2026-02-30 silently becomes March 1.
+   * Round-tripping the parsed parts back out is what catches both. */
+  function _parseISO(d) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d == null ? "" : d));
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], da = +m[3];
+    var t = Date.UTC(y, mo - 1, da);
+    var dt = new Date(t);
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== da) {
+      return null;
+    }
+    return t;
+  }
+
   function _days(fromISO, today) {
-    var a = Date.parse(fromISO + "T00:00:00Z"), b = Date.parse(today + "T00:00:00Z");
-    if (isNaN(a) || isNaN(b)) return null;
+    var a = _parseISO(fromISO), b = _parseISO(today);
+    if (a === null || b === null) return null;
     return Math.round((b - a) / 86400000);
   }
 
   function stock(h, today) {
     var raw = h.availability, date = h.availabilityDate || null;
     var out = { state: "unknown", date: date, source: h.availabilitySource || null,
-                stale: false, ageDays: null };
+                stale: false, ageDays: null,
+                // WHICH CONFIGURATION. A reference is not an offer: San Martin lists the
+                // SN058 in 24 configurations and sells one of them, and "in stock" against
+                // the reference promises a reader the SW200 they cannot buy. Where a row
+                // records the configuration that was actually available, it travels with
+                // the state so no surface can print one without the other.
+                config: h.availabilityConfig || null,
+                configsInStock: typeof h.availabilityConfigsInStock === "number"
+                  ? h.availabilityConfigsInStock : null,
+                configsTotal: typeof h.availabilityConfigsTotal === "number"
+                  ? h.availabilityConfigsTotal : null,
+                excludes: h.availabilityExcludes || null };
     if (raw !== "in-stock" && raw !== "sold-out") return out;
-    // Shape before calendar: "20260922" and "2026-W38-7" both parse as dates and neither
-    // is the format this file writes.
-    var dated = Boolean(date) && /^\d{4}-\d{2}-\d{2}$/.test(date);
+    // Shape, then calendar: "20260922" and "2026-W38-7" pass a loose parse, and
+    // "2026-99-99" passed the shape test on its own. _parseISO demands both.
+    var dated = _parseISO(date) !== null;
     if (!dated) out.date = null;
     if (raw === "sold-out") {
       // An undated sold-out row keeps its state. Five rows carried `availability:
@@ -284,9 +313,14 @@
       return out;
     }
     if (!dated) return out;             // "in-stock" with no date is not a check
-    var age = today ? _days(date, today) : null;
+    // An in-stock claim needs a real date, a date to measure it against, and an age that
+    // is neither negative nor outside the window. A check dated in the future has not
+    // happened yet; treating it as fresh would make tomorrow's typo today's evidence.
+    var age = _days(date, today);
     out.ageDays = age;
-    if (age !== null && age > STOCK_MAX_AGE_DAYS) {
+    if (age === null) return out;       // no usable comparison date -> no claim
+    if (age < 0) return out;            // dated in the future -> not a check that happened
+    if (age > STOCK_MAX_AGE_DAYS) {
       out.stale = true;
       return out;                       // state stays "unknown" — an aged check is not a claim
     }
