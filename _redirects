@@ -40,3 +40,9 @@
 # Autocomplete carries panerai luminor homage (6 phrases), patek aquanaut homage (6),
 # iwc portugieser homage (4) and rolex milgauss homage (4). The binding constraint is
 # verifiable inventory, so re-opening any of them means finding real rows first.
+#
+# 2026-09-26 (moondog-portfolio#153): /guides/ had no index, so it 404ed. The seven brand
+# guides are listed, with context, in the watches hub's "Brand reviews and rankings"
+# section. Exact paths only: the guides themselves (/guides/<brand>) must keep serving.
+/guides   /watches/  301
+/guides/  /watches/  301
