@@ -1308,7 +1308,12 @@ def homepage_ssr(originals):
             f'{price}{", " + str(h["size_mm"]) + "mm" if h.get("size_mm") else ""}'
             f'{", " + str(h["wr_m"]) + "m WR" if h.get("wr_m") else ""}'
             f'{", " + esc(h["movement"]) if h.get("movement") else ""}.'
-            f'{" " + esc(h["note"]) if h.get("note") else ""}</p></article>')
+            f'{" " + esc(h["note"]) if h.get("note") else ""}</p>'
+            # The buy path, server-rendered (moondog-portfolio#165): the same routing-policy
+            # link the watch page's table row uses, so a reader or an assistant that does not
+            # run finder.js still reaches the watch. finder.js replaces the whole card on load.
+            f'<p class="eh-cardfoot"><span class="eh-cardlinks">'
+            f'<a href="/watches/{esc(o["id"])}">Specs →</a>{shop_link(h)}</span></p></article>')
 
     icons = [f'<article class="eh-ix"><h3><a href="/watches/{esc(o["id"])}">'
              f'{esc(o["house"])} {esc(o["name"])}</a></h3>'
@@ -1357,8 +1362,11 @@ def homepage_ssr(originals):
                           f"fidelity across <strong>{len(originals)}</strong> icons." + m.group(2)),
                s, count=1, flags=re.S)
     for cid, body in (("cards", "\n".join(cards)), ("icons-list", "\n".join(icons))):
-        pat = re.compile(r'(<div class="[^"]*" id="' + cid + r'">).*?(</div>)', re.S)
-        new, n = pat.subn(lambda m: m.group(1) + "<!--SSR-->" + body + m.group(2), s, count=1)
+        # The block ends at an explicit <!--/SSR--> marker, not at the first </div>: a card
+        # may itself contain markup, and matching to the first </div> made every re-run
+        # append the list again. A page from before the marker still matches the old way.
+        pat = re.compile(r'(<div class="[^"]*" id="' + cid + r'">)(?:<!--SSR-->.*?<!--/SSR-->|.*?)(</div>)', re.S)
+        new, n = pat.subn(lambda m: m.group(1) + "<!--SSR-->" + body + "<!--/SSR-->" + m.group(2), s, count=1)
         if not n:
             raise SystemExit(f"homepage_ssr: no #{cid} container in index.html")
         s = new
