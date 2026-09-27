@@ -19,7 +19,7 @@ on non-shop pages).
 
 Run from repo root:  python3 scripts/gen.py
 """
-import datetime, json, os, re, subprocess, html, urllib.parse
+import datetime, importlib.util, json, os, re, subprocess, html, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://wristhomage.com"
@@ -43,6 +43,13 @@ TODAY = datetime.date.today().isoformat()
 # This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
 # The two tracking IDs themselves now live in data/routing-policy.js.
 REVIEWED_HUMAN = "August 2026"   # fallback only, for a page with no dated rows
+
+# The watch-storage pilot (wristhomage#26) keeps its data rules and page bodies in its own module;
+# this file wraps, lists and links its pages like every other page on the site.
+_spec = importlib.util.spec_from_file_location("storage", os.path.join(os.path.dirname(os.path.abspath(__file__)), "storage.py"))
+storage = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(storage)
+STORAGE_URLS = [storage.BASE + p["slug"] for p in storage.PAGES]
 
 _VERIFIED_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 
@@ -176,7 +183,9 @@ def url_to_file(u):
 def git_lastmod(u):
     rel = url_to_file(u)
     if not os.path.exists(os.path.join(ROOT, rel)):
-        return LASTMOD_FALLBACK
+        # A page this run is about to create for the first time: its content first appears
+        # today. The July fallback would claim it had not changed since before it existed.
+        return TODAY
     try:
         dirty = subprocess.run(["git", "status", "--porcelain", "--", rel],
                                cwd=ROOT, capture_output=True, text=True).stdout.strip()
@@ -1081,6 +1090,11 @@ def hub_page(originals):
              'whether to buy one at all, start with '
              '<a href="/articles/are-homage-watches-ok">are homage watches OK?</a> and '
              '<a href="/articles/homage-vs-replica">homage vs replica</a>.</p>')
+    # Plain navigation to the watch-storage pages (wristhomage#26): no product link here.
+    b.append('<h2>Storing your watches</h2>')
+    b.append('<p>Boxes, rolls and travel cases, compared on what their makers publish about the '
+             'inside: ' + ', '.join(f'<a href="{storage.BASE}{p["slug"]}">{esc(p["nav"])}</a>'
+                                   for p in storage.PAGES) + '.</p>')
     b.append('<h2>Common questions</h2>')
     for _q, _a, prose in faq:
         b.append(f'<p>{prose}</p>')
@@ -1170,6 +1184,7 @@ def sitemap_urls(originals):
     urls = ["/", "/watches/", "/rubric", "/disclosure"]
     urls += [f"/watches/{o['id']}" for o in originals]
     urls += ARTICLES
+    urls += STORAGE_URLS
     seen, ordered = set(), []
     for u in urls:
         if u not in seen:
@@ -1249,6 +1264,9 @@ def llms(originals):
         label = title or a.rsplit("/", 1)[-1].replace("-", " ")
         lines.append(f"- [{label}]({SITE}{a})" + (f": {blurb}" if blurb else ""))
 
+    lines += ["", "## Watch storage"]
+    for p in storage.PAGES:
+        lines.append(f"- [{p['h1']}]({SITE}{storage.BASE}{p['slug']}): {p['desc']}")
     lines += ["", "## About",
               f"- [Scoring rubric]({SITE}/rubric)",
               f"- [Homage vs replica]({SITE}/articles/homage-vs-replica)",
@@ -1256,7 +1274,7 @@ def llms(originals):
 
     body = "\n".join(lines)
     # Same contract the sitemap keeps: never publish a map that omits a live page.
-    absent = sorted(a for a in ARTICLES + ["/disclosure"] if f"{SITE}{a})" not in body)
+    absent = sorted(a for a in ARTICLES + STORAGE_URLS + ["/disclosure"] if f"{SITE}{a})" not in body)
     if absent:
         raise SystemExit("gen.py: llms.txt would omit these live pages:\n  " + "\n  ".join(absent))
     write("llms.txt", body)
@@ -1383,6 +1401,10 @@ def main():
     for o in originals:
         write(f"watches/{o['id']}.html", original_page(o))
     write("watches/index.html", hub_page(originals))
+    for path, title, desc, schema, body in storage.pages():
+        head = HEAD.format(title=esc(title) + " | wristhomage", desc=esc(desc), canon=SITE + path,
+                           schema="\n  ".join(ld(s) for s in schema), sprite="", logo=LOGO)
+        write(path.lstrip("/") + ".html", head + body + "\n" + FOOT.format(year=YEAR, click_js=CLICK_JS))
     n = sitemap(originals, lastmods)
     llms(originals)
     nh, ni = homepage_ssr(originals)
