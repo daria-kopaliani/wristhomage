@@ -205,7 +205,7 @@ price, or Amazon cheaper — in which case priceUSD/priceSource move to amazon.c
 |---|---|
 | PD-1701 | ✅ B0DZBVM35F — "Pagani Design 1701 … VK63", model PD-1701, $124.99 (quoted $136) |
 | PD-1752 | ✅ B0DKNQFGFS — "Pagani Design 1752 DD36", model PD-1752, $134.99 (quoted $148) |
-| PD-1751 | ✅ B0BZXN3D26 — model PD1751, $139.99 (quoted $180 → repriced to Amazon) |
+| PD-1751 | ~~✅ B0BZXN3D26~~ **wrong: see the 2026-09-27 correction below** |
 | SSK023 | ✅ B0D3WBXVP9 — model SSK023, $360 (quoted $450 → repriced) |
 | AD2078 | ✅ B0DX73XKQD — model AD2078, $152.99 (quoted $139) |
 | AD2106 | ✅ B0F7Y14PJT — model AD2106, $129.99; the "+Mesh Band" bundle B0D4VCFRLH avoided |
@@ -217,3 +217,17 @@ price, or Amazon cheaper — in which case priceUSD/priceSource move to amazon.c
 | 8926OB, SRPE53 | unchanged from the 08-30 finding (not buyable) |
 
 Net: 19 → 25 exact links. The search rows above stay searches; they are the honest link.
+
+## Correction — 2026-09-27: PD-1751 was linked to the PD-1753
+
+The 09-11 pass accepted **B0BZXN3D26** for PD-1751 on its model field ("model PD1751"). On
+2026-09-27 Claude Affiliate reviewer 3 (wristhomage#33, review 5331390382) and a re-read both
+found the listing's **Item model number is PD1753**; the title names no model, every model
+mention on the page says PD-1753, and the stated dial is **40mm** against the row's 36mm. The
+row also took that listing's $139.99 as its price. Fixed in wristhomage#33: the `asin` is
+removed (the row is an honest `wristhomage-20` search again), the price returns to Pagani's own
+$180 (paganidesign.com, 2026-08-13), and the two article/guide links revert to the search. A
+search of 26 Amazon US candidates on 2026-09-27 found no listing carrying PD-1751.
+
+Lesson for the next pass: read the model field **and** a second identifier (size, or the
+designator in the title/alt text) — a single model-number read was transcribed wrong here.
