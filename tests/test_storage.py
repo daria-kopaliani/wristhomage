@@ -178,7 +178,7 @@ class Pages(unittest.TestCase):
             self.assertEqual(json.loads(blocks[0])["@type"], "FAQPage")
             body = re.sub(r"<script.*?</script>", "", h, flags=re.S)
             self.assertIn("<table>", body)
-            self.assertIn("Checked " + DATA["checked"], body)
+            self.assertIn("Last checked " + DATA["checked"], body)
 
 
 class Wiring(unittest.TestCase):

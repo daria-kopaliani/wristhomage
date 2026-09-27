@@ -210,7 +210,7 @@ def source(x):
 
 DISC = ('<div class="disc-bar"><strong>As an Amazon Associate we earn from qualifying purchases</strong>, '
         'at no extra cost to you. The Amazon links on this page are affiliate links; a product is linked only '
-        'while Amazon.com or the maker’s own store sells it. <a href="/disclosure">How this site works</a>.</div>')
+        'while Amazon.com or the maker’s own store sells it. <a href="/disclosure">Affiliate disclosure</a>.</div>')
 
 
 def crumbs(title):
@@ -218,8 +218,8 @@ def crumbs(title):
 
 
 def checked_line(d):
-    return (f'<p class="muted">Checked {d["checked"]}: sellers read from each Amazon US buy box, dimensions '
-            f'from each maker’s own publication. We handled none of these; there are no prices here.</p>')
+    return (f'<p class="muted">Last checked {d["checked"]}: sellers read from each Amazon US buy box, dimensions '
+            f'from each maker’s own publication; we handled none of these, and there are no prices here.</p>')
 
 
 def related(slug):
@@ -315,7 +315,7 @@ def page_large(d):
     <h1>{PAGES[1]['h1']}</h1>
     {DISC}
     {checked_line(d)}
-    <p class="lede">A large watch is a fit question, and fit is about the inside of the box: how wide a slot is, how much height the lid leaves, and how big the pillow is that the strap wraps around. Of the boxes and cases here, Tawbury and Rothwell publish inside figures; SONGMICS publishes only a case diameter, which leaves out the lugs, the crown, the thickness and the clasp.</p>
+    <p class="lede">A large watch is a fit question, and fit is about the inside of the box. Of the boxes here, only the Tawbury Bayswater 8 publishes a slot size: 55&nbsp;mm wide with 30&nbsp;mm of height. Rothwell publishes a pillow circumference; SONGMICS publishes only a case diameter, which leaves out the lugs, the crown, the thickness and the clasp.</p>
     <h2>What each maker publishes</h2>
     {table(config_rows(boxes), HEADS)}
     <h2>A case of a given width, by the makers' own numbers</h2>
@@ -346,7 +346,7 @@ def page_vs(d):
     <h1>{PAGES[2]['h1']}</h1>
     {DISC}
     {checked_line(d)}
-    <p class="lede">A watch box keeps a collection at home: more slots, a glass lid, often a drawer. A watch roll or travel case carries a few watches in a bag and closes around them. The useful comparison is the inside: the compartments, the cushion each watch wraps around, and the closure.</p>
+    <p class="lede">Compared on what each maker publishes about the inside, a watch box and a watch roll solve different problems. A box keeps a collection at home: more slots, a glass lid, often a drawer. A roll or travel case carries a few watches in a bag and closes around them. What matters is the compartments, the cushion each watch wraps around, and the closure.</p>
     <h2>Rolls and travel cases</h2>
     {table(config_rows(rolls), HEADS)}
     <p>The WOLF Blake roll is the best-known roll in this shape; it is <a href="{BASE}wolf-watch-roll-alternatives">covered on its own page</a> and not linked, because the Amazon US listings we found were sold by a reseller.</p>
