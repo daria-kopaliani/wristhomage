@@ -75,6 +75,30 @@ Fifty Fathoms across the open catalogues returns only other brands sold *through
 Militado, Rdunae), generic "pilot watch" hits and tourbillon dress watches. None of them is a homage
 of anything, and all of them would be ghosts.
 
+### Ballon Bleu, Overseas and Sea-Dweller have no verifiable homage — checked 2026-09-28
+
+Issue #36 asked for `/watches/cartier-ballon-bleu`, `/watches/vacheron-overseas` and
+`/watches/rolex-sea-dweller`. **None was built, because not one row survives the first-party rule.**
+Every open catalogue was searched for the model names, their common spellings ("balloon",
+"sea dweller", "deepsea") and the originals' references (W69012/WSBB, 4500V/4520V/5500V/47040,
+16600/116600/126600/126660), plus design-cue words (cabochon, helium valve, 1220m/3900m):
+
+- `products.json`: Pagani Design (173 products), Watchdives (261), Sugess (397), Addiesdive (384),
+  Heimdallr (96), Specht & Söhne (182). Zero hits for any of the three. Specht & Söhne names
+  Cartier only on its Aviator line, which is the Santos, already filed. Watchdives and Addiesdive
+  "helium" hits are Watchdives WD007/WD1968 and Addiesdive AD2526 divers that name no original.
+- San Martin's `sitemap-1.xml` (337 URLs) and Cadisen's full `sitemap-pages.xml` (138 pages,
+  fetched one by one): zero hits. Cadisen does name Datejust, Submariner, Nautilus, Royal Oak and
+  Daytona in its own copy, so its silence on these three is a real answer and not a crawl miss.
+- Amazon US, read in a US-address browser session: "ballon bleu homage watch", "sea dweller homage
+  watch", "vacheron overseas homage watch" and "overseas homage automatic watch" return genuine
+  Cartier listings, straps and clasps, and generic OLEVS / FANMIS / FEICE / SEA-GULL dress and dive
+  watches. No listing from any brand here claims one of the three designs.
+
+Anything filed against these three would have been matched by eye, which is the trap described
+above. A future page needs a human to decide the pairing first, then the usual first-party and
+buy-box checks.
+
 ### Three pages currently earn nothing
 
 `blancpain-fifty-fathoms` (1 row), `iwc-big-pilot` (2) and `cartier-santos` (2) have **no
