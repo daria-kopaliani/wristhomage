@@ -75,29 +75,61 @@ Fifty Fathoms across the open catalogues returns only other brands sold *through
 Militado, Rdunae), generic "pilot watch" hits and tourbillon dress watches. None of them is a homage
 of anything, and all of them would be ghosts.
 
-### Ballon Bleu, Overseas and Sea-Dweller have no verifiable homage — checked 2026-09-28
+### Ballon Bleu and Overseas have no verifiable homage; Sea-Dweller has one lead — checked 2026-09-28
 
 Issue #36 asked for `/watches/cartier-ballon-bleu`, `/watches/vacheron-overseas` and
-`/watches/rolex-sea-dweller`. **None was built, because not one row survives the first-party rule.**
-Every open catalogue was searched for the model names, their common spellings ("balloon",
-"sea dweller", "deepsea") and the originals' references (W69012/WSBB, 4500V/4520V/5500V/47040,
-16600/116600/126600/126660), plus design-cue words (cabochon, helium valve, 1220m/3900m):
+`/watches/rolex-sea-dweller`. **None was built in PR #38.** The sources below were searched for the
+model names, their common spellings ("balloon", "sea dweller", "deepsea"), the originals' references
+(W69012/WSBB, 4500V/4520V/5500V/47040, 16600/116600/126600/126660) and design-cue words
+(cabochon, helium valve, 1220m/3900m). This is the list of sources read, not a claim that every
+open catalogue was read:
 
 - `products.json`: Pagani Design (173 products), Watchdives (261), Sugess (397), Addiesdive (384),
   Heimdallr (96), Specht & Söhne (182). Zero hits for any of the three. Specht & Söhne names
-  Cartier only on its Aviator line, which is the Santos, already filed. Watchdives and Addiesdive
-  "helium" hits are Watchdives WD007/WD1968 and Addiesdive AD2526 divers that name no original.
+  Cartier only on its Aviator line, which is the Santos, already filed. The "helium" hits at
+  Watchdives and Addiesdive are Watchdives WD007/WD1968 and Addiesdive AD2526 divers that name no original.
 - San Martin's `sitemap-1.xml` (337 URLs) and Cadisen's full `sitemap-pages.xml` (138 pages,
   fetched one by one): zero hits. Cadisen does name Datejust, Submariner, Nautilus, Royal Oak and
   Daytona in its own copy, so its silence on these three is a real answer and not a crawl miss.
 - Amazon US, read in a US-address browser session: "ballon bleu homage watch", "sea dweller homage
   watch", "vacheron overseas homage watch" and "overseas homage automatic watch" return genuine
   Cartier listings, straps and clasps, and generic OLEVS / FANMIS / FEICE / SEA-GULL dress and dive
-  watches. No listing from any brand here claims one of the three designs.
+  watches. None of these generic searches surfaced a listing that claims one of the three designs.
+- **Missed in the first pass, found at review:** `www.steeldives.com` ("Steeldive Official Store",
+  Shopify) serves an open `products.json` of 108 products. `steeldive.com` itself still 403s. So
+  "Steeldive blocks every machine read" is true of steeldive.com only.
 
-Anything filed against these three would have been matched by eye, which is the trap described
-above. A future page needs a human to decide the pairing first, then the usual first-party and
-buy-box checks.
+**Ballon Bleu and Overseas:** no source above names either in its own copy. Anything filed against
+them would have been matched by eye, which is the trap described above. A future page needs a
+human to decide the pairing first, then the usual first-party and buy-box checks.
+
+**Sea-Dweller has a first-party-style lead, not yet shipped.** steeldives.com lists
+"Steeldive SD1964 Sea-Dweller Sub Dive Watch"
+(<https://www.steeldives.com/products/steeldive-sd1964-45mm-sub-dive-watch>, read 2026-09-28).
+Its spec block lists a Japan NH35 automatic, 1000 m, a helium ("exhause") valve, a 120-click
+ceramic bezel, sapphire with AR, and 45.5 mm × 17.1 mm; 3 of its 10 variants were buyable that
+day. **Whether steeldives.com is Steeldive's own store or a dealer is not settled.** Its title calls it
+"Steeldive Official Store", and its About page speaks as the brand ("Steeldive registered own
+brands… In 2018, Steeldive independently produced the first batch…"). But no page names the operating
+company, the contact is a generic `sales@` address, and WHOIS shows only a 2020-07-17 registration
+through Alibaba Cloud with a redacted Hong Kong registrant. steeldive.com cannot be read to
+cross-check. Amazon US has the reference, read 2026-09-28 in `#desktop_buybox`, model number SD1964
+on each:
+
+- `B09PYYBT2S` (blue) and `B09PYWC8CM` (green): Shipper / Seller BurnsideChronoUS, In Stock.
+- `B09C4FBJ68`, `B09C4DFHY5`, `B09C4DGN92`: Shipper / Seller "Jason watch", in stock,
+  usually ships in 2 to 3 days.
+
+All five are third-party sellers, and none is identified as Steeldive. It was not built in PR #38
+for three reasons:
+- the find came at review, after the PR's verification pass;
+- the page would have a single row, against the 2–5 the issue asks for;
+- the store's identity, the row's fidelity score and a choice between these sellers still need
+  their own check.
+
+It is a lead for #36. Note that the "Three pages currently earn nothing" section below says
+Steeldive is not on US Amazon. The SD1964 listings above show that is no longer true for every
+Steeldive reference.
 
 ### Three pages currently earn nothing
 
