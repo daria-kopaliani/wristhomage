@@ -143,6 +143,9 @@ ARTICLES = [
     "/guides/cadisen",
     "/guides/addiesdive",
     "/guides/watchdives",
+    "/guides/invicta",
+    "/guides/heimdallr",
+    "/guides/sugess",
 ]
 
 # Brand guides, keyed by the `house` value the rows use. Drives the "Further reading"
@@ -156,6 +159,11 @@ HOUSE_GUIDES = {
     "Cadisen":       ("/guides/cadisen",       "Cadisen watches review"),
     "Addiesdive":    ("/guides/addiesdive",    "Addiesdive watches review"),
     "Watchdives":    ("/guides/watchdives",    "Are Watchdives watches any good?"),
+    "Invicta":       ("/guides/invicta",       "Are Invicta watches any good?"),
+    # No Heimdallr row exists yet, so this entry links from no watch page today. It is here
+    # because main() refuses a guide without one, and so the first Heimdallr row gets it.
+    "Heimdallr":     ("/guides/heimdallr",     "Are Heimdallr watches any good?"),
+    "Sugess":        ("/guides/sugess",        "Are Sugess watches any good?"),
 }
 
 # Pages the homepage Reading section is not expected to carry: /rubric is linked from the
@@ -1072,8 +1080,11 @@ def hub_page(originals):
              '<a href="/guides/steeldive">Steeldive</a>, '
              '<a href="/guides/baltany">Baltany</a>, '
              '<a href="/guides/cadisen">Cadisen</a>, '
-             '<a href="/guides/addiesdive">Addiesdive</a> and '
-             '<a href="/guides/watchdives">Watchdives</a>, each reviewed model by model.</p>')
+             '<a href="/guides/addiesdive">Addiesdive</a>, '
+             '<a href="/guides/watchdives">Watchdives</a>, '
+             '<a href="/guides/invicta">Invicta</a>, '
+             '<a href="/guides/heimdallr">Heimdallr</a> and '
+             '<a href="/guides/sugess">Sugess</a>, each reviewed model by model.</p>')
     b.append('<p>Ranked by icon: <a href="/articles/best-submariner-homage-under-200">Submariner '
              'under $200</a>, <a href="/articles/best-gmt-homage">Rolex GMT</a>, '
              '<a href="/articles/best-explorer-2-homage">Explorer II</a>, '
@@ -1226,6 +1237,9 @@ def llms(originals):
         "/guides/cadisen": "honest brand review of the spec-per-dollar budget brand, model by model",
         "/guides/addiesdive": "honest brand review of the $79-$150 brand: which models are quartz, and what the codes mean",
         "/guides/watchdives": "honest brand review of the titanium-and-vintage-diver house: which listings are actually its own watches, and what is in stock",
+        "/guides/invicta": "honest brand review of the Pro Diver maker: which references are automatic, which are quartz, and the calibre in each",
+        "/guides/heimdallr": "honest brand review of the SKX007-and-Tuna specialist: which movement you actually get, and who sells it on Amazon",
+        "/guides/sugess": "honest brand review of the Seagull-movement house: column-wheel chronographs, moonphases and a jump hour",
         "/articles/best-gmt-homage": "affordable GMT-Master II homages, ranked",
         "/articles/best-explorer-2-homage": "polar dials and freccione hands, ranked",
         "/articles/best-nautilus-homage": "the porthole field, verified and ranked",
