@@ -46,3 +46,10 @@
 # section. Exact paths only: the guides themselves (/guides/<brand>) must keep serving.
 /guides   /watches/  301
 /guides/  /watches/  301
+#
+# 2026-10-02 (wristhomage#41): full-brand slugs that chatgpt.com sent readers to and that
+# 404ed. Each is a GoatCounter "Not found" pageview with a chatgpt.com referrer in
+# 2026-09-01..10-01. Only observed paths are listed; nothing here is a guessed variant.
+/watches/patek-philippe-nautilus      /watches/patek-nautilus            301
+/watches/audemars-piguet-royal-oak    /watches/ap-royal-oak              301
+/watches/omega-seamaster              /watches/omega-seamaster-300m      301
