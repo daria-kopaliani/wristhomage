@@ -776,6 +776,71 @@ def money(n):
         return "—"
 
 
+# ANSWER FIRST, IN SPECS, WITHOUT PRICES (wristhomage#41). ChatGPT referrals to the pages it
+# already cites fell from mid-September. Those pages opened on a verdict and a price, and the
+# specs an assistant needs to answer "which Nautilus homage, what size, what movement" sat in
+# a table further down. So the treated pages carry one server-rendered paragraph near the top
+# naming the ranked models with case size, movement and water resistance, and the stock check
+# with its date and place where one stands. No price: portfolio #134 keeps new copy price-free,
+# and a spec does not go stale the way a price does.
+ANSWER_FIRST_WATCHES = {"patek-nautilus", "ap-royal-oak"}
+
+# The homepage answer: the closest homage per icon, for the icons ChatGPT sends readers to.
+# Order follows the 2026-09 referral table on wristhomage#41 (Nautilus, Royal Oak, Day-Date,
+# Speedmaster), then Datejust and Submariner, the two other most-visited icons.
+HOME_ANSWER_ICONS = ["patek-nautilus", "ap-royal-oak", "rolex-day-date", "omega-speedmaster",
+                     "rolex-datejust", "rolex-submariner"]
+
+
+def _specs_no_price(h):
+    """'40mm, Automatic (Seagull ST16), 100m water resistance' — never a price."""
+    bits = []
+    if h.get("size_mm"):
+        bits.append(f'{esc(h["size_mm"])}mm')
+    if h.get("movement"):
+        bits.append(esc(h["movement"]))
+    if h.get("wr_m"):
+        bits.append(f'{esc(h["wr_m"])}m water resistance')
+    return ", ".join(bits)
+
+
+def _stock_clause(h):
+    """'in stock at amazon.com, checked 2026-10-02' only where routing-policy's stock() says a
+    dated check still stands; sold out says so with its date; unknown says nothing."""
+    st = routing(h)["stock"]
+    where = esc(st["source"]) if st["source"] else "its seller"
+    if st["state"] == "in-stock":
+        scope = (f' in {st["configsInStock"]} of {st["configsTotal"]} configurations'
+                 if st["configsInStock"] is not None and st["configsTotal"] else "")
+        return f'; in stock{scope} at {where}, checked {esc(st["date"])}'
+    if st["state"] == "sold-out":
+        return f'; sold out at {where}' + (f', checked {esc(st["date"])}' if st["date"] else "")
+    return ""
+
+
+def _named(h):
+    return f'<strong>{esc(h.get("house",""))} {esc(h.get("name",""))}</strong>'
+
+
+def answer_first(o, homages):
+    """One paragraph: the ranked models, closest first, each with its specs and stock check."""
+    ranked = [h for h in homages if h.get("fidelity") is not None][:3]
+    if not ranked:
+        return ""
+    full = f'{o.get("house","")} {o.get("name","")}'
+    first = ranked[0]
+    out = (f'<p class="answer"><strong>Short answer:</strong> the closest {esc(full)} homage we rank '
+           f'is the {_named(first)} ({_specs_no_price(first)}; fidelity {esc(first["fidelity"])}/100'
+           f'{_stock_clause(first)}).')
+    rest = [f'the {_named(h)} ({_specs_no_price(h)}; fidelity {esc(h["fidelity"])}/100{_stock_clause(h)})'
+            for h in ranked[1:]]
+    if rest:
+        out += " Next: " + (" and ".join(rest) if len(rest) < 3 else ", ".join(rest)) + "."
+    out += (f' The original, ref {esc(o.get("ref","—"))}: {esc(o.get("size_mm","?"))}mm, '
+            f'{esc(o.get("movement",""))}, {esc(o.get("wr_m","?"))}m water resistance.</p>')
+    return out
+
+
 def original_page(o):
     house, name = o.get("house", ""), o.get("name", "")
     homages = sorted(o.get("homages", []), key=lambda c: c.get("fidelity", 0), reverse=True)
@@ -831,6 +896,8 @@ def original_page(o):
                  f'movements and honest notes so you can get the look without the {money(o.get("priceUSD"))} entry price.</p>')
     # A visible review date. Models and search indexes both weight currency, and the
     # item pages carried none while the guides did.
+    if o["id"] in ANSWER_FIRST_WATCHES:
+        b.append(answer_first(o, homages))
     b.append(f'<p class="muted" style="margin-top:-6px">Last reviewed {review_month(o)}.</p>')
     b.append('</div></div>')
     b.append(DISC)
@@ -1375,6 +1442,36 @@ def homepage_ssr(originals):
                lambda m: (m.group(1) + f"<strong>{len(ranked)}</strong> watches ranked by "
                           f"fidelity across <strong>{len(originals)}</strong> icons." + m.group(2)),
                s, count=1, flags=re.S)
+    # The hero stats were literals (60 homages, 24 originals) that finder.js corrected on load,
+    # so anything without JavaScript read two wrong numbers in the first screen. Write the
+    # real ones; finder.js still overwrites them with the same values.
+    for sid, val in (("stat-homages", len(ranked)), ("stat-originals", len(originals))):
+        s, n = re.subn(r'(<div class="n" id="' + sid + r'">)[^<]*(</div>)',
+                       lambda m, v=val: m.group(1) + str(v) + m.group(2), s, count=1)
+        if not n:
+            raise SystemExit(f"homepage_ssr: no #{sid} in index.html")
+    # The first-screen answer (wristhomage#41): closest homage per most-asked icon, with specs
+    # and no price, server-rendered so an assistant that never runs finder.js can lift it.
+    by_id = {o["id"]: o for o in originals}
+    lines = []
+    for oid in HOME_ANSWER_ICONS:
+        o = by_id.get(oid)
+        if not o:
+            raise SystemExit(f"homepage_ssr: HOME_ANSWER_ICONS names {oid}, which has no page")
+        top = max((h for h in o.get("homages", []) if h.get("fidelity") is not None),
+                  key=lambda h: h["fidelity"], default=None)
+        if not top:
+            continue
+        lines.append(f'<li><a href="/watches/{esc(oid)}">{esc(o["name"])}</a>: {_named(top)} '
+                     f'({_specs_no_price(top)}; fidelity {esc(top["fidelity"])}/100).</li>')
+    answer = (f'<p><strong>Short answer: the closest of our {len(ranked)} ranked homages for '
+              f'each of the most-asked icons</strong>, by the published fidelity rubric:</p><ul>'
+              + "".join(lines) + '</ul>')
+    s, n = re.subn(r'(<div class="sub eh-answer" id="answer">)(?:<!--SSR-->.*?<!--/SSR-->)?(</div>)',
+                   lambda m: m.group(1) + "<!--SSR-->" + answer + "<!--/SSR-->" + m.group(2),
+                   s, count=1, flags=re.S)
+    if not n:
+        raise SystemExit("homepage_ssr: no #answer container in index.html")
     for cid, body in (("cards", "\n".join(cards)), ("icons-list", "\n".join(icons))):
         # The block ends at an explicit <!--/SSR--> marker, not at the first </div>: a card
         # may itself contain markup, and matching to the first </div> made every re-run
