@@ -75,19 +75,34 @@ def review_month(original):
     shape is checked before the calendar because date.fromisoformat() also accepts
     "20260920" and "2026-W38-7".
     """
+    # The page also prints prices, each with the day it was read (price_cell() prints
+    # `priceDate` wherever a row has a `priceSource`; _spec_phrase() prints
+    # `amazonPriceDate` beside an Amazon price). A price is one of the claims above the
+    # line, so the month is floored on those dates too. Without this, re-verifying every
+    # row's specification moved a page to "Last reviewed October" while it still quoted
+    # August prices that had since drifted (wristhomage#46 review): a spec check is not
+    # a price check.
     dates = []
-    for h in original.get("homages", []):
-        raw_date = h.get("verified")
+
+    def take(h, field):
+        raw_date = h.get(field)
         if raw_date in (None, ""):
-            continue
+            return
         if not _VERIFIED_RE.match(str(raw_date)):
             raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
-                             f"verified={raw_date!r}; the required shape is YYYY-MM-DD.")
+                             f"{field}={raw_date!r}; the required shape is YYYY-MM-DD.")
         try:
             dates.append(datetime.date.fromisoformat(str(raw_date)))
         except ValueError as e:
             raise SystemExit(f"gen.py: {original.get('id')} row {h.get('name')!r} has "
-                             f"verified={raw_date!r}, which is not a real date ({e}).")
+                             f"{field}={raw_date!r}, which is not a real date ({e}).")
+
+    for h in original.get("homages", []):
+        take(h, "verified")
+        if h.get("priceSource"):
+            take(h, "priceDate")
+        if h.get("amazonPriceUSD"):
+            take(h, "amazonPriceDate")
     if not dates:
         return REVIEWED_HUMAN
     return min(dates).strftime("%B %Y")
