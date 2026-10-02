@@ -1464,8 +1464,9 @@ def homepage_ssr(originals):
             continue
         lines.append(f'<li><a href="/watches/{esc(oid)}">{esc(o["name"])}</a>: {_named(top)} '
                      f'({_specs_no_price(top)}; fidelity {esc(top["fidelity"])}/100).</li>')
-    answer = ('<p><strong>Short answer: the closest homage we rank for each of the most-asked '
-              'icons</strong>, by the published fidelity rubric:</p><ul>' + "".join(lines) + '</ul>')
+    answer = (f'<p><strong>Short answer: the closest of our {len(ranked)} ranked homages for '
+              f'each of the most-asked icons</strong>, by the published fidelity rubric:</p><ul>'
+              + "".join(lines) + '</ul>')
     s, n = re.subn(r'(<div class="sub eh-answer" id="answer">)(?:<!--SSR-->.*?<!--/SSR-->)?(</div>)',
                    lambda m: m.group(1) + "<!--SSR-->" + answer + "<!--/SSR-->" + m.group(2),
                    s, count=1, flags=re.S)
