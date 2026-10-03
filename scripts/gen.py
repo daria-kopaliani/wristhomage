@@ -640,7 +640,16 @@ def top_cta(homage, siblings=()):
                   f"at our last check. " if c["soldOut"] else "")
         note = ("Exact first-party link; carries our referral." if c["paid"]
                 else "Exact first-party link; not affiliated.")
-        out = (f'<p class="cta"><a class="buy" href="{esc(c["href"])}" rel="{c["rel"]}" '
+        # TRACKED EXACTLY LIKE THE TABLE ROW (wristhomage#54). This anchor used to carry no
+        # data-merchant, so it matched none of the page handler's selectors and the Explorer
+        # II page's Watchdives button — a paid link — sent no event at all. Same rule and
+        # same attributes as shop_link(): a PAID merchant destination carries data-merchant
+        # and data-slug, so the one handler sends shop/<merchant>/<slug>. Limited to paid
+        # links on purpose: the unpaid San Martin merchant CTAs stay as they were, untracked,
+        # so this fix adds the one missing paid event and no new unpaid ones.
+        track = (f' data-merchant="{esc(c["kind"])}" data-slug="{esc(routing(homage)["slug"])}"'
+                 if c["paid"] and c["kind"] not in ("amazon", "direct", "search") else "")
+        out = (f'<p class="cta"><a class="buy" href="{esc(c["href"])}"{track} rel="{c["rel"]}" '
                f'target="_blank">{label} &rsaquo;</a> '
                f'<span class="muted">{detail}{note}</span></p>')
     elif c["kind"] == "amazon":
