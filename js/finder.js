@@ -54,10 +54,23 @@
     return "Other";
   }
 
+  /* Picks the generator retired under the 60-day sold-out rule (wristhomage#47). They
+   * stay in data/homages.js as a record, so without this the finder would redraw a row
+   * every watch page has dropped. scripts/gen.py writes the list; it is not decided here. */
+  var RETIRED = {};
+  var retiredMeta = document.querySelector('meta[name="wh-retired"]');
+  if (retiredMeta) {
+    String(retiredMeta.getAttribute("content") || "").split(/\s+/).forEach(function (s) {
+      if (s) RETIRED[s] = 1;
+    });
+  }
+
   /* Flatten: one row per homage, carrying its original */
   var ROWS = [];
   DATA.originals.forEach(function (o) {
-    (o.homages || []).forEach(function (h) { ROWS.push({ h: h, o: o }); });
+    (o.homages || []).forEach(function (h) {
+      if (!RETIRED[rowSlug(h)]) ROWS.push({ h: h, o: o });
+    });
   });
 
   var state = { icon: "all", budget: "all", move: "all", sort: "fidelity" };
