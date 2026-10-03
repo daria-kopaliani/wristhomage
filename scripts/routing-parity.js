@@ -517,8 +517,11 @@ var LEDGER_UNPAID = /^\/?out\/(iherb-research|brand|search)\/|^\/?shop\/(?!amazo
 
 /* Run the page's OWN handler, not a copy of its logic. Reimplementing it here is how a
  * suite ends up proving that the reimplementation works. */
-function replay(page, anchorTag) {
-  var script = /<script>(document\.addEventListener\("click"[\s\S]*?)<\/script>/.exec(page);
+function replay(page, anchorTag, ev) {
+  // The affiliate handler: the inline script binding a[href*=amazon]. moondog-portfolio#215
+  // wrapped its body in one function bound to click and middle-click auxclick.
+  ev = ev || { type: "click", button: 0 };
+  var script = /<script>([^<]*closest\("a\[href\*=amazon[^<]*)<\/script>/.exec(page);
   if (!script) return null;
   var ds = {};
   (anchorTag.match(/data-([a-z-]+)="([^"]*)"/g) || []).forEach(function (d) {
@@ -536,14 +539,15 @@ function replay(page, anchorTag) {
       return null;
     }
   };
-  var cb = null;
+  var cbs = {};
   var savedDoc = global.document, savedWin = global.window, savedGc = global.goatcounter;
-  global.document = { addEventListener: function (t, f) { cb = f; } };
-  global.window = { goatcounter: { count: function (o) { hits.push(o.path); } } };
+  global.document = { addEventListener: function (t, f) { cbs[t] = f; } };
+  global.window = { onauxclick: null, goatcounter: { count: function (o) { hits.push(o.path); } } };
   global.goatcounter = global.window.goatcounter;
   try {
     new Function(script[1])();
-    if (cb) cb({ target: anchor });
+    if (!cbs.click) return null;
+    if (cbs[ev.type]) cbs[ev.type]({ target: anchor, type: ev.type, button: ev.button });
   } finally {
     global.document = savedDoc; global.window = savedWin; global.goatcounter = savedGc;
   }
@@ -588,6 +592,13 @@ treated.forEach(function (rel) {
        Boolean(hits) && hits.length === 1);
     if (!hits || hits.length !== 1) return;
     var p = hits[0];
+    // moondog-portfolio#215: a middle-click is the same one event; other buttons none.
+    eq(rel + ": a middle-click on " + href.slice(0, 52) + " sends the click's one event",
+       (replay(page, a, { type: "auxclick", button: 1 }) || []).join(","), p);
+    eq(rel + ": a right-button auxclick on " + href.slice(0, 52) + " sends nothing",
+       (replay(page, a, { type: "auxclick", button: 2 }) || []).length, 0);
+    eq(rel + ": a contextmenu on " + href.slice(0, 52) + " sends nothing",
+       (replay(page, a, { type: "contextmenu", button: 2 }) || []).length, 0);
     ok(rel + ": " + p + " carries the placement", p.indexOf("alt-compare/") !== -1);
     var paid = LEDGER_PAID.test(p), unpaid = LEDGER_UNPAID.test(p);
     ok(rel + ": " + p + " is classified by the portfolio ledger", paid || unpaid);

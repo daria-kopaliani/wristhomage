@@ -430,9 +430,21 @@ HEAD = """<!doctype html>
 # earns nothing. An unpaid click counted as paid is the worst of the four possible errors
 # here, because it inflates exactly the number the experiment is trying to read.
 #
-# Still one listener and one event per click: every branch returns.
+# Still one handler and one event per physical action: every branch returns.
+#
+# MIDDLE-CLICK (moondog-portfolio#215). A middle-click, or a mouse's "open in new tab"
+# button, fires `auxclick`, never `click`, so those Amazon opens reached Amazon and never
+# reached us. The handler is now one function bound to both events, and its guard keeps it
+# at one event per action: auxclick counts button 1 only (a right-click opens nothing, and
+# nothing here listens for `contextmenu`), and a `click` with button 1 is skipped where the
+# browser has auxclick, because a few old browsers fired both for one middle-click. The
+# body below is unchanged; only the wrapper moved. sync_click_handlers() moves the
+# hand-written pages' own copies (index, articles, guides, ...) onto the same wrapper.
+CLICK_OPEN = ('(function(){function h(e){'
+              'if(e.type==="auxclick"?e.button!==1:e.button===1&&"onauxclick"in window)return;')
+CLICK_CLOSE = '}document.addEventListener("click",h,true);document.addEventListener("auxclick",h,true);})();'
 CLICK_JS = (
-    '<script>document.addEventListener("click",function(e){'
+    '<script>' + CLICK_OPEN +
     'var a=e.target.closest&&e.target.closest("a[href*=amazon],a[data-merchant],a[data-placement]");'
     'if(!a||!window.goatcounter||!goatcounter.count)return;'
     'function s(x){return String(x||"").toLowerCase().replace(/[^a-z0-9]+/g,"-")'
@@ -453,7 +465,35 @@ CLICK_JS = (
     'else if(u.searchParams.get("k")){base+="k/";k=u.searchParams.get("k");}'
     'else{k="link";}'
     'hit(base+s(k));'
-    '}catch(_){}},true);</script>\n')
+    '}catch(_){}' + CLICK_CLOSE + '</script>\n')
+
+# Any inline affiliate handler still on the click-only wrapper, whatever its body.
+_CLICK_ONLY = re.compile(r'<script>document\.addEventListener\("click",function\(e\)\{'
+                         r'(var a=e\.target\.closest&&e\.target\.closest\("a\[href\*=amazon.*?)'
+                         r'\},true\);</script>', re.S)
+
+
+def upgrade_click_handler(page):
+    """Move an inline affiliate handler from click-only to click + middle-click auxclick.
+    Idempotent; the handler's body (and so every path it emits) is not touched."""
+    return _CLICK_ONLY.sub(lambda m: "<script>" + CLICK_OPEN + m.group(1) + CLICK_CLOSE + "</script>", page)
+
+
+def sync_click_handlers():
+    """Hand-written pages carry their own copy of a handler; move each onto the wrapper."""
+    changed = []
+    for dirpath, dirnames, files in os.walk(ROOT):
+        dirnames[:] = sorted(d for d in dirnames if not d.startswith(".") and d not in ("design", "scripts", "tests"))
+        for fn in sorted(files):
+            if not fn.endswith(".html"):
+                continue
+            fp = os.path.join(dirpath, fn)
+            src = open(fp, encoding="utf-8").read()
+            out = upgrade_click_handler(src)
+            if out != src:
+                open(fp, "w", encoding="utf-8").write(out)
+                changed.append(os.path.relpath(fp, ROOT))
+    return changed
 
 FOOT = """  </main>
   <footer class="foot"><div class="wrap">
@@ -1338,7 +1378,7 @@ def alt_compare_articles(originals):
         # And the same click handler the generated pages get. The article used to carry its
         # own older copy, which is how its comparison buttons ended up emitting unplaced
         # paths while the watch pages emitted placed ones.
-        out = re.sub(r'<script>document\.addEventListener\("click".*?</script>\n?',
+        out = re.sub(r'<script>(?:document\.addEventListener\("click"|\(function\(\)\{function h\(e\)\{).*?</script>\n?',
                      CLICK_JS, out, count=1, flags=re.S)
         if CLICK_JS not in out:
             raise SystemExit(f"gen.py: {rel} has no click handler to replace")
@@ -1635,12 +1675,15 @@ def main():
     llms(originals)
     nh, ni = homepage_ssr(originals, retired)
     arts, cleared = alt_compare_articles(originals)
+    upgraded = sync_click_handlers()
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
     print(f"compared-alternative block: {len(ALT_COMPARE_WATCHES)} watch pages "
           f"({', '.join(sorted(ALT_COMPARE_WATCHES))}) + {len(arts)} article(s) "
           f"({', '.join(arts)})"
           + (f"; cleared {len(cleared)} rolled-back article(s) ({', '.join(cleared)})"
              if cleared else ""))
+    if upgraded:
+        print(f"click handler now also counts middle-click opens: {len(upgraded)} hand-written page(s)")
     print(f"homepage SSR: {nh} homage cards + {ni} icon rows + ItemList({nh})")
     print(f"sold-out picks ({SOLD_OUT_RETIRE_DAYS}-day rule, as of {TODAY}): {len(retired)} retired, "
           f"{len(counting)} counting, {len(unknown)} undated")
