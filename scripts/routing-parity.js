@@ -335,6 +335,81 @@ ok("alternative: in stock but nothing to link is not an alternative",
      R.resolve(row).href, R.resolve(amazonNoCheck).href);
 });
 
+/* ------------------------------------------ sixty days sold out: retirement --- */
+/* Owner decision, wristhomage#47: a pick sold out for 60+ days, counted from the
+ * earliest dated sold-out check (`soldOutSince`), is retired by the generator. These pin
+ * the boundary and every fail-closed branch: no usable date must never retire a row. */
+var RET_TODAY = "2026-12-01";
+var soRow = { house: "San Martin", name: "SN008-G", availability: "sold-out",
+              availabilityDate: "2026-10-02", soldOutSince: "2026-08-27" };
+[
+  { why: "not sold out -> listed, whatever soldOutSince says",
+    row: { house: "Pagani Design", name: "PD-1651", availability: "in-stock",
+           availabilityDate: "2026-10-02", soldOutSince: "2026-01-01" },
+    today: RET_TODAY, state: "listed" },
+  { why: "59 days sold out -> still counting, keeps 'Check availability'",
+    row: Object.assign({}, soRow, { soldOutSince: "2026-10-03", availabilityDate: "2026-11-20" }),
+    today: RET_TODAY,
+    state: "counting", days: 59, retireOn: "2026-12-02" },
+  { why: "exactly 60 days -> retired",
+    row: Object.assign({}, soRow, { soldOutSince: "2026-10-02" }), today: RET_TODAY,
+    state: "retired", days: 60, retireOn: "2026-12-01" },
+  { why: "96 days -> retired",
+    row: soRow, today: RET_TODAY, state: "retired", days: 96 },
+  { why: "measured from soldOutSince, NOT the latest check: re-checking must not reset it",
+    row: Object.assign({}, soRow, { availabilityDate: "2026-11-30" }), today: RET_TODAY,
+    state: "retired", days: 96 },
+  { why: "no soldOutSince -> unknown, never retired on a guess",
+    row: Object.assign({}, soRow, { soldOutSince: undefined }), today: "2027-06-01",
+    state: "unknown" },
+  { why: "undated sold-out row (no availabilityDate, no soldOutSince) -> unknown",
+    row: { house: "San Martin", name: "SN021-G", availability: "sold-out" }, today: "2027-06-01",
+    state: "unknown" },
+  { why: "malformed soldOutSince -> unknown",
+    row: Object.assign({}, soRow, { soldOutSince: "2026-02-30" }), today: "2027-06-01",
+    state: "unknown" },
+  { why: "soldOutSince in the future -> unknown",
+    row: Object.assign({}, soRow, { soldOutSince: "2026-12-05" }), today: RET_TODAY,
+    state: "unknown" },
+  { why: "soldOutSince later than the latest check -> inconsistent record, unknown",
+    row: Object.assign({}, soRow, { soldOutSince: "2026-10-05" }), today: RET_TODAY,
+    state: "unknown" },
+  { why: "no usable today -> unknown, not retired",
+    row: soRow, today: "", state: "unknown" }
+].forEach(function (f) {
+  var r = R.retirement(f.row, f.today);
+  eq("retirement: " + f.why, r.state, f.state);
+  if (f.days !== undefined) eq("retirement days: " + f.why, r.days, f.days);
+  if (f.retireOn !== undefined) eq("retirement date: " + f.why, r.retireOn, f.retireOn);
+});
+eq("retirement threshold is the owner's 60 days", R.SOLD_OUT_RETIRE_DAYS, 60);
+eq("retirement does not move a destination",
+   R.resolve(soRow).href, R.resolve(Object.assign({}, soRow, { soldOutSince: undefined })).href);
+
+// Every live sold-out row carries a usable since-date, never later than its latest check.
+rows.filter(function (h) { return h.availability === "sold-out"; }).forEach(function (h) {
+  var r = R.retirement(h, h.availabilityDate);
+  ok(h.house + " " + h.name + ": sold-out row has a usable soldOutSince (got " +
+     JSON.stringify(h.soldOutSince) + ")", r.state === "counting" || r.state === "retired");
+});
+rows.filter(function (h) { return h.soldOutSince !== undefined; }).forEach(function (h) {
+  ok(h.house + " " + h.name + ": soldOutSince only on a sold-out row", h.availability === "sold-out");
+});
+
+/* ------------------------------------------------- SSK023: no buy box, search --- */
+/* wristhomage#47: B0D3WBXVP9 had no buy box on 2026-10-02, so the row links a tagged
+ * search. The search shape must wear the search tag (AGENTS.md 1.6), never the dp tag. */
+var ssk = rows.filter(function (h) { return /^SSK023\b/.test(h.name); });
+eq("SSK023: exactly one live row", ssk.length, 1);
+if (ssk.length) {
+  var sskD = R.resolve(ssk[0]);
+  eq("SSK023: links a tagged Amazon search on the search tag", sskD.href,
+     "https://www.amazon.com/s?k=Seiko%20SSK023%20watch&tag=wristhomage-20");
+  ok("SSK023: no ASIN left on the row", !String(ssk[0].asin || "").trim());
+  eq("SSK023: CTA is the same search", R.cta(ssk[0]).href, sskD.href);
+  ok("SSK023: no dp tag anywhere on its link", sskD.href.indexOf(R.AMAZON_TAG_DP) === -1);
+}
+
 /* ------------------------------------------- the generated pages, both ways --- */
 /* The fixtures above prove the policy answers each branch correctly. This proves the
  * server-rendered pages actually carry those answers — closing the loop between the
@@ -350,9 +425,23 @@ var html = fs.readdirSync(dir)
 
 ok("generated watch pages were read", html.length > 10000);
 
-// 1. every destination the policy produces is present in the generated output
+// 1. every destination the policy produces is present in the generated output - except
+//    for picks the generator retired. index.html records which (meta wh-retired), and each
+//    one must really be a dated sold-out row; the pages it was dropped from must not link it.
+var indexHtml = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+var retiredMeta = indexHtml.match(/<meta name="wh-retired" content="([^"]*)">/);
+var retiredSlugs = {};
+(retiredMeta ? retiredMeta[1].split(/\s+/) : []).forEach(function (s) { if (s) retiredSlugs[s] = 1; });
+Object.keys(retiredSlugs).forEach(function (s) {
+  var hit = rows.filter(function (h) { return R.clickSlug(h.house, h.name) === s; })[0];
+  ok("retired slug " + s + " is a live data row", Boolean(hit));
+  if (hit) {
+    ok("retired slug " + s + " is a dated sold-out row",
+       R.retirement(hit, "2999-12-31").state === "retired");
+  }
+});
 var expected = {};
-rows.forEach(function (h) {
+rows.filter(function (h) { return !retiredSlugs[R.clickSlug(h.house, h.name)]; }).forEach(function (h) {
   var d = R.resolve(h);
   (d.pair ? d.pair.map(function (x) { return x.href; }) : [d.href])
     .forEach(function (u) { expected[u] = (expected[u] || 0) + 1; });

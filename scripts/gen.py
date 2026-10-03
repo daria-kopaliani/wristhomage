@@ -43,6 +43,8 @@ TODAY = datetime.date.today().isoformat()
 # This is also the site that matters: 16 of the portfolio's 20 all-time orders are here.
 # The two tracking IDs themselves now live in data/routing-policy.js.
 REVIEWED_HUMAN = "August 2026"   # fallback only, for a page with no dated rows
+# Mirrors data/routing-policy.js SOLD_OUT_RETIRE_DAYS for messages only; the policy decides.
+SOLD_OUT_RETIRE_DAYS = 60
 
 # The watch-storage pilot (wristhomage#26) keeps its data rules and page bodies in its own module;
 # this file wraps, lists and links its pages like every other page on the site.
@@ -267,7 +269,7 @@ def art_svg(t):
     return f'<svg class="wa" viewBox="0 0 48 48" aria-hidden="true"><use href="#wa-{esc(t)}"/></svg>'
 
 
-def load_data():
+def load_data(today=None):
     """Row data, with every row's routing decision already attached as _routing.
 
     Both come out of one node call: the policy in data/routing-policy.js is the same
@@ -279,12 +281,12 @@ def load_data():
     pol = os.path.join(ROOT, "data", "routing-policy.js")
     out = subprocess.check_output(["node", "-e", (
         f"global.window={{}};"
-        f"var TODAY={json.dumps(TODAY)};"
+        f"var TODAY={json.dumps(today or TODAY)};"
         f"var R=require({json.dumps(pol)});"
         f"require({json.dumps(js)});"
         "var d=window.HOMAGE_DATA;"
         "(d.originals||[]).forEach(function(o){(o.homages||[]).forEach(function(h){"
-        "var d=R.resolve(h);""d.cta=R.cta(h);d.alternative=R.alternative(h);""d.canBeAlternative=R.canBeAlternative(h);""d.stock=R.stock(h,TODAY);d.availableAlternative=R.availableAlternative(h,TODAY);""h._routing=d;})});"
+        "var d=R.resolve(h);""d.cta=R.cta(h);d.alternative=R.alternative(h);""d.canBeAlternative=R.canBeAlternative(h);""d.stock=R.stock(h,TODAY);d.availableAlternative=R.availableAlternative(h,TODAY);""d.retirement=R.retirement(h,TODAY);""h._routing=d;})});"
         "process.stdout.write(JSON.stringify(d));")])
     data = json.loads(out)
     rows = [h for o in data.get("originals", []) for h in (o.get("homages") or [])]
@@ -294,6 +296,86 @@ def load_data():
     if missing:
         raise SystemExit(f"gen.py: routing policy returned no decision for {len(missing)} row(s)")
     return data
+
+
+def apply_retirement(data):
+    """Drop every pick that has been sold out for 60+ days (owner decision, wristhomage#47).
+
+    The rule itself is data/routing-policy.js retirement(), measured from the row's
+    `soldOutSince`; this only acts on its answer. It runs once, straight after
+    load_data(), so every surface this file renders - the watch page and its "Last
+    reviewed" month, the hub, llms.txt, the homepage cards and ItemList, the
+    compared-alternative blocks - sees the same field without the retired row, and the
+    next pick on the page moves up. The row itself stays in data/homages.js: it is a
+    record of what was checked, and the catalogue audits still read it.
+
+    Refuses to empty a page. README "Catalogue integrity": a page that loses every row is
+    retired with a 301 in _redirects, which is a decision about the URL and not something
+    a generator should do on its own.
+
+    Returns (retired, unknown, counting): lists of (original id, row) for the report.
+    """
+    retired, unknown, counting = [], [], []
+    for o in data.get("originals", []):
+        keep = []
+        for h in o.get("homages") or []:
+            r = routing(h).get("retirement") or {}
+            state = r.get("state")
+            if state not in ("listed", "counting", "unknown", "retired"):
+                raise SystemExit(f"gen.py: no retirement decision for {h.get('house')} {h.get('name')}")
+            if state == "retired":
+                retired.append((o["id"], h))
+                continue
+            if state == "unknown":
+                unknown.append((o["id"], h))
+            elif state == "counting":
+                counting.append((o["id"], h))
+            keep.append(h)
+        if not keep and o.get("homages"):
+            raise SystemExit(
+                f"gen.py: every row on /watches/{o['id']} has been sold out for "
+                f"{SOLD_OUT_RETIRE_DAYS}+ days, so retiring them would empty the page. Retire "
+                "the page with a 301 in _redirects (README, Catalogue integrity) or record a "
+                "new stock check; the generator will not publish an empty ranking.")
+        o["homages"] = keep
+    return retired, unknown, counting
+
+
+def retirement_report(retired, unknown, counting):
+    """Printed every run, so a sold-out pick never leaves a page without anyone seeing it -
+    and a sold-out pick with no usable date is named rather than silently kept forever."""
+    out = []
+    for oid, h in retired:
+        r = routing(h)["retirement"]
+        out.append(f"retired (sold out {r['days']} days, since {r['since']}): "
+                   f"{h['house']} {h['name']} on /watches/{oid}")
+    for oid, h in unknown:
+        out.append(f"sold out, no usable soldOutSince - kept, NOT retired: "
+                   f"{h['house']} {h['name']} on /watches/{oid}")
+    for oid, h in counting:
+        r = routing(h)["retirement"]
+        out.append(f"sold out {r['days']} days (since {r['since']}), retires {r['retireOn']}: "
+                   f"{h['house']} {h['name']} on /watches/{oid}")
+    return out
+
+
+def retired_mentions(retired):
+    """Hand-written pages that still name a retired pick. The generator cannot rewrite
+    prose, so it lists them for a human instead of leaving a ghost recommendation unseen."""
+    hits = []
+    for d in ("articles", "guides"):
+        base = os.path.join(ROOT, d)
+        if not os.path.isdir(base):
+            continue
+        for fn in sorted(os.listdir(base)):
+            if not fn.endswith(".html"):
+                continue
+            text = open(os.path.join(base, fn), encoding="utf-8").read()
+            for _, h in retired:
+                name = re.sub(r"\s*\([^)]*\)", "", h["name"]).strip()
+                if re.search(r"(?<![A-Za-z0-9-])" + re.escape(name) + r"(?![A-Za-z0-9-])", text):
+                    hits.append(f"{d}/{fn} names retired {h['house']} {h['name']}")
+    return hits
 
 
 def routing(h):
@@ -1376,7 +1458,7 @@ def llms(originals):
     write("llms.txt", body)
 
 
-def homepage_ssr(originals):
+def homepage_ssr(originals, retired=()):
     """Server-render the finder into index.html, and describe it as an ItemList.
 
     The homepage's whole substance — every homage, ranked — was drawn by finder.js
@@ -1502,6 +1584,15 @@ def homepage_ssr(originals):
     s = re.sub(r'<script type="application/ld\+json">(?:(?!</script>).)*?"@type":\s*"ItemList".*?</script>\s*',
                "", s, flags=re.S)
     s = s.replace("</head>", item_list + "\n</head>", 1)
+    # js/finder.js redraws every card from data/homages.js, which still holds the retired
+    # rows (they are a record, not a recommendation). This tells it which ones the
+    # generator retired, by the policy's own click slug, so the homepage cannot bring back
+    # a pick the watch pages dropped. Written only while something is retired, so it adds
+    # no diff - and no lastmod - on a run where nothing is.
+    s = re.sub(r'<meta name="wh-retired" content="[^"]*">\s*', "", s)
+    slugs = sorted(routing(h)["slug"] for _, h in retired)
+    if slugs:
+        s = s.replace("</head>", f'<meta name="wh-retired" content="{esc(" ".join(slugs))}">\n</head>', 1)
     # The homepage is the only INDEXED page that links the hand-written guides, so a page
     # missing from the Reading section has no crawl path from anything Google has already
     # fetched — it sits at "Discovered - currently not indexed / Referring page: None
@@ -1528,6 +1619,7 @@ def main():
         raise SystemExit("gen.py: brand guides with no HOUSE_GUIDES entry:\n  "
                          + "\n  ".join(unwired))
     data = load_data()
+    retired, unknown, counting = apply_retirement(data)
     originals = data["originals"]
     # Snapshot lastmod BEFORE writing anything: the writes below would otherwise dirty
     # every generated page and make git_lastmod report today for all of them.
@@ -1541,7 +1633,7 @@ def main():
         write(path.lstrip("/") + ".html", head + body + "\n" + FOOT.format(year=YEAR, click_js=CLICK_JS))
     n = sitemap(originals, lastmods)
     llms(originals)
-    nh, ni = homepage_ssr(originals)
+    nh, ni = homepage_ssr(originals, retired)
     arts, cleared = alt_compare_articles(originals)
     print(f"generated {len(originals)} watch pages + hub + sitemap ({n} urls) + llms.txt")
     print(f"compared-alternative block: {len(ALT_COMPARE_WATCHES)} watch pages "
@@ -1550,6 +1642,12 @@ def main():
           + (f"; cleared {len(cleared)} rolled-back article(s) ({', '.join(cleared)})"
              if cleared else ""))
     print(f"homepage SSR: {nh} homage cards + {ni} icon rows + ItemList({nh})")
+    print(f"sold-out picks ({SOLD_OUT_RETIRE_DAYS}-day rule, as of {TODAY}): {len(retired)} retired, "
+          f"{len(counting)} counting, {len(unknown)} undated")
+    for line in retirement_report(retired, unknown, counting):
+        print("  " + line)
+    for line in retired_mentions(retired):
+        print("  WARNING: " + line)
 
 
 if __name__ == "__main__":

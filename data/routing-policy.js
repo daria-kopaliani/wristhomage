@@ -353,6 +353,46 @@
              seller: null };
   }
 
+  /* SIXTY DAYS SOLD OUT AND A PICK IS RETIRED (owner decision, wristhomage#47).
+   *
+   * A sold-out pick keeps its dated "Check availability" state for a while: San Martin and
+   * Watchdives restock references, and pulling a row the week it sells out would gut pages
+   * that recover. But a page that keeps ranking a watch nobody has been able to buy for
+   * two months is recommending a ghost, so the generator drops the row once it has been
+   * sold out for SOLD_OUT_RETIRE_DAYS.
+   *
+   * "Sold out for 60 days" is measured from `soldOutSince`, the earliest dated check on
+   * record that found the row sold out - NOT from `availabilityDate`, which is the latest
+   * check and moves forward every time someone re-reads a still-sold-out page. Measuring
+   * from that would reset the clock on every re-check and nothing would ever retire.
+   *
+   * Fails closed, towards keeping the row. A sold-out row with no `soldOutSince`, a
+   * malformed one, one dated in the future, or one later than the latest check is
+   * "unknown": not retired, and gen.py lists it so a human can record the date. Retiring
+   * on a guessed date would delete a recommendation on no evidence.
+   *
+   * States: "listed" (not sold out), "counting" (sold out, dated, under the limit),
+   * "unknown" (sold out, no usable date), "retired". */
+  var SOLD_OUT_RETIRE_DAYS = 60;
+
+  function retirement(h, today) {
+    var out = { state: "listed", since: null, days: null, retireOn: null };
+    if (h.availability !== "sold-out") return out;
+    out.state = "unknown";
+    var since = h.soldOutSince;
+    if (_parseISO(since) === null) return out;
+    out.since = since;
+    var checked = h.availabilityDate;
+    if (_parseISO(checked) !== null && _days(since, checked) < 0) return out;
+    var days = _days(since, today);
+    if (days === null || days < 0) return out;
+    out.days = days;
+    out.retireOn = new Date(_parseISO(since) + SOLD_OUT_RETIRE_DAYS * 86400000)
+      .toISOString().slice(0, 10);
+    out.state = days >= SOLD_OUT_RETIRE_DAYS ? "retired" : "counting";
+    return out;
+  }
+
   function assign(a, b) {
     var out = {}, k;
     for (k in a) if (Object.prototype.hasOwnProperty.call(a, k)) out[k] = a[k];
@@ -369,7 +409,8 @@
     sellerPair: sellerPair, resolve: resolve,
     cta: cta, canBeAlternative: canBeAlternative, alternative: alternative,
     STOCK_MAX_AGE_DAYS: STOCK_MAX_AGE_DAYS, stock: stock,
-    availableAlternative: availableAlternative
+    availableAlternative: availableAlternative,
+    SOLD_OUT_RETIRE_DAYS: SOLD_OUT_RETIRE_DAYS, retirement: retirement
   };
 
   if (typeof window !== "undefined" && window) window.WH_ROUTING = api;
