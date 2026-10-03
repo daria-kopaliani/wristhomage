@@ -188,7 +188,11 @@
   wire(els.sort, SORTS, "sort");
 
   /* Shop-click events (delegated — cards re-render) */
-  els.cards.addEventListener("click", function (e) {
+  // A middle-click opens the link too but fires `auxclick`, not `click` (moondog-portfolio#215),
+  // so both are bound, with the inline handler's guard: auxclick counts button 1 only, and a
+  // middle-button `click` is skipped where auxclick exists. One event per open.
+  function trackShop(e) {
+    if (e.type === "auxclick" ? e.button !== 1 : e.button === 1 && "onauxclick" in window) return;
     var a = e.target.closest("a.shop"); if (!a || !window.goatcounter || !window.goatcounter.count) return;
     // The homepage is the ONLY page carrying both trackers: index.html has the inline
     // a[href*=amazon] handler AND loads this file, so an Amazon shop click used to log
@@ -198,7 +202,9 @@
     // only the non-Amazon links, which is the data nothing else records.
     if (a.getAttribute("data-shop") === "amazon") return;
     window.goatcounter.count({ path: "shop/" + a.getAttribute("data-shop") + "/" + a.getAttribute("data-slug"), title: "shop click", event: true });
-  });
+  }
+  els.cards.addEventListener("click", trackShop);
+  els.cards.addEventListener("auxclick", trackShop);
 
   /* The Icons — editorial index of every original */
   if (els.icons) {
